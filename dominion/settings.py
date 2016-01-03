@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'django_extensions',
 
     'dominion.cards',
+    'dominion.games',
     'dominion.players',
 )
 
