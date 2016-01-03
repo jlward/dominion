@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 
-from dominion.cards.models import Treasure
+from dominion.cards.models import Treasure, Victory
 
 
 def create_treasure(name, fields):
@@ -18,6 +18,23 @@ def create_treasure(name, fields):
     else:
         card.cost = fields['cost']
         card.money_value = fields['money_value']
+    card.save()
+
+
+def create_victories(name, fields):
+    try:
+        card = Victory.objects.get(
+            name=name,
+        )
+    except Victory.DoesNotExist:
+        card = Victory(
+            name=name,
+            cost=fields['cost'],
+            points=fields['points'],
+        )
+    else:
+        card.cost = fields['cost']
+        card.points = fields['points']
     card.save()
 
 
@@ -38,6 +55,23 @@ def create_cards(sender, **kwargs):
     }
     for name, fields in cards.items():
         create_treasure(name, fields)
+
+    cards = {
+        'estate': {
+            'cost': 2,
+            'points': 1,
+        },
+        'duchy': {
+            'cost': 5,
+            'points': 3,
+        },
+        'province': {
+            'cost': 8,
+            'points': 6,
+        },
+    }
+    for name, fields in cards.items():
+        create_victories(name, fields)
 
 
 class CardAppConfig(AppConfig):
