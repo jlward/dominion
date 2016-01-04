@@ -1,10 +1,8 @@
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 
-from dominion.cards.models import Treasure, Victory
 
-
-def create_treasure(name, fields):
+def create_treasure(Treasure, name, fields):
     try:
         card = Treasure.objects.get(
             name=name,
@@ -23,7 +21,7 @@ def create_treasure(name, fields):
     card.save()
 
 
-def create_victories(name, fields):
+def create_victories(Victory, name, fields):
     try:
         card = Victory.objects.get(
             name=name,
@@ -43,6 +41,8 @@ def create_victories(name, fields):
 
 
 def create_cards(sender, **kwargs):
+    Treasure = sender.get_model('Treasure')
+    Victory = sender.get_model('Victory')
     cards = {
         'copper': {
             'cost': 0,
@@ -61,7 +61,7 @@ def create_cards(sender, **kwargs):
         },
     }
     for name, fields in cards.items():
-        create_treasure(name, fields)
+        create_treasure(Treasure, name, fields)
 
     cards = {
         'estate': {
@@ -81,7 +81,7 @@ def create_cards(sender, **kwargs):
         },
     }
     for name, fields in cards.items():
-        create_victories(name, fields)
+        create_victories(Victory, name, fields)
 
 
 class CardAppConfig(AppConfig):

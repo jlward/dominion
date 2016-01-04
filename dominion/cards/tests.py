@@ -1,7 +1,15 @@
 from django.test import TestCase
 
-from dominion.cards.apps import create_cards
-from dominion.cards.models import Card
+import dominion.cards
+from dominion.cards.apps import CardAppConfig, create_cards
+from dominion.cards.models import Card, CardInstance, Treasure, Victory
+from dominion.games.factories import GameFactory
+
+
+class SmokeTestCase(TestCase):
+    def test_string_method(self):
+        for card in Card.objects.all():
+            self.assertEqual(str(card), card.name.title())
 
 
 class PostMigrateTestCase(TestCase):
@@ -24,7 +32,12 @@ class PostMigrateTestCase(TestCase):
         self.assertEqual(card.treasure.money_value, 3)
 
     def test_create_cards_multiple_times_does_not_cause_problems(self):
-        create_cards(None)
+        sender = CardAppConfig('dominion.cards', dominion.cards)
+        sender.models = {
+            'treasure': Treasure,
+            'victory': Victory,
+        }
+        create_cards(sender)
         card = Card.objects.get(name='copper')
         self.assertEqual(card.cost, 0)
         self.assertEqual(card.count, 60)
@@ -47,3 +60,14 @@ class PostMigrateTestCase(TestCase):
         self.assertEqual(card.cost, 8)
         self.assertEqual(card.count, 12)
         self.assertEqual(card.victory.points, 6)
+
+
+class CreateForCardTestCase(TestCase):
+    def setUp(self):
+        self.game = GameFactory()
+
+    def test_create_coppers(self):
+        card = Card.objects.get(name='copper')
+        with self.assertNumQueries(1):
+            CardInstance.objects.create_for_card(card, self.game)
+        self.assertEqual(self.game.cardinstance_set.count(), 60)
