@@ -46,6 +46,7 @@ class Game(models.Model):
         for player in players:
             deck = Deck.objects.create(game=self, player=player)
             deck.get_starting_cards()
+            deck.draw_hand()
         Turn.objects.create(
             player=self.current_player,
             game=self,
