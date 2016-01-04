@@ -24,7 +24,12 @@ class PostMigrateTestCase(TestCase):
         self.assertEqual(card.treasure.money_value, 3)
 
     def test_create_cards_multiple_times_does_not_cause_problems(self):
-        create_cards(None)
+        sender = CardAppConfig('dominion.cards', dominion.cards)
+        sender.models = {
+            'treasure': Treasure,
+            'victory': Victory,
+        }
+        create_cards(sender)
         card = Card.objects.get(name='copper')
         self.assertEqual(card.cost, 0)
         self.assertEqual(card.count, 60)
