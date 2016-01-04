@@ -2,6 +2,8 @@ import random
 
 from django.test import TestCase
 
+from dominion.cards.models import Card
+from dominion.games.factories import GameFactory
 from dominion.games.models import Game
 from dominion.players.factories import PlayerFactory
 
@@ -58,3 +60,19 @@ class AddPlayerTestCase(TestCase):
             self.game.player_order,
             [player2.pk, player4.pk, player1.pk, player3.pk],
         )
+
+
+class CreateCardInstanesTestCase(TestCase):
+    def setUp(self):
+        self.game = GameFactory()
+
+    def test_one_query_per_card(self):
+        # The query to get the list of cards.
+        num_queries = Card.objects.count() + 1
+        with self.assertNumQueries(num_queries):
+            self.game.create_card_instances()
+
+    def test_number_of_card_instances_created(self):
+        self.game.create_card_instances()
+        card_count = sum(Card.objects.values_list('count', flat=True))
+        self.assertEqual(self.game.cardinstance_set.count(), card_count)
