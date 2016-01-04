@@ -3,6 +3,7 @@ import random
 from django.test import TestCase
 
 from dominion.cards.models import Card
+from dominion.decks.models import Deck
 from dominion.games.factories import GameFactory
 from dominion.games.models import Game
 from dominion.players.factories import PlayerFactory
@@ -76,3 +77,24 @@ class CreateCardInstanesTestCase(TestCase):
         self.game.create_card_instances()
         card_count = sum(Card.objects.values_list('count', flat=True))
         self.assertEqual(self.game.cardinstance_set.count(), card_count)
+
+
+class StartGameTestCase(TestCase):
+    def setUp(self):
+        self.game = GameFactory()
+        self.player = PlayerFactory()
+        self.game.add_player(self.player)
+
+    def test_deck_is_created_for_single_player(self):
+        player = PlayerFactory()
+        self.game.start()
+        assert Deck.objects.get(game=self.game, player=self.player)
+        with self.assertRaises(Deck.DoesNotExist):
+            Deck.objects.get(game=self.game, player=player)
+
+    def test_decks_are_created_for_players(self):
+        player = PlayerFactory()
+        self.game.add_player(player)
+        self.game.start()
+        assert Deck.objects.get(game=self.game, player=self.player)
+        assert Deck.objects.get(game=self.game, player=player)
