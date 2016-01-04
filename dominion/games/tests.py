@@ -98,3 +98,8 @@ class StartGameTestCase(TestCase):
         self.game.start()
         assert Deck.objects.get(game=self.game, player=self.player)
         assert Deck.objects.get(game=self.game, player=player)
+
+    def test_deck_size_is_set(self):
+        self.game.start()
+        deck = Deck.objects.get(game=self.game, player=self.player)
+        self.assertEqual(deck.get_deck_size(), 10)

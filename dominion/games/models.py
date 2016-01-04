@@ -23,8 +23,8 @@ class Game(models.Model):
             CardInstance.objects.create_for_card(card, self)
 
     def start(self):
+        self.create_card_instances()
         players = list(self.players.all())
-        Deck.objects.bulk_create(
-            Deck(game=self, player=player)
-            for player in players
-        )
+        for player in players:
+            deck = Deck.objects.create(game=self, player=player)
+            deck.get_starting_cards()
