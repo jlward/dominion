@@ -5,7 +5,7 @@ from django.test import TestCase
 from dominion.cards.models import Card
 from dominion.decks.models import Deck
 from dominion.games.factories import GameFactory
-from dominion.games.models import Game
+from dominion.games.models import Game, Turn
 from dominion.players.factories import PlayerFactory
 
 
@@ -103,3 +103,18 @@ class StartGameTestCase(TestCase):
         self.game.start()
         deck = Deck.objects.get(game=self.game, player=self.player)
         self.assertEqual(deck.get_deck_size(), 10)
+
+    def test_turn_created_for_first_player(self):
+        self.game.start()
+        turn = Turn.objects.get(
+            game=self.game,
+            turn_number=1,
+        )
+        self.assertEqual(turn.actions_left, 1)
+        self.assertEqual(turn.buys_left, 1)
+        self.assertEqual(turn.player, self.player)
+
+    def test_current_player_returns_whos_turn_it_is(self):
+        self.game.start()
+        current_player = self.game.current_player
+        self.assertEqual(current_player, self.player)
