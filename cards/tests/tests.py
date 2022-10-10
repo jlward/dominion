@@ -20,6 +20,10 @@ class CardTestCase(TestCase):
         card = Card(name='gold')
         self.assertEqual(card.plus_treasures, 3)
 
+    def test_card_victory_points_returns_three(self):
+        card = Card(name='gold')
+        self.assertEqual(card.plus_victory_points, 0)
+
     def test_card_name_does_not_exist(self):
         with self.assertRaises(ValueError):
             Card(name='foobar')

@@ -53,3 +53,7 @@ class Card:
     @property
     def plus_treasures(self, *args, **kwargs):
         return self.get_modifier_function('treasures')()
+
+    @property
+    def plus_victory_points(self, *args, **kwargs):
+        return self.get_modifier_function('victory_points')()
