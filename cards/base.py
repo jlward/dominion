@@ -28,14 +28,16 @@ class Card:
             raise ValueError(f'"{self.name}" is not a valid card')
 
     def process_card(self, game):
-        # Placeholder for shitty cards like shanty town
+        # Placeholder for shitty cards like shanty town and stonemasons
         pass
 
-    def get_modifier_function(self, name):
+    def get_modifier_function(self, name, fail_silently=True):
         try:
             module = importlib.import_module(f'cards.card_repo.{self.name}.{name}')
         except ModuleNotFoundError:
-            return noop
+            if fail_silently:
+                return noop
+            raise ValueError(f'"{self.name}" is missing {name}')
         return getattr(module, name)
 
     @property
@@ -57,3 +59,8 @@ class Card:
     @property
     def plus_victory_points(self, *args, **kwargs):
         return self.get_modifier_function('victory_points')()
+
+    @property
+    def cost(self):
+        func = self.get_modifier_function('cost', fail_silently=False)
+        return func()

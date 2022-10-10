@@ -24,6 +24,10 @@ class CardTestCase(TestCase):
         card = Card(name='gold')
         self.assertEqual(card.plus_victory_points, 0)
 
+    def test_card_cost_returns_six(self):
+        card = Card(name='gold')
+        self.assertEqual(card.cost, 6)
+
     def test_card_name_does_not_exist(self):
         with self.assertRaises(ValueError):
             Card(name='foobar')
