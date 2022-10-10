@@ -1,3 +1,6 @@
+import os
+
+from django.conf import settings
 from django.test import TestCase
 
 from cards import Card
@@ -31,3 +34,26 @@ class CardTestCase(TestCase):
     def test_card_name_does_not_exist(self):
         with self.assertRaises(ValueError):
             Card(name='foobar')
+
+
+class SmokeTestCase(TestCase):
+    def test_all_cards_have_a_cost(self):
+        path = os.path.join(
+            settings.BASE_DIR,
+            'cards',
+            'card_repo',
+        )
+        failures = []
+        for root, dirs, files in os.walk(path):
+            if not files:
+                continue
+
+            card_name = os.path.split(root)[-1]
+            if card_name == '__pycache__':
+                continue
+            if 'cost.py' not in files:
+                failures.append(card_name)
+        if failures:
+            message = '\n'.join(f'{name} is missing a cost' for name in failures)
+            message = f'\n{message}'
+            raise AssertionError(message)
