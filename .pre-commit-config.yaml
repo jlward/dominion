@@ -13,4 +13,4 @@ repos:
     rev: 3.9.2
     hooks:
     -   id: flake8
-    additional_dependencis: ["flake8-commas", "flake8-quotes"]
+        additional_dependencies: ["flake8-commas", "flake8-quotes"]
