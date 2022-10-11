@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'players',
     'games',
     'django_extensions',
+    'turns',
 ]
 
 MIDDLEWARE = [
