@@ -1,5 +1,6 @@
 import importlib
 import os
+import uuid
 
 from django.conf import settings
 
@@ -9,9 +10,13 @@ def noop():
 
 
 class Card:
-    def __init__(self, *, name):
+    def __init__(self, *, name, _id=None):
         self.name = name
         self.validate_name()
+        # This is to keep track of unique versions of duration cards.
+        if not _id:
+            _id = uuid.uuid4()
+        self.id = _id
 
     @property
     def card_repo(self):
