@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'games',
     'django_extensions',
     'turns',
+    'decks',
 ]
 
 MIDDLEWARE = [

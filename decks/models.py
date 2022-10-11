@@ -2,8 +2,16 @@ from django.db import models
 
 
 class Deck(models.Model):
-    game = models.ForeignKey('games.Game', related_name='decks')
-    player = models.ForeignKey('players.Player', related_name='decks')
+    game = models.ForeignKey(
+        'games.Game',
+        related_name='decks',
+        on_delete=models.PROTECT,
+    )
+    player = models.ForeignKey(
+        'players.Player',
+        related_name='decks',
+        on_delete=models.PROTECT,
+    )
 
     draw_pile = models.JSONField(default=list)
     discard_pile = models.JSONField(default=list)
