@@ -2,8 +2,12 @@ import uuid
 
 from django.db import models
 
+from games.manager import GameManger
+
 
 class Game(models.Model):
+    objects = GameManger()
+
     players = models.ManyToManyField('players.Player')
     kingdom = models.JSONField(default=list)
     trash_pile = models.JSONField(default=list)
