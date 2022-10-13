@@ -1,7 +1,10 @@
 from django.db import models
 
+from decks.managers import DeckManger
+
 
 class Deck(models.Model):
+    objects = DeckManger()
     game = models.ForeignKey(
         'games.Game',
         related_name='decks',

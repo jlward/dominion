@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from games.manager import GameManger
+from games.managers import GameManger
 
 
 class Game(models.Model):

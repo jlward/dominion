@@ -11,6 +11,7 @@ class Card:
     extra_cards = 0
     extra_treasure = 0
     extra_victory_points = 0
+    cards_in_pile = 10
 
     @property
     def name(self):
