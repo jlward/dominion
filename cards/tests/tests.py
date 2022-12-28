@@ -52,3 +52,22 @@ class SmokeTestCase(TestCase):
             message = '\n'.join(f'{name} is missing a cost' for name in failures)
             message = f'\n{message}'
             raise AssertionError(message)
+
+    def test_all_cards_have_a_type(self):
+        failures = []
+        for class_name in cards.__all__:
+            CardClass = getattr(cards, class_name)
+            card = CardClass()
+            try:
+                types = card.types
+            except Exception:
+                failures.append(class_name)
+            assert isinstance(types, list)
+        if failures:
+            message = '\n'.join(f'{name} is missing a type' for name in failures)
+            message = f'\n{message}'
+            raise AssertionError(message)
+
+    def test_base_card_types(self):
+        with self.assertRaises(NotImplementedError):
+            Card().types

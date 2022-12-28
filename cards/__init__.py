@@ -9,7 +9,15 @@ from cards.kingdom_cards.base_cards import (
     Province,
     Silver,
 )
-from cards.kingdom_cards.dominion import Smithy, Village
+from cards.kingdom_cards.dominion import (
+    Festival,
+    Laboratory,
+    Market,
+    Smithy,
+    Village,
+    Witch,
+    Woodcutter,
+)
 
 __all__ = [
     'Gold',
@@ -23,4 +31,9 @@ __all__ = [
     'Curse',
     'Village',
     'Smithy',
+    'Festival',
+    'Laboratory',
+    'Market',
+    'Witch',
+    'Woodcutter',
 ]

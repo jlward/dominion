@@ -62,8 +62,7 @@ class Turn(models.Model):
     def perform_buy(self, kingdom_card):
         game = self.game
         player_deck = self.get_deck()
-        player_deck.discard_pile.append(kingdom_card.name)
-        game.kingdom[kingdom_card.name] -= 1
+        game.gain_card(player_deck, kingdom_card)
         self.available_buys -= 1
         self.available_money -= kingdom_card.cost
         game.save()
