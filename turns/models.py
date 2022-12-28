@@ -57,7 +57,16 @@ class Turn(models.Model):
         self.save()
 
     def perform_buy(self, kingdom_card):
-        pass
+        game = self.game
+        Deck = apps.get_model('decks', 'Deck')
+        player_deck = Deck.objects.get(game_id=self.game_id, player_id=self.player_id)
+        player_deck.discard_pile.append(kingdom_card.name)
+        game.kingdom[kingdom_card.name] -= 1
+        self.available_buys -= 1
+        self.available_money -= kingdom_card.cost
+        game.save()
+        player_deck.save()
+        self.save()
 
     def perform_cleanup(self):
         pass

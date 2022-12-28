@@ -72,3 +72,23 @@ class TurnPlayTreasuresTestCase(TestCase):
             available_money=3,
             treasures_played=['Copper', 'Silver', 'Estate'],
         )
+
+
+class TestPerformBuyTestCase(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.turn = TurnFactory(available_money=10)
+        self.deck = DeckFactory(game=self.turn.game, player=self.turn.player)
+        self.village = Village()
+
+    def assert_buying(self):
+        self.turn.refresh_from_db()
+        self.deck.refresh_from_db()
+        self.assertEqual(self.turn.game.kingdom['Village'], 9)
+        self.assertIn('Village', self.deck.discard_pile)
+        self.assertEqual(self.turn.available_money, 7)
+        self.assertEqual(self.turn.available_buys, 0)
+
+    def test_smoke(self):
+        self.turn.perform_buy(self.village)
+        self.assert_buying()
