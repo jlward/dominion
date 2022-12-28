@@ -3,6 +3,23 @@ from cards.constants import CardTypes
 from cards.kingdom_cards.base_cards import Curse
 
 
+class CouncilRoom(Card):
+    types = [CardTypes.Action]
+    card_cost = 5
+    extra_cards = 4
+    extra_buys = 1
+
+    def perform_specific_action(self, deck, turn):
+        game = turn.game
+        players = game.get_players(turn.player)
+        # remove current player from list
+        players.pop(0)
+        for player_id in players:
+            deck = game.decks.get(player_id=player_id)
+            deck.draw_cards(1)
+            deck.save()
+
+
 class Festival(Card):
     types = [CardTypes.Action]
     card_cost = 5
