@@ -4,7 +4,7 @@ from django.db import models
 import cards
 
 
-class GameManger(models.Manager):
+class GameManager(models.Manager):
     default_kingdom_cards = [
         'Gold',
         'Silver',

@@ -2,11 +2,11 @@ import uuid
 
 from django.db import models
 
-from games.managers import GameManger
+from games.managers import GameManager
 
 
 class Game(models.Model):
-    objects = GameManger()
+    objects = GameManager()
 
     players = models.ManyToManyField('players.Player')
     kingdom = models.JSONField(default=list)
