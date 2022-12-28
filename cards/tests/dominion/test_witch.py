@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from cards import Witch
+from cards.kingdom_cards.dominion import Witch
 from games.factories import GameFactory
 from players.factories import PlayerFactory
 from turns.factories import TurnFactory

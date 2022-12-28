@@ -4,8 +4,8 @@ from django.conf import settings
 from django.test import TestCase
 
 import cards
-from cards import Gold
 from cards.base import Card
+from cards.kingdom_cards.base_cards import Gold
 
 
 class CardTestCase(TestCase):
@@ -39,15 +39,19 @@ class CardTestCase(TestCase):
 
 
 class SmokeTestCase(TestCase):
+    def get_cards(self):
+        all_cards = cards.get_all_cards()
+        for card in all_cards.values():
+            yield card
+
     def test_all_cards_have_a_cost(self):
         failures = []
-        for class_name in cards.__all__:
-            CardClass = getattr(cards, class_name)
+        for CardClass in self.get_cards():
             card = CardClass()
             try:
                 card.cost
             except Exception:
-                failures.append(class_name)
+                failures.append(card.name)
         if failures:
             message = '\n'.join(f'{name} is missing a cost' for name in failures)
             message = f'\n{message}'
@@ -55,13 +59,12 @@ class SmokeTestCase(TestCase):
 
     def test_all_cards_have_a_type(self):
         failures = []
-        for class_name in cards.__all__:
-            CardClass = getattr(cards, class_name)
+        for CardClass in self.get_cards():
             card = CardClass()
             try:
                 types = card.types
             except Exception:
-                failures.append(class_name)
+                failures.append(card.name)
             assert isinstance(types, list)
         if failures:
             message = '\n'.join(f'{name} is missing a type' for name in failures)
