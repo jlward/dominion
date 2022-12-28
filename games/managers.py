@@ -18,8 +18,9 @@ class GameManager(models.Manager):
     def _build_kingdom(self):
         kingdom_cards = self.default_kingdom_cards + ['Smithy', 'Village']
         kingdom = {}
+        all_cards = cards.get_all_cards()
         for card_name in kingdom_cards:
-            Card = getattr(cards, card_name)
+            Card = all_cards[card_name]
             kingdom[Card.__name__] = Card.cards_in_pile
         return kingdom
 
