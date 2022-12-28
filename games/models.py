@@ -22,3 +22,18 @@ class Game(models.Model):
     def create_turn(self, player):
         Turn = apps.get_model('turns', 'Turn')
         return Turn.objects.create(player=player, game=self, turn_number=1)
+
+    def get_players(self, player):
+        if player.pk not in self.turn_order:
+            raise NotImplementedError()
+        order = self.turn_order[:]
+        while player.pk != order[0]:
+            order.append(order.pop(0))
+
+        return order
+
+    def gain_card(self, deck, card):
+        if self.kingdom[card.name] == 0:
+            return
+        deck.discard_pile.append(card.name)
+        self.kingdom[card.name] -= 1

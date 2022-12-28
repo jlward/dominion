@@ -21,5 +21,23 @@ def starting_kingdom(n):
 class GameFactory(factory.django.DjangoModelFactory):
     kingdom = factory.Sequence(starting_kingdom)
 
+    @factory.post_generation
+    def players(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if not extracted:
+            return
+
+        # circular import
+        from decks.factories import DeckFactory
+
+        self.players.set(extracted)
+
+        for player in extracted:
+            DeckFactory(player=player, game=self)
+            self.turn_order.append(player.pk)
+        self.save()
+
     class Meta:
         model = 'games.Game'

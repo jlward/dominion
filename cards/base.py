@@ -44,6 +44,10 @@ class Card:
         # `card_cost` is not set on purpose. We want this to always be explicitly set.
         return self.card_cost
 
+    @property
+    def types(self):
+        raise NotImplementedError()
+
     def perform_specific_action(self, deck, turn):
         pass
 
