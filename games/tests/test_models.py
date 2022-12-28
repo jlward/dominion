@@ -1,6 +1,7 @@
 from django.test import TestCase
 
 from decks.models import Deck
+from games.factories import GameFactory
 from games.models import Game
 from players.factories import PlayerFactory
 
@@ -43,3 +44,10 @@ class GameTestCase(TestCase):
                 deck.draw_pile + deck.hand,
                 Deck.objects.default_draw_pile,
             )
+
+    def test_create_turn(self):
+        game = GameFactory()
+        turn = game.create_turn(player=self.players[0])
+        self.assertEqual(turn.player, self.players[0])
+        self.assertEqual(turn.game, game)
+        self.assertEqual(turn.turn_number, 1)
