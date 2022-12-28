@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.db import models
 
 from turns.managers import TurnManager
@@ -41,7 +42,14 @@ class Turn(models.Model):
         ]
 
     def play_action(self, action):
-        pass
+        Deck = apps.get_model('decks', 'Deck')
+        player_deck = Deck.objects.get(game_id=self.game_id, player_id=self.player_id)
+        player_deck.play_card(action)
+        self.actions_played.append(action.name)
+        action.perform_action(deck=player_deck, turn=self)
+        self.available_actions -= 1
+        player_deck.save()
+        self.save()
 
     def play_treasures(self, treasures):
         self.treasures_played.extend(treasure.name for treasure in treasures)

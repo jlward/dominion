@@ -1,7 +1,32 @@
 from django.test import TestCase
 
-from cards import Copper, Estate, Silver
+from cards import Copper, Estate, Silver, Village
+from decks.factories import DeckFactory
+from decks.models import Deck
 from turns.factories import TurnFactory
+
+
+class TurnPlayActionTestCase(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.turn = TurnFactory()
+        self.deck = DeckFactory(game=self.turn.game, player=self.turn.player)
+        self.village = Village()
+
+    def assert_action_played(self):
+        self.deck.refresh_from_db()
+        self.turn.refresh_from_db()
+        self.assertEqual(self.turn.actions_played, ['Village'])
+        self.assertEqual(self.deck.played_cards, ['Village'])
+        self.assertEqual(
+            self.deck.hand,
+            ['Copper', 'Copper', 'Silver', 'Estate', 'Smithy'],
+        )
+        self.assertEqual(self.turn.available_actions, 2)
+
+    def test_smoke(self):
+        self.turn.play_action(self.village)
+        self.assert_action_played()
 
 
 class TurnPlayTreasuresTestCase(TestCase):

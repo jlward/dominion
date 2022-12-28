@@ -4,6 +4,8 @@ import uuid
 
 from django.conf import settings
 
+from turns.models import Turn
+
 
 class Card:
     extra_buys = 0
@@ -41,3 +43,13 @@ class Card:
     def cost(self):
         # `card_cost` is not set on purpose. We want this to always be explicitly set.
         return self.card_cost
+
+    def perform_specific_action(self, deck, turn):
+        pass
+
+    def perform_action(self, deck, turn: Turn):
+        deck.draw_cards(self.plus_cards)
+        turn.available_actions += self.plus_actions
+        turn.available_buys += self.plus_buys
+        turn.available_money += self.plus_treasures
+        self.perform_specific_action(deck, turn)
