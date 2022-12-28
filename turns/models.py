@@ -41,9 +41,12 @@ class Turn(models.Model):
             ('game', 'is_current_turn'),
         ]
 
-    def play_action(self, action):
+    def get_deck(self):
         Deck = apps.get_model('decks', 'Deck')
-        player_deck = Deck.objects.get(game_id=self.game_id, player_id=self.player_id)
+        return Deck.objects.get(game_id=self.game_id, player_id=self.player_id)
+
+    def play_action(self, action):
+        player_deck = self.get_deck()
         player_deck.play_card(action)
         self.actions_played.append(action.name)
         action.perform_action(deck=player_deck, turn=self)
@@ -58,8 +61,7 @@ class Turn(models.Model):
 
     def perform_buy(self, kingdom_card):
         game = self.game
-        Deck = apps.get_model('decks', 'Deck')
-        player_deck = Deck.objects.get(game_id=self.game_id, player_id=self.player_id)
+        player_deck = self.get_deck()
         player_deck.discard_pile.append(kingdom_card.name)
         game.kingdom[kingdom_card.name] -= 1
         self.available_buys -= 1
@@ -69,4 +71,9 @@ class Turn(models.Model):
         self.save()
 
     def perform_cleanup(self):
-        pass
+        player_deck = self.get_deck()
+        player_deck.cleanup()
+        player_deck.draw_cards(5)
+        player_deck.save()
+        self.is_current_turn = False
+        self.save()

@@ -92,3 +92,34 @@ class TestPerformBuyTestCase(TestCase):
     def test_smoke(self):
         self.turn.perform_buy(self.village)
         self.assert_buying()
+
+
+class TestPerformCleanupTestCase(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.turn = TurnFactory()
+        self.deck = DeckFactory(
+            game=self.turn.game,
+            player=self.turn.player,
+            discard_pile=[],
+            draw_pile=['Copper'] * 6,
+            played_cards=['Village'] * 3,
+            hand=['Silver'] * 4,
+        )
+
+    def assert_cleanup(self):
+        self.turn.refresh_from_db()
+        self.deck.refresh_from_db()
+        assert not self.turn.is_current_turn
+        self.assertEqual(len(self.deck.hand), 5)
+        self.assertEqual(len(self.deck.played_cards), 0)
+        self.assertCountEqual(self.deck.draw_pile, ['Copper'])
+        self.assertCountEqual(
+            self.deck.discard_pile,
+            (['Village'] * 3) + (['Silver'] * 4),
+        )
+        self.assertCountEqual(self.deck.hand, ['Copper'] * 5)
+
+    def test_smoke(self):
+        self.turn.perform_cleanup()
+        self.assert_cleanup()

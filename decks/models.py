@@ -50,6 +50,13 @@ class Deck(models.Model):
         self.hand.remove(card.name)
         self.played_cards.append(card.name)
 
+    def cleanup(self):
+        for _ in range(len(self.hand)):
+            self.discard_pile.append(self.hand.pop())
+
+        for _ in range(len(self.played_cards)):
+            self.discard_pile.append(self.played_cards.pop())
+
     def full_shuffle(self):
         for _ in range(len(self.discard_pile)):
             self.draw_pile.append(self.discard_pile.pop())
