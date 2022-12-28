@@ -1,4 +1,5 @@
 import factory
+
 from games.factories import GameFactory
 from players.factories import PlayerFactory
 

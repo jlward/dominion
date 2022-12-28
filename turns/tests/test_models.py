@@ -1,7 +1,8 @@
 from django.test import TestCase
-from cards import Copper, Silver, Estate
 
+from cards import Copper, Estate, Silver
 from turns.factories import TurnFactory
+
 
 class TurnPlayTreasuresTestCase(TestCase):
     def setUp(self):
@@ -33,11 +34,16 @@ class TurnPlayTreasuresTestCase(TestCase):
         cards = [Copper(), Silver()]
         self.turn.treasures_played = ['Foo']
         self.turn.play_treasures(cards)
-        self.assert_monies(available_money=3, treasures_played=['Foo', 'Copper', 'Silver'])
+        self.assert_monies(
+            available_money=3,
+            treasures_played=['Foo', 'Copper', 'Silver'],
+        )
 
     # TODO remove estate or something
     def test_non_money(self):
         cards = [Copper(), Silver(), Estate()]
         self.turn.play_treasures(cards)
-        self.assert_monies(available_money=3, treasures_played=['Copper', 'Silver', 'Estate'])
-        
+        self.assert_monies(
+            available_money=3,
+            treasures_played=['Copper', 'Silver', 'Estate'],
+        )
