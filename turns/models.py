@@ -39,3 +39,17 @@ class Turn(models.Model):
         index_together = [
             ('game', 'is_current_turn'),
         ]
+
+    def play_action(self, action):
+        pass
+
+    def play_treasures(self, treasures):
+        self.treasures_played.extend(treasure.name for treasure in treasures)
+        self.available_money += sum(treasure.plus_treasures for treasure in treasures)
+        self.save()
+
+    def perform_buy(self, kingdom_card):
+        pass
+
+    def perform_cleanup(self):
+        pass
