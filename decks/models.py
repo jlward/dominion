@@ -2,11 +2,11 @@ import random
 
 from django.db import models
 
-from decks.managers import DeckManger
+from decks.managers import DeckManager
 
 
 class Deck(models.Model):
-    objects = DeckManger()
+    objects = DeckManager()
     game = models.ForeignKey(
         'games.Game',
         related_name='decks',

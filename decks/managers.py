@@ -3,7 +3,7 @@ import random
 from django.db import models
 
 
-class DeckManger(models.Manager):
+class DeckManager(models.Manager):
     default_draw_pile = [
         'Copper',
         'Copper',
