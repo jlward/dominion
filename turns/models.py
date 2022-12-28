@@ -1,7 +1,11 @@
 from django.db import models
 
+from turns.managers import TurnManager
+
 
 class Turn(models.Model):
+    objects = TurnManager()
+
     player = models.ForeignKey(
         'players.Player',
         related_name='turns',
@@ -17,6 +21,7 @@ class Turn(models.Model):
     # Standard card stuff
     available_actions = models.IntegerField(default=1)
     available_buys = models.IntegerField(default=1)
+    available_money = models.IntegerField(default=0)
 
     # What cards were played
     actions_played = models.JSONField(default=list)
