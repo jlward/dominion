@@ -28,3 +28,13 @@ def get_all_cards():
             result[klass] = Klass
 
     return result
+
+
+def get_cards_from_names(cards):
+    return list(get_cards_from_names_as_generator(cards))
+
+
+def get_cards_from_names_as_generator(cards):
+    all_cards = get_all_cards()
+    for card in cards:
+        yield all_cards[card]()

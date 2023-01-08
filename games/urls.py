@@ -16,6 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from games.views import game_state
+import games.views
 
-urlpatterns = [path('<int:game_id>', game_state, name='game_state')]
+urlpatterns = [
+    path('<int:game_id>', games.views.game_state, name='game_state'),
+    path(
+        '<int:game_id>/<int:player_id>',
+        games.views.play_game_as_player,
+        name='games_play_game_as_player',
+    ),
+]

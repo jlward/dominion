@@ -2,6 +2,7 @@ import random
 
 from django.db import models
 
+from cards import get_cards_from_names
 from decks.managers import DeckManager
 
 
@@ -33,6 +34,10 @@ class Deck(models.Model):
             + self.duration_cards
             + self.played_cards
         )
+
+    @property
+    def real_hand(self):
+        return get_cards_from_names(self.hand)
 
     def __len__(self):
         return len(self.all_cards)

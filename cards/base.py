@@ -57,3 +57,6 @@ class Card:
         turn.available_buys += self.plus_buys
         turn.available_money += self.plus_treasures
         self.perform_specific_action(deck, turn)
+
+    def __str__(self):
+        return self.name
