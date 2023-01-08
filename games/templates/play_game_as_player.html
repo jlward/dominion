@@ -2,7 +2,11 @@
 
 {% block content %}
 {% if turn %}
-<h1>{{ player }} (Your turn)</h1>
+<h1>{{ player }} (Your turn - {{ turn.get_state_display }})</h1>
+<form method="POST" action="{% url 'turns_end_phase' turn_id=turn.pk %}">
+    {% csrf_token %}
+    <button>End Phase</button>
+</form>
 <table class="table">
     <tbody>
       <tr>
@@ -23,6 +27,16 @@
 <h1>{{ player }} (Not your turn)</h1>
 {% endif %}
 <h2>HAND</h2>
+<table class="table">
+    <tbody>
+      {% for card in deck.real_hand %}
+      <tr>
+        <td>{{ card }}</td>
+        <td><button>Play</button></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+</table>
 <ul>
     {% for card in deck.real_hand %}
     <li>{{ card }}</li>
