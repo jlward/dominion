@@ -15,7 +15,7 @@ def get_all_cards():
         if file_name == '__init__.py':
             continue
         file_name = file_name[:-3]
-        module = importlib.import_module('cards.kingdom_cards', '')
+        module = importlib.__import__('cards.kingdom_cards', fromlist=[file_name])
         module_file = getattr(module, file_name)
         for klass in dir(module_file):
             if klass.startswith('__'):
