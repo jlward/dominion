@@ -47,6 +47,20 @@ span.card img {
 	padding: 0px;
 }
 
+span.card .count {
+	position: absolute;
+	top: 120px;
+	left: 80px;
+}
+.count {
+	border:1px solid black;
+	border-radius: 3px;
+	width: 18px;
+	height: 18px;
+	color: white;
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
 span.card:has(img) {
 	padding: 0px;
 }
@@ -71,4 +85,6 @@ img {
 .card:hover {
 	transform: scale(2);
 	z-index: 1000;
+	margin-left: 40px;
+	margin-right: 40px;
 }
