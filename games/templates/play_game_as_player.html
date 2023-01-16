@@ -17,14 +17,6 @@
         <div id="actions">Actions ({{ turn.available_actions }})</div>
         <div id="buys">Buys ({{ turn.available_buys }})</div>
         <div id="money">Money ({{ turn.available_money }})</div>
-        {% endif %}
-        <div id="cards-in-deck">
-            Cards in Deck: {{ deck.draw_pile|length }}
-        </div>
-        <div id="cards-in-discard">
-            Cards in discard: {{ deck.discard_pile|length }}
-        </div>
-        {% if turn %}
         <div id="end-phase">
             <form method="POST" action="{% url 'turns_end_phase' turn_id=turn.pk %}">
                 {% csrf_token %}
@@ -37,27 +29,37 @@
         <h2>KINGDOM</h2>
         <span class="card">
             {{ game.real_kingdom.Gold.card }}
+            </br>
+            &nbsp;
         </span>
         <span class="card">
             {{ game.real_kingdom.Silver.card }}
+            </br>
+            &nbsp;
         </span>
         <span class="card">
             {{ game.real_kingdom.Copper.card }}
+            </br>
+            &nbsp;
         </span>
         <span class="card">
             {{ game.real_kingdom.Province.card }}
+            </br>
             ({{ game.real_kingdom.Province.count }})
         </span>
         <span class="card">
             {{ game.real_kingdom.Duchy.card }}
+            </br>
             ({{ game.real_kingdom.Duchy.count }})
         </span>
         <span class="card">
             {{ game.real_kingdom.Estate.card }}
+            </br>
             ({{ game.real_kingdom.Estate.count }})
         </span>
         <span class="card">
             {{ game.real_kingdom.Curse.card }}
+            </br>
             ({{ game.real_kingdom.Curse.count }})
         </span>
         </br>
@@ -65,7 +67,9 @@
             {% if row.card.name in "Gold,Silver,Copper,Province,Duchy,Estate,Curse" %}
             {% else %}
                 <span class="card">
-                    {{ row.card }} ({{ row.count }})
+                    {{ row.card }}
+                    </br>
+                    ({{ row.count }})
                 </span>
             {% endif %}
         {% endfor %}
@@ -73,17 +77,46 @@
     <div id="left-sidebar" class="sidebar">
     </div>
 </div>
-<div id="hand">
-    {% for card in deck.real_hand %}
+<div id="played-cards">
+    <div class="centered">
+        Played Cards
+    </div>
+    {% for card in deck.played_cards %}
     <span class="card">
         <span class="card-name">
             {{ card }}
         </span>
+    </span>
+    {% endfor %}
+</div>
+<div id="hand">
+    <div class="centered">
+        Hand
+    </div>
+    <span class="card">
+        Deck
         </br>
+        {{ deck.draw_pile|length }}
+    </span>
+    {% for card in deck.real_hand %}
+    <span class="card" draggable="true">
+        <span class="card-name">
+            {{ card }}
+        </span>
+        </br>
+        {% if turn.is_action_phase and card.is_action %}
         <span class="play-button">
             <button>Play</button>
         </span>
+        {% else %}
+        &nbsp;
+        {% endif %}
     </span>
     {% endfor %}
+    <span class="card pull-right">
+        Discard
+        </br>
+        {{ deck.discard_pile|length }}
+    </span>
 </div>
 {% endblock content %}

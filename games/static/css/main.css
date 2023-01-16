@@ -30,4 +30,18 @@ span.card {
 	width: 100px;
 	padding: 10px;
 	margin: 5px;
+	text-align: center;
+}
+
+
+#played-cards,
+#hand {
+	min-height: 150px;
+}
+
+.centered {
+	text-align: center;
+}
+.pull-right {
+	float: right;
 }

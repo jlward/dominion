@@ -4,6 +4,7 @@ import uuid
 
 from django.conf import settings
 
+from cards.constants import CardTypes
 from turns.models import Turn
 
 
@@ -47,6 +48,10 @@ class Card:
     @property
     def types(self):
         raise NotImplementedError()
+
+    @property
+    def is_action(self):
+        return CardTypes.Action in self.types
 
     def perform_specific_action(self, deck, turn):
         pass
