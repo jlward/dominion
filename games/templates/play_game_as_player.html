@@ -2,18 +2,16 @@
 {% load static %}
 
 {% block content %}
-<nav class="navbar navbar-light bg-light">
-  <span class="navbar-brand mb-0 h1">
-      {{ player }}
-      {% if turn %}
-      (Your turn - {{ turn.get_state_display }})
-      {% else %}
-      (Not your turn)
-      {% endif %}
-  </span>
-</nav>
 <div class="flex">
     <div id="right-sidebar" class="sidebar">
+        <strong>{{ player }}</strong>
+        <div class='state'>
+            {% if turn %}
+            <em>{{ turn.get_state_display }}</em>
+            {% else %}
+            <em>Waiting</em>
+            {% endif %}
+        </div>
         {% if turn %}
         <div id="actions">Actions <span class="float-right">({{ turn.available_actions }})</span></div>
         <div id="buys">Buys <span class="float-right">({{ turn.available_buys }})</span></div>

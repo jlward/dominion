@@ -37,6 +37,7 @@ span.card {
 	margin: 5px;
 	text-align: center;
 	font-size: 9px;
+	transition: transform .2s; /* Animation */
 }
 
 span.card img {
@@ -66,4 +67,8 @@ span.card:has(img) {
 
 img {
     pointer-events: none;
+}
+.card:hover {
+	transform: scale(2);
+	z-index: 1000;
 }
