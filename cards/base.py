@@ -55,8 +55,12 @@ class Card:
         return CardTypes.Action in self.types
 
     @property
+    def path(self):
+        return f'images/{self.name}.jpg'
+
+    @property
     def url(self):
-        return static(f'images/{self.name}.jpg')
+        return static(self.path)
 
     def perform_specific_action(self, deck, turn):
         pass
