@@ -2,13 +2,11 @@
 
 {% block content %}
 <div class="flex">
-    <div id="right-sidebar">
+    <div id="right-sidebar" class="sidebar">
         {% if turn %}
-        <ul>
-            <li>Actions ({{ turn.available_actions }})</li>
-            <li>Buys ({{ turn.available_buys }})</li>
-            <li>Money ({{ turn.available_money }})</li>
-        </ul>
+        <div id="actions">Actions ({{ turn.available_actions }})</div>
+        <div id="buys">Buys ({{ turn.available_buys }})</div>
+        <div id="money">Money ({{ turn.available_money }})</div>
         {% endif %}
         <div id="cards-in-deck">
             Cards in Deck: {{ deck.draw_pile|length }}
@@ -61,6 +59,8 @@
                 </span>
             {% endif %}
         {% endfor %}
+    </div>
+    <div id="left-sidebar" class="sidebar">
     </div>
 </div>
 <div id="hand">
