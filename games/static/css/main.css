@@ -27,6 +27,7 @@ div.flex #left-sidebar {
 }
 #body {
 	padding: 10px;
+	text-align: center;
 }
 
 span.card {
@@ -70,6 +71,7 @@ span.card:has(img) {
 #hand {
 	min-height: 150px;
 	margin-bottom: 10px;
+	text-align: center;
 }
 
 .centered {
@@ -77,6 +79,9 @@ span.card:has(img) {
 }
 .pull-right {
 	float: right;
+}
+.pull-left {
+	float: left;
 }
 
 img {
