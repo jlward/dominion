@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+<nav class="navbar navbar-light bg-light">
+  <span class="navbar-brand mb-0 h1">
+      {{ player }}
+      {% if turn %}
+      (Your turn - {{ turn.get_state_display }})
+      {% else %}
+      (Not your turn)
+      {% endif %}
+  </span>
+</nav>
 <div class="flex">
     <div id="right-sidebar" class="sidebar">
         {% if turn %}

@@ -13,18 +13,6 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}?{% now "U" %}" >
   </head>
   <body>
-    {% if player %}
-    <nav class="navbar navbar-light bg-light">
-      <span class="navbar-brand mb-0 h1">
-          {{ player }}
-          {% if turn %}
-          (Your turn - {{ turn.get_state_display }})
-          {% else %}
-          (Not your turn)
-          {% endif %}
-      </span>
-    </nav>
-    {% endif %}
     {% block content %}
     {% endblock content %}
   </body>
