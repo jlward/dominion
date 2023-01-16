@@ -3,3 +3,20 @@ body {
     padding: 2%;
     margin: 0;
 }
+
+div.flex {
+	display: flex;
+}
+div.flex #right-sidebar {
+	flex: 10%;
+}
+div.flex #body {
+	flex: 90%;
+}
+#right-sidebar {
+	background-color: #EEE;
+}
+div#end-phase {
+	position: absolute;
+	padding-top: 25%;
+}
