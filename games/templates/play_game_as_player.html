@@ -27,34 +27,53 @@
     </div>
     <div id="body">
         <h2>KINGDOM</h2>
-        <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Card</th>
-                <th scope="col">Count</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for row in game.real_kingdom.values %}
-              <tr>
-                <td>{{ row.card.name }}</td>
-                <td>{{ row.count }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-        </table>
+        <span class="card">
+            {{ game.real_kingdom.Gold.card }}
+        </span>
+        <span class="card">
+            {{ game.real_kingdom.Silver.card }}
+        </span>
+        <span class="card">
+            {{ game.real_kingdom.Copper.card }}
+        </span>
+        <span class="card">
+            {{ game.real_kingdom.Province.card }}
+            ({{ game.real_kingdom.Province.count }})
+        </span>
+        <span class="card">
+            {{ game.real_kingdom.Duchy.card }}
+            ({{ game.real_kingdom.Duchy.count }})
+        </span>
+        <span class="card">
+            {{ game.real_kingdom.Estate.card }}
+            ({{ game.real_kingdom.Estate.count }})
+        </span>
+        <span class="card">
+            {{ game.real_kingdom.Curse.card }}
+            ({{ game.real_kingdom.Curse.count }})
+        </span>
+        </br>
+        {% for row in game.real_kingdom.values %}
+            {% if row.card.name in "Gold,Silver,Copper,Province,Duchy,Estate,Curse" %}
+            {% else %}
+                <span class="card">
+                    {{ row.card }} ({{ row.count }})
+                </span>
+            {% endif %}
+        {% endfor %}
     </div>
 </div>
 <div id="hand">
-    <table class="table">
-        <tbody>
-          {% for card in deck.real_hand %}
-          <tr>
-            <td>{{ card }}</td>
-            <td><button>Play</button></td>
-          </tr>
-          {% endfor %}
-        </tbody>
-    </table>
+    {% for card in deck.real_hand %}
+    <span class="card">
+        <span class="card-name">
+            {{ card }}
+        </span>
+        </br>
+        <span class="play-button">
+            <button>Play</button>
+        </span>
+    </span>
+    {% endfor %}
 </div>
 {% endblock content %}

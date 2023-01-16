@@ -16,7 +16,9 @@ div.flex #body {
 #right-sidebar {
 	background-color: #EEE;
 }
-div#end-phase {
-	position: absolute;
-	padding-top: 25%;
+
+span.card {
+	display: inline-block;
+	height: 140px;
+	width: 100px;
 }
