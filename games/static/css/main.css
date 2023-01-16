@@ -1,3 +1,8 @@
+/*
+ * Color Pallet:
+ * https://coolors.co/33658a-86bbd8-2f4858-f6ae2d-f26419
+ */
+
 body {
     border: 10px solid black;
     padding: 2%;
@@ -31,6 +36,17 @@ span.card {
 	padding: 10px;
 	margin: 5px;
 	text-align: center;
+}
+
+span.card img {
+	object-fit: fill;
+	height: 140px;
+	width: 100px;
+	padding: 0px;
+}
+
+span.card:has(img) {
+	padding: 0px;
 }
 
 

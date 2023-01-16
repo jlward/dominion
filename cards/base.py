@@ -3,6 +3,7 @@ import os
 import uuid
 
 from django.conf import settings
+from django.templatetags.static import static
 
 from cards.constants import CardTypes
 from turns.models import Turn
@@ -52,6 +53,10 @@ class Card:
     @property
     def is_action(self):
         return CardTypes.Action in self.types
+
+    @property
+    def url(self):
+        return static(f'images/{self.name}.jpg')
 
     def perform_specific_action(self, deck, turn):
         pass
