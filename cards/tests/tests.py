@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.test import TestCase, override_settings
+from django.test import TestCase
 
 import cards
 from cards.base import Card
@@ -77,7 +77,6 @@ class SmokeTestCase(TestCase):
         with self.assertRaises(NotImplementedError):
             Card().types
 
-    @override_settings(DEBUG=True)
     def test_file_found_for_url(self):
         failures = []
         for CardClass in self.get_cards():
