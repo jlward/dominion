@@ -19,6 +19,11 @@ class Turn(models.Model):
     )
     turn_number = models.IntegerField()
     is_current_turn = models.BooleanField(default=True, db_index=True)
+    state = models.CharField(
+        choices=[('action', 'Action Phase'), ('buy', 'Buy Phase')],
+        default='action',
+        max_length=10,
+    )
     # Standard card stuff
     available_actions = models.IntegerField(default=1)
     available_buys = models.IntegerField(default=1)

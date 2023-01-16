@@ -3,6 +3,7 @@ import uuid
 from django.apps import apps
 from django.db import models
 
+from cards import get_cards_from_names_as_generator
 from games.managers import GameManager
 
 
@@ -37,3 +38,15 @@ class Game(models.Model):
             return
         deck.discard_pile.append(card.name)
         self.kingdom[card.name] -= 1
+
+    @property
+    def real_kingdom(self):
+        kingdom = get_cards_from_names_as_generator(self.kingdom)
+        result = {}
+        for card in kingdom:
+            result[card.name] = dict(card=card, count=self.kingdom[card.name])
+
+        return result
+
+    def get_current_turn(self):
+        return self.turns.get(is_current_turn=True)

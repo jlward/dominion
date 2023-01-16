@@ -16,8 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+import turns.views
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('games/', include('games.urls')),
-    path('turns/', include('turns.urls')),
+    path(
+        '<int:turn_id>',
+        turns.views.end_phase,
+        name='turns_end_phase',
+    ),
 ]
