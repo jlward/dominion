@@ -61,7 +61,7 @@
         {% for row in game.real_kingdom.values %}
             {% if row.card.name in "Gold,Silver,Copper,Province,Duchy,Estate,Curse" %}
             {% else %}
-                <span class="card">
+                <span class="card" draggable='true'>
                     {{ row.card }}&nbsp;({{ row.count }})
                     <img src="{{ row.card.url }}" />
                 </span>

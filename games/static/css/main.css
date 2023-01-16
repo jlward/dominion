@@ -54,6 +54,7 @@ span.card:has(img) {
 #played-cards,
 #hand {
 	min-height: 150px;
+	margin-bottom: 10px;
 }
 
 .centered {
@@ -61,4 +62,8 @@ span.card:has(img) {
 }
 .pull-right {
 	float: right;
+}
+
+img {
+    pointer-events: none;
 }
