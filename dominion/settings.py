@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     'django_extensions',
     'turns',
     'decks',
+    'accounts',
 ]
+
+AUTH_USER_MODEL = 'accounts.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
