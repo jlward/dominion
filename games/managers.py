@@ -15,8 +15,10 @@ class GameManager(models.Manager):
         'Curse',
     ]
 
-    def _build_kingdom(self):
-        kingdom_cards = self.default_kingdom_cards + ['Smithy', 'Village']
+    def _build_kingdom(self, kingdom=None):
+        if kingdom is None:
+            kingdom = ['Smithy', 'Village']
+        kingdom_cards = self.default_kingdom_cards + kingdom
         kingdom = {}
         all_cards = cards.get_all_cards()
         for card_name in kingdom_cards:
@@ -24,10 +26,10 @@ class GameManager(models.Manager):
             kingdom[Card.__name__] = Card.cards_in_pile
         return kingdom
 
-    def create_game(self, players):
+    def create_game(self, players, kingdom=None):
         Deck = apps.get_model('decks', 'Deck')
 
-        kingdom = self._build_kingdom()
+        kingdom = self._build_kingdom(kingdom)
         turn_order = [player.pk for player in players]
 
         game = self.create(
