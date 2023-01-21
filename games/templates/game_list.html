@@ -15,7 +15,7 @@
     Game List
     <ul>
     {% for game in games %}
-    <li>{{ game }}</li>
+    <li><a href="{% url 'games_play' game_id=game.pk %}">{{ game }}</a></li>
     {% endfor %}
     </ul>
 </div>
