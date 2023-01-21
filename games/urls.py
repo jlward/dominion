@@ -19,6 +19,7 @@ from django.urls import include, path
 import games.views
 
 urlpatterns = [
+    path('', games.views.game_list, name='game_list'),
     path('<int:game_id>', games.views.game_state, name='game_state'),
     path(
         '<int:game_id>/<int:player_id>',

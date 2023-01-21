@@ -5,6 +5,11 @@ from games.models import Game
 from players.models import Player
 
 
+def game_list(request):
+    context = dict()
+    return render(request, 'game_list.html', context)
+
+
 def game_state(request, game_id):
     if Player.objects.count() == 0:
         Player.objects.create(handle='Ward')
