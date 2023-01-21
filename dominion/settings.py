@@ -106,6 +106,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+# This is only to make local use easier. If this ever goes out into the world,
+# we'll want those validators back.
+AUTH_PASSWORD_VALIDATORS = []
 
 
 # Internationalization
