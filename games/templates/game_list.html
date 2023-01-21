@@ -1,5 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-Game List
+<div>
+    <form method="POST" action="{% url 'game_create' %}">
+        {% csrf_token %}
+        <ul>
+        {{ form.as_ul }}
+        </ul>
+        <button>Create game</button>
+    </form>
+</div>
+<hr>
+<div>
+    Game List
+    <ul>
+    {% for game in games %}
+    <li><a href="{% url 'games_play' game_id=game.pk %}">{{ game }}</a></li>
+    {% endfor %}
+    </ul>
+</div>
 {% endblock content %}

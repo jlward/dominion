@@ -1,26 +1,46 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 
+from games.forms import GameCreateForm
 from games.models import Game
 from players.models import Player
 
 
+@login_required
 def game_list(request):
-    context = dict()
+    form = GameCreateForm(request.user.player)
+    games = Game.objects.all()
+    context = dict(
+        games=games,
+        form=form,
+    )
     return render(request, 'game_list.html', context)
 
 
-def game_state(request, game_id):
-    if Player.objects.count() == 0:
-        Player.objects.create(handle='Ward')
-        Player.objects.create(handle='Probably D')
+@login_required
+@require_POST
+def game_create(request):
+    form = GameCreateForm(
+        request.user.player,
+        data=request.POST,
+    )
+    if not form.is_valid():
+        return redirect('game_list')
 
-    try:
-        game = Game.objects.get(pk=game_id)
-    except Game.DoesNotExist:
-        players = Player.objects.all()
-        game = Game.objects.create_game(players)
-        game.create_turn(players[0])
+    players = [request.user.player, form.cleaned_data['player']]
+    game = Game.objects.create_game(players)
+    game.create_turn(players[0])
+    return redirect('games_play', game_id=game.pk)
+
+
+@login_required
+def game_state(request, game_id):
+    game = get_object_or_404(
+        Game,
+        pk=game_id,
+    )
 
     context = dict(
         game=game,
@@ -28,15 +48,13 @@ def game_state(request, game_id):
     return render(request, 'game_state.html', context)
 
 
-def play_game_as_player(request, game_id, player_id):
+@login_required
+def play_game_as_player(request, game_id):
     game = get_object_or_404(
         Game,
         pk=game_id,
     )
-    player = get_object_or_404(
-        Player,
-        pk=player_id,
-    )
+    player = request.user.player
     deck = game.decks.get(player=player)
     turn = game.get_current_turn()
     if turn.player_id != player.pk:
