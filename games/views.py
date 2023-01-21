@@ -30,7 +30,10 @@ def game_create(request):
         return redirect('game_list')
 
     players = [request.user.player, form.cleaned_data['player']]
-    game = Game.objects.create_game(players)
+    game = Game.objects.create_game(
+        players=players,
+        kingdom=form.cleaned_data['kingdom'],
+    )
     game.create_turn(players[0])
     return redirect('games_play', game_id=game.pk)
 
