@@ -1,5 +1,95 @@
+/*
+ * Color Pallet:
+ * https://coolors.co/33658a-86bbd8-2f4858-f6ae2d-f26419
+ */
+
 body {
     border: 10px solid black;
     padding: 2%;
     margin: 0;
+}
+
+div.flex {
+	display: flex;
+}
+div.flex #right-sidebar {
+	flex: 10%;
+}
+div.flex #body {
+	flex: 80%;
+}
+div.flex #left-sidebar {
+	flex: 10%;
+}
+.sidebar {
+	background-color: #EEE;
+	padding: 10px;
+}
+#body {
+	padding: 10px;
+	text-align: center;
+}
+
+span.card {
+	display: inline-block;
+	height: 140px;
+	width: 100px;
+	padding: 10px;
+	margin: 5px;
+	text-align: center;
+	font-size: 9px;
+	transition: transform .2s; /* Animation */
+}
+
+span.card img {
+	object-fit: fill;
+	height: 140px;
+	width: 100px;
+	padding: 0px;
+}
+
+span.card .count {
+	position: absolute;
+	top: 120px;
+	left: 80px;
+}
+.count {
+	border:1px solid black;
+	border-radius: 3px;
+	width: 18px;
+	height: 18px;
+	color: white;
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+span.card:has(img) {
+	padding: 0px;
+}
+
+
+#played-cards,
+#hand {
+	min-height: 150px;
+	margin-bottom: 10px;
+	text-align: center;
+}
+
+.centered {
+	text-align: center;
+}
+.pull-right {
+	float: right;
+}
+.pull-left {
+	float: left;
+}
+
+img {
+    pointer-events: none;
+}
+.card:hover {
+	transform: scale(2);
+	z-index: 1000;
+	margin-left: 40px;
+	margin-right: 40px;
 }

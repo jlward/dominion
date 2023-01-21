@@ -1,6 +1,8 @@
 import os
 
 from django.conf import settings
+from django.contrib.staticfiles import finders
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.test import TestCase
 
 import cards
@@ -74,3 +76,17 @@ class SmokeTestCase(TestCase):
     def test_base_card_types(self):
         with self.assertRaises(NotImplementedError):
             Card().types
+
+    def test_file_found_for_url(self):
+        failures = []
+        for CardClass in self.get_cards():
+            card = CardClass()
+            absolute_path = finders.find(card.path)
+            if absolute_path is None:
+                failures.append(card.name)
+            elif not staticfiles_storage.exists(absolute_path):
+                failures.append(card.name)
+        if failures:
+            message = '\n'.join(f'{name} is missing an image' for name in failures)
+            message = f'\n{message}'
+            raise AssertionError(message)

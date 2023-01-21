@@ -3,7 +3,9 @@ import os
 import uuid
 
 from django.conf import settings
+from django.templatetags.static import static
 
+from cards.constants import CardTypes
 from turns.models import Turn
 
 
@@ -47,6 +49,18 @@ class Card:
     @property
     def types(self):
         raise NotImplementedError()
+
+    @property
+    def is_action(self):
+        return CardTypes.Action in self.types
+
+    @property
+    def path(self):
+        return f'images/{self.name}.jpg'
+
+    @property
+    def url(self):
+        return static(self.path)
 
     def perform_specific_action(self, deck, turn):
         pass

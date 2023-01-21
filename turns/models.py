@@ -46,6 +46,10 @@ class Turn(models.Model):
             ('game', 'is_current_turn'),
         ]
 
+    @property
+    def is_action_phase(self):
+        return self.state == 'action'
+
     def get_deck(self):
         Deck = apps.get_model('decks', 'Deck')
         return Deck.objects.get(game_id=self.game_id, player_id=self.player_id)

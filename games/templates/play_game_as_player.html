@@ -1,66 +1,100 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-{% if turn %}
-<h1>{{ player }} (Your turn - {{ turn.get_state_display }})</h1>
-<form method="POST" action="{% url 'turns_end_phase' turn_id=turn.pk %}">
-    {% csrf_token %}
-    <button>End Phase</button>
-</form>
-<table class="table">
-    <tbody>
-      <tr>
-        <td>Actions</td>
-        <td>{{ turn.available_actions }}</td>
-      </tr>
-      <tr>
-        <td>Buys</td>
-        <td>{{ turn.available_buys }}</td>
-      </tr>
-      <tr>
-        <td>Money</td>
-        <td>{{ turn.available_money }}</td>
-      </tr>
-    </tbody>
-</table>
-{% else %}
-<h1>{{ player }} (Not your turn)</h1>
-{% endif %}
-<h2>HAND</h2>
-<table class="table">
-    <tbody>
-      {% for card in deck.real_hand %}
-      <tr>
-        <td>{{ card }}</td>
-        <td><button>Play</button></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-</table>
-<ul>
-    {% for card in deck.real_hand %}
-    <li>{{ card }}</li>
+<div class="flex">
+    <div id="right-sidebar" class="sidebar">
+        <strong>{{ player }}</strong>
+        <div class='state'>
+            {% if turn %}
+            <em>{{ turn.get_state_display }}</em>
+            {% else %}
+            <em>Waiting</em>
+            {% endif %}
+        </div>
+        {% if turn %}
+        <div id="actions">Actions <span class="float-right">({{ turn.available_actions }})</span></div>
+        <div id="buys">Buys <span class="float-right">({{ turn.available_buys }})</span></div>
+        <div id="money">Money <span class="float-right">({{ turn.available_money }})</span></div>
+        <div id="end-phase">
+            <form method="POST" action="{% url 'turns_end_phase' turn_id=turn.pk %}">
+                {% csrf_token %}
+                <button>End Phase</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+    <div id="body">
+        <h2>KINGDOM</h2>
+        <span class="card">
+            <img src="{{ game.real_kingdom.Gold.card.url }}" />
+        </span>
+        <span class="card">
+            <img src="{{ game.real_kingdom.Silver.card.url }}" />
+        </span>
+        <span class="card">
+            <img src="{{ game.real_kingdom.Copper.card.url }}" />
+        </span>
+        <span class="card">
+            <img src="{{ game.real_kingdom.Province.card.url }}" />
+            <div class="count">{{ game.real_kingdom.Province.count }}</div>
+        </span>
+        <span class="card">
+            <img src="{{ game.real_kingdom.Duchy.card.url }}" />
+            <div class="count">{{ game.real_kingdom.Duchy.count }}</div>
+        </span>
+        <span class="card">
+            <img src="{{ game.real_kingdom.Estate.card.url }}" />
+            <div class="count">{{ game.real_kingdom.Estate.count }}</div>
+        </span>
+        <span class="card">
+            <img src="{{ game.real_kingdom.Curse.card.url }}" />
+            <div class="count">{{ game.real_kingdom.Curse.count }}</div>
+        </span>
+        </br>
+        </br>
+        {% for row in game.real_kingdom.values %}
+            {% if row.card.name in "Gold,Silver,Copper,Province,Duchy,Estate,Curse" %}
+            {% else %}
+                <span class="card" draggable='true'>
+                    <img src="{{ row.card.url }}" />
+                    <div class="count">{{ row.count }}</div>
+                </span>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div id="left-sidebar" class="sidebar">
+        TODO Opponent info
+    </div>
+</div>
+<div id="played-cards">
+    <div class="centered">
+        Played Cards
+    </div>
+    {% for card in deck.played_cards %}
+    <span class="card">
+        <span class="card-name">
+            {{ card }}
+        </span>
+    </span>
     {% endfor %}
-</ul>
-<h2>DECK</h2>
-<p> {{ deck.draw_pile|length }}</p>
-<h2>DISCARD</h2>
-<p> {{ deck.discard_pile|length }}</p>
-<h2>KINGDOM</h2>
-<table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Card</th>
-        <th scope="col">Count</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in game.real_kingdom.values %}
-      <tr>
-        <td>{{ row.card.name }}</td>
-        <td>{{ row.count }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-</table>
+</div>
+<div id="hand">
+    <div class="centered">
+        Hand
+    </div>
+    <span class="card pull-left">
+        <img src="{% static 'images/card_back.jpg' %}" />
+        <div class="count">{{ deck.draw_pile|length }}</div>
+    </span>
+    {% for card in deck.real_hand %}
+    <span class="card" draggable="true">
+        <img src="{{ card.url }}" />
+    </span>
+    {% endfor %}
+    <span class="card pull-right">
+        <img src="{% static 'images/card_back.jpg' %}" />
+        <div class="count">{{ deck.discard_pile|length }}</div>
+    </span>
+</div>
 {% endblock content %}
