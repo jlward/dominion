@@ -55,6 +55,23 @@ class Card:
         return CardTypes.Action in self.types
 
     @property
+    def is_base_card(self):
+        base_cards = [
+            'Copper',
+            'Silver',
+            'Gold',
+            'Platinum',
+            'Estate',
+            'Duchy',
+            'Province',
+            'Colony',
+            'Curse',
+        ]
+        if self.name in base_cards:
+            return True
+        return False
+
+    @property
     def path(self):
         return f'images/{self.name}.jpg'
 

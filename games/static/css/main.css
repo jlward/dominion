@@ -87,9 +87,24 @@ span.card:has(img) {
 img {
     pointer-events: none;
 }
+.kingdom-selector div:hover,
 .card:hover {
 	transform: scale(2);
 	z-index: 1000;
 	margin-left: 40px;
 	margin-right: 40px;
+}
+
+.kingdom-selector img {
+	height: 140px;
+	width: 100px;
+	padding-right: 5px;
+}
+.kingdom-selector div {
+	display: inline-block;
+}
+.kingdom-selector input {
+	display: block;
+	margin-left: 42px;
+	margin-bottom: 5px;
 }
