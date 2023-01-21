@@ -30,6 +30,10 @@ def get_all_cards():
     return result
 
 
+def get_available_kingdom_cards():
+    return {k: v for k, v in get_all_cards().items() if not v().is_base_card}
+
+
 def get_cards_from_names(cards):
     return list(get_cards_from_names_as_generator(cards))
 
