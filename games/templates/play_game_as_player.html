@@ -12,28 +12,39 @@
     {%else%}
         data-turn="0"
     {%endif%}
+    {%if game.is_over%}
+        data-over="1"
+    {%else%}
+        data-over="0"
+    {%endif%}
     ></span>
 
 <div class="flex">
     <div id="right-sidebar" class="sidebar">
         <strong>{{ player }}</strong>
-        <div class='state'>
+        {% if not game.is_over %}
+            <div class='state'>
+                {% if turn %}
+                <em>{{ turn.get_state_display }}</em>
+                {% else %}
+                <em>Waiting</em>
+                {% endif %}
+            </div>
             {% if turn %}
-            <em>{{ turn.get_state_display }}</em>
-            {% else %}
-            <em>Waiting</em>
+            <div id="actions">Actions <span class="float-right">({{ turn.available_actions }})</span></div>
+            <div id="buys">Buys <span class="float-right">({{ turn.available_buys }})</span></div>
+            <div id="money">Money <span class="float-right">({{ turn.available_money }})</span></div>
+            <div id="end-phase">
+                <form method="POST" action="{% url 'turns_end_phase' turn_id=turn.pk %}">
+                    {% csrf_token %}
+                    <button>End Phase</button>
+                </form>
+            </div>
             {% endif %}
-        </div>
-        {% if turn %}
-        <div id="actions">Actions <span class="float-right">({{ turn.available_actions }})</span></div>
-        <div id="buys">Buys <span class="float-right">({{ turn.available_buys }})</span></div>
-        <div id="money">Money <span class="float-right">({{ turn.available_money }})</span></div>
-        <div id="end-phase">
-            <form method="POST" action="{% url 'turns_end_phase' turn_id=turn.pk %}">
-                {% csrf_token %}
-                <button>End Phase</button>
-            </form>
-        </div>
+        {% else %}
+            <div class='state'>
+                <em>Game Over</em>
+            </div>
         {% endif %}
     </div>
     <div id="body">

@@ -38,6 +38,7 @@ class Card:
     def plus_treasures(self, *args, **kwargs):
         return self.extra_treasure
 
+    # TODO adapt for Gardens
     @property
     def plus_victory_points(self, *args, **kwargs):
         return self.extra_victory_points

@@ -13,10 +13,35 @@
 <hr>
 <div>
     Game List
-    <ul>
-    {% for game in games %}
-    <li><a href="{% url 'games_play' game_id=game.pk %}">{{ game }}</a></li>
-    {% endfor %}
-    </ul>
+    <table class="table">
+        <thead>
+            <th>Game</th>
+            <th>Players</th>
+            <th>Turn</th>
+            <th>Winner</th>
+        </thead>
+        <tbody>
+            {% for game in games %}
+            <tr>
+                <td><a href="{% url 'games_play' game_id=game.pk %}">{{ game }}</a></td>
+                <td>
+                    <ul>
+                    {% for deck in game.decks.all %}
+                        <li>{{ deck.player }} - {{ deck.score }}</li>
+                    {% endfor %}
+                    </ul>
+                </td>
+                <td>
+                    {% if game.is_over %}
+                        -
+                    {% else %}
+                        {{ game.get_current_turn.player }}
+                    {% endif %}
+                </td>
+                <td>{{ game.winner }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock content %}

@@ -71,8 +71,10 @@ function allowBuyKingdomCard(){
 
 function autoReload(){
     $info = $('#gameHash');
-    console.log($info.data());
     if($info.data('turn') === 1){
+        return
+    }
+    if($info.data('over') === 1){
         return
     }
     function checkHash(){

@@ -6,6 +6,7 @@
                 data-url="{%url 'games_play_action' game_id=game.pk%}"
             {%endif%}
         {%endif%}
+        {% comment %} TODO do not allow buy if none in supply {% endcomment %}
         {%if turn.state == 'buy'%}
             {%if card.is_treasure%}
                 data-url="{%url 'games_play_treasure' game_id=game.pk%}"
