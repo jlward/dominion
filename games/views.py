@@ -60,7 +60,7 @@ def play_game_as_player(request, game_id):
     player = request.user.player
     deck = game.decks.get(player=player)
     turn = game.get_current_turn()
-    if turn.player_id != player.pk:
+    if turn and turn.player_id != player.pk:
         turn = None
 
     context = dict(

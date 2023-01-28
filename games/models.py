@@ -65,6 +65,8 @@ class Game(models.Model):
         return result
 
     def get_current_turn(self):
+        if self.is_over:
+            return None
         return self.turns.get(is_current_turn=True)
 
     def end_turn(self, turn):
@@ -73,3 +75,9 @@ class Game(models.Model):
         Player = apps.get_model('players', 'Player')
         self.create_turn(Player(pk=players[1]))
         self.save()
+
+    def check_game_over(self):
+        if self.kingdom['Province'] < 1:
+            self.is_over = True
+        if len([count for count in self.kingdom.values() if count < 1]) > 2:
+            self.is_over = True
