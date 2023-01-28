@@ -1,0 +1,26 @@
+<span class="card"
+    {% if in_hand %}
+        draggable="true"
+        {%if turn.state == 'action' and turn.available_actions > 0 %}
+            {%if card.is_action%}
+                data-url="{%url 'games_play_action' game_id=game.pk%}"
+            {%endif%}
+        {%endif%}
+        {%if turn.state == 'buy'%}
+            {%if card.is_treasure%}
+                data-url="{%url 'games_play_treasure' game_id=game.pk%}"
+            {%endif%}
+        {%endif%}
+        data-name="{{card.name}}"
+    {% elif in_kingdom %}
+        data-name="{{card.name}}"
+        {%if turn.state == 'buy' and turn.available_buys > 0 %}
+            data-url="{%url 'games_buy_kingdom_card' game_id=game.pk%}"
+        {%endif%}
+    {% endif %}
+    >
+    <img src="{{ card.url }}" />
+    {% if in_kingdom %}
+        <div class="count">{{ count }}</div>
+    {% endif %}
+</span>
