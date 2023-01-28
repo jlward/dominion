@@ -138,6 +138,11 @@
     {% for card in deck.real_hand %}
     <span class="card"
         draggable="true"
+        {%if turn.state == 'action' and turn.available_actions > 0%}
+            {%if card.is_action%}
+                data-url="{%url 'games_play_action' game_id=game.pk%}"
+            {%endif%}
+        {%endif%}
         {%if turn.state == 'buy'%}
             {%if card.is_treasure%}
                 data-url="{%url 'games_play_treasure' game_id=game.pk%}"

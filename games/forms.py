@@ -27,12 +27,30 @@ class GameCreateForm(forms.Form):
         )
 
 
+class PlayActionForm(forms.Form):
+    card = forms.ChoiceField()
+
+    def __init__(self, data, deck, *args, **kwargs):
+        super().__init__(data, *args, **kwargs)
+        self.fields['card'].choices = [
+            (card.name, card.name) for card in deck.real_hand if card.is_action
+        ]
+
+    def clean_card(self):
+        card = self.cleaned_data['card']
+        all_cards = get_all_cards()
+        self.cleaned_data['card'] = all_cards[card]()
+        return self.cleaned_data['card']
+
+
 class PlayTreasureForm(forms.Form):
     card = forms.ChoiceField()
 
     def __init__(self, data, deck, *args, **kwargs):
         super().__init__(data, *args, **kwargs)
-        self.fields['card'].choices = [(card, card) for card in deck.hand]
+        self.fields['card'].choices = [
+            (card.name, card.name) for card in deck.real_hand if card.is_treasure
+        ]
 
     def clean_card(self):
         card = self.cleaned_data['card']
