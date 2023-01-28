@@ -56,7 +56,13 @@
         {% for row in game.real_kingdom.values %}
             {% if row.card.name in "Gold,Silver,Copper,Province,Duchy,Estate,Curse" %}
             {% else %}
-                <span class="card" draggable='true'>
+                <span 
+                    class="card"
+                    data-name="{{row.card.name}}"
+                    {%if turn.state == 'buy'%}
+                        data-url="{%url 'games_buy_kingdom_card' game_id=game.pk%}"
+                    {%endif%}
+                >
                     <img src="{{ row.card.url }}" />
                     <div class="count">{{ row.count }}</div>
                 </span>
@@ -105,4 +111,25 @@
         <div class="count">{{ deck.discard_pile|length }}</div>
     </span>
 </div>
+
+<div id="buyModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Do you want to buy <span id="cardName"></span></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body centered">
+          <span id="cardImg"></span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-confirm">Yes</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
+

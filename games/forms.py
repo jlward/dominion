@@ -39,3 +39,23 @@ class PlayTreasureForm(forms.Form):
         all_cards = get_all_cards()
         self.cleaned_data['card'] = all_cards[card]()
         return self.cleaned_data['card']
+
+
+class BuyKingdomCard(forms.Form):
+    card = forms.ChoiceField()
+
+    def __init__(self, data, game, turn, *args, **kwargs):
+        super().__init__(data, *args, **kwargs)
+        real_kingdom = game.real_kingdom
+        kingdom_can_afford = [
+            row['card']
+            for row in real_kingdom.values()
+            if row['card'].cost <= turn.available_money
+        ]
+        self.fields['card'].choices = [(card, card) for card in kingdom_can_afford]
+
+    def clean_card(self):
+        card = self.cleaned_data['card']
+        all_cards = get_all_cards()
+        self.cleaned_data['card'] = all_cards[card]()
+        return self.cleaned_data['card']
