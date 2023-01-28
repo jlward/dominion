@@ -50,3 +50,10 @@ class Game(models.Model):
 
     def get_current_turn(self):
         return self.turns.get(is_current_turn=True)
+
+    def end_turn(self, turn):
+        turn.perform_cleanup()
+        players = self.get_players(turn.player)
+        Player = apps.get_model('players', 'Player')
+        self.create_turn(Player(pk=players[1]))
+        self.save()
