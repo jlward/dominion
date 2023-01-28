@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from games.forms import BuyKingdomCard, GameCreateForm, PlayTreasureForm
+from games.forms import BuyKingdomCard, GameCreateForm, PlayActionForm, PlayTreasureForm
 from games.models import Game
 from players.models import Player
 
@@ -70,6 +70,25 @@ def play_game_as_player(request, game_id):
         turn=turn,
     )
     return render(request, 'play_game_as_player.html', context)
+
+
+@login_required
+@require_POST
+def play_action(request, game_id):
+    game = get_object_or_404(
+        Game,
+        pk=game_id,
+    )
+    player = request.user.player
+    deck = game.decks.get(player=player)
+    turn = game.get_current_turn()
+    form = PlayActionForm(request.POST, deck)
+    if form.is_valid():
+        turn.play_action(form.cleaned_data['card'])
+        game.save()
+        return JsonResponse(dict(okay=True))
+
+    return JsonResponse(dict(okay=False))
 
 
 @login_required

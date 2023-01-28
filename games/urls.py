@@ -28,6 +28,11 @@ urlpatterns = [
         name='games_play',
     ),
     path(
+        '<int:game_id>/play_action',
+        games.views.play_action,
+        name='games_play_action',
+    ),
+    path(
         '<int:game_id>/play_treasure',
         games.views.play_treasure,
         name='games_play_treasure',
