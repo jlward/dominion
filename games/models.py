@@ -64,6 +64,19 @@ class Game(models.Model):
         result = [row for row in kingdom.values() if not row['card'].is_base_card]
         return result
 
+    @property
+    def winner(self):
+        if not self.is_over:
+            return '-'
+        score = -1000
+        winner = None
+        for deck in self.decks.all():
+            if deck.score > score:
+                winner = deck.player
+                score = deck.score
+                # TODO make ties work
+        return winner
+
     def get_current_turn(self):
         if self.is_over:
             return None

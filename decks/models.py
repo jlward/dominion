@@ -27,12 +27,12 @@ class Deck(models.Model):
 
     @property
     def all_cards(self):
-        return (
+        return get_cards_from_names(
             self.draw_pile
             + self.discard_pile
             + self.hand
             + self.duration_cards
-            + self.played_cards
+            + self.played_cards,
         )
 
     @property
@@ -42,6 +42,10 @@ class Deck(models.Model):
     @property
     def real_played_cards(self):
         return get_cards_from_names(self.played_cards)
+
+    @property
+    def score(self):
+        return sum(card.plus_victory_points for card in self.all_cards)
 
     def __len__(self):
         return len(self.all_cards)
