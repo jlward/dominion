@@ -44,8 +44,23 @@ class Game(models.Model):
         kingdom = get_cards_from_names_as_generator(self.kingdom)
         result = {}
         for card in kingdom:
-            result[card.name] = dict(card=card, count=self.kingdom[card.name])
+            count = self.kingdom[card.name]
+            if card.unlimited:
+                count = '∞'
+            result[card.name] = dict(card=card, count=count)
 
+        return result
+
+    @property
+    def real_base_kingdom(self):
+        kingdom = self.real_kingdom
+        result = [row for row in kingdom.values() if row['card'].is_base_card]
+        return result
+
+    @property
+    def real_not_base_kingdom(self):
+        kingdom = self.real_kingdom
+        result = [row for row in kingdom.values() if not row['card'].is_base_card]
         return result
 
     def get_current_turn(self):

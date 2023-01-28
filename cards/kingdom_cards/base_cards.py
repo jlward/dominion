@@ -7,6 +7,7 @@ class Platinum(Card):
     extra_treasure = 5
     card_cost = 9
     cards_in_pile = 1000
+    unlimited = True
 
 
 class Gold(Card):
@@ -14,6 +15,7 @@ class Gold(Card):
     extra_treasure = 3
     card_cost = 6
     cards_in_pile = 1000
+    unlimited = True
 
 
 class Silver(Card):
@@ -21,6 +23,7 @@ class Silver(Card):
     extra_treasure = 2
     card_cost = 3
     cards_in_pile = 1000
+    unlimited = True
 
 
 class Copper(Card):
@@ -28,6 +31,7 @@ class Copper(Card):
     extra_treasure = 1
     card_cost = 0
     cards_in_pile = 1000
+    unlimited = True
 
 
 class Colony(Card):
