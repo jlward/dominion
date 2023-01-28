@@ -2,6 +2,17 @@
 {% load static %}
 
 {% block content %}
+<span
+    id="gameHash"
+    data-url="{%url 'game_hash' game_id=game.pk%}"
+    data-hash="{{game.game_hash}}"
+    {%if turn%}
+        data-turn="1"
+    {%else%}
+        data-turn="0"
+    {%endif%}
+    ></span>
+
 <div class="flex">
     <div id="right-sidebar" class="sidebar">
         <strong>{{ player }}</strong>

@@ -126,3 +126,13 @@ def buy_kingdom_card(request, game_id):
         return JsonResponse(dict(okay=True))
 
     return JsonResponse(dict(okay=False))
+
+
+@login_required
+def game_hash(request, game_id):
+    game = get_object_or_404(
+        Game,
+        pk=game_id,
+    )
+
+    return JsonResponse(dict(hash=game.game_hash))

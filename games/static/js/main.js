@@ -69,7 +69,29 @@ function allowBuyKingdomCard(){
     })
 }
 
+function autoReload(){
+    $info = $('#gameHash');
+    console.log($info.data());
+    if($info.data('turn') === 1){
+        return
+    }
+    function checkHash(){
+        $.ajax({
+            type: "get",
+            datatype: 'application/json',
+            url: $info.data('url'),
+            success: function(data){
+                if(data.hash != $info.data('hash')){
+                    location.reload();
+                }
+            }
+        });
+    }
+    setInterval(checkHash, 1000);
+}
+
 $(document).ready(function() {
     addDragEvents('#hand .card', '#played-cards');
     allowBuyKingdomCard();
+    autoReload();
 });
