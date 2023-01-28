@@ -71,10 +71,10 @@
     <div class="centered">
         Played Cards
     </div>
-    {% for card in deck.played_cards %}
+    {% for card in deck.real_played_cards %}
     <span class="card">
         <span class="card-name">
-            {{ card }}
+            <img src="{{ card.url }}" />
         </span>
     </span>
     {% endfor %}
@@ -88,7 +88,15 @@
         <div class="count">{{ deck.draw_pile|length }}</div>
     </span>
     {% for card in deck.real_hand %}
-    <span class="card" draggable="true">
+    <span class="card"
+        draggable="true"
+        {%if turn.state == 'buy'%}
+            {%if card.is_treasure%}
+                data-url="{%url 'games_play_treasure' game_id=game.pk%}"
+            {%endif%}
+        {%endif%}
+        data-name="{{card.name}}"
+    >
         <img src="{{ card.url }}" />
     </span>
     {% endfor %}

@@ -27,4 +27,9 @@ urlpatterns = [
         games.views.play_game_as_player,
         name='games_play',
     ),
+    path(
+        '<int:game_id>/play_treasure',
+        games.views.play_treasure,
+        name='games_play_treasure',
+    ),
 ]

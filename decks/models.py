@@ -39,6 +39,10 @@ class Deck(models.Model):
     def real_hand(self):
         return get_cards_from_names(self.hand)
 
+    @property
+    def real_played_cards(self):
+        return get_cards_from_names(self.played_cards)
+
     def __len__(self):
         return len(self.all_cards)
 
