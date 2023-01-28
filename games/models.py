@@ -15,6 +15,7 @@ class Game(models.Model):
     trash_pile = models.JSONField(default=list)
     game_hash = models.UUIDField()
     turn_order = models.JSONField(default=list)
+    is_over = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         self.game_hash = uuid.uuid4()
