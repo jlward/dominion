@@ -9,8 +9,9 @@ def end_phase(request, turn_id):
     turn = get_object_or_404(Turn, pk=turn_id)
     if turn.state == 'action':
         turn.state = 'buy'
-    if turn.state == 'buy':
-        pass
+    elif turn.state == 'buy':
+        turn.game.end_turn(turn)
+        turn.state = 'end'
     turn.save()
     turn.game.save()
 
