@@ -27,4 +27,14 @@ urlpatterns = [
         games.views.play_game_as_player,
         name='games_play',
     ),
+    path(
+        '<int:game_id>/play_treasure',
+        games.views.play_treasure,
+        name='games_play_treasure',
+    ),
+    path(
+        '<int:game_id>/buy_kingdom_card',
+        games.views.buy_kingdom_card,
+        name='games_buy_kingdom_card',
+    ),
 ]

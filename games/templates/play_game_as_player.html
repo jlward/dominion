@@ -26,28 +26,70 @@
     </div>
     <div id="body">
         <h2>KINGDOM</h2>
-        <span class="card">
+        <span 
+            class="card"
+            data-name="{{game.real_kingdom.Gold.card.name}}"
+            {%if turn.state == 'buy'%}
+                data-url="{%url 'games_buy_kingdom_card' game_id=game.pk%}"
+            {%endif%}
+        >
             <img src="{{ game.real_kingdom.Gold.card.url }}" />
         </span>
-        <span class="card">
+        <span 
+            class="card"
+            data-name="{{game.real_kingdom.Silver.card.name}}"
+            {%if turn.state == 'buy'%}
+                data-url="{%url 'games_buy_kingdom_card' game_id=game.pk%}"
+            {%endif%}
+        >
             <img src="{{ game.real_kingdom.Silver.card.url }}" />
         </span>
-        <span class="card">
+        <span 
+            class="card"
+            data-name="{{game.real_kingdom.Copper.card.name}}"
+            {%if turn.state == 'buy'%}
+                data-url="{%url 'games_buy_kingdom_card' game_id=game.pk%}"
+            {%endif%}
+        >
             <img src="{{ game.real_kingdom.Copper.card.url }}" />
         </span>
-        <span class="card">
+        <span 
+            class="card"
+            data-name="{{game.real_kingdom.Province.card.name}}"
+            {%if turn.state == 'buy'%}
+                data-url="{%url 'games_buy_kingdom_card' game_id=game.pk%}"
+            {%endif%}
+        >
             <img src="{{ game.real_kingdom.Province.card.url }}" />
             <div class="count">{{ game.real_kingdom.Province.count }}</div>
         </span>
-        <span class="card">
+        <span 
+            class="card"
+            data-name="{{game.real_kingdom.Duchy.card.name}}"
+            {%if turn.state == 'buy'%}
+                data-url="{%url 'games_buy_kingdom_card' game_id=game.pk%}"
+            {%endif%}
+        >
             <img src="{{ game.real_kingdom.Duchy.card.url }}" />
             <div class="count">{{ game.real_kingdom.Duchy.count }}</div>
         </span>
-        <span class="card">
+        <span 
+            class="card"
+            data-name="{{game.real_kingdom.Estate.card.name}}"
+            {%if turn.state == 'buy'%}
+                data-url="{%url 'games_buy_kingdom_card' game_id=game.pk%}"
+            {%endif%}
+        >
             <img src="{{ game.real_kingdom.Estate.card.url }}" />
             <div class="count">{{ game.real_kingdom.Estate.count }}</div>
         </span>
-        <span class="card">
+        <span 
+            class="card"
+            data-name="{{game.real_kingdom.Curse.card.name}}"
+            {%if turn.state == 'buy'%}
+                data-url="{%url 'games_buy_kingdom_card' game_id=game.pk%}"
+            {%endif%}
+        >
             <img src="{{ game.real_kingdom.Curse.card.url }}" />
             <div class="count">{{ game.real_kingdom.Curse.count }}</div>
         </span>
@@ -56,7 +98,13 @@
         {% for row in game.real_kingdom.values %}
             {% if row.card.name in "Gold,Silver,Copper,Province,Duchy,Estate,Curse" %}
             {% else %}
-                <span class="card" draggable='true'>
+                <span 
+                    class="card"
+                    data-name="{{row.card.name}}"
+                    {%if turn.state == 'buy'%}
+                        data-url="{%url 'games_buy_kingdom_card' game_id=game.pk%}"
+                    {%endif%}
+                >
                     <img src="{{ row.card.url }}" />
                     <div class="count">{{ row.count }}</div>
                 </span>
@@ -71,10 +119,10 @@
     <div class="centered">
         Played Cards
     </div>
-    {% for card in deck.played_cards %}
+    {% for card in deck.real_played_cards %}
     <span class="card">
         <span class="card-name">
-            {{ card }}
+            <img src="{{ card.url }}" />
         </span>
     </span>
     {% endfor %}
@@ -88,7 +136,15 @@
         <div class="count">{{ deck.draw_pile|length }}</div>
     </span>
     {% for card in deck.real_hand %}
-    <span class="card" draggable="true">
+    <span class="card"
+        draggable="true"
+        {%if turn.state == 'buy'%}
+            {%if card.is_treasure%}
+                data-url="{%url 'games_play_treasure' game_id=game.pk%}"
+            {%endif%}
+        {%endif%}
+        data-name="{{card.name}}"
+    >
         <img src="{{ card.url }}" />
     </span>
     {% endfor %}
@@ -97,4 +153,25 @@
         <div class="count">{{ deck.discard_pile|length }}</div>
     </span>
 </div>
+
+<div id="buyModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Do you want to buy <span id="cardName"></span></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body centered">
+          <span id="cardImg"></span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-confirm">Yes</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
+

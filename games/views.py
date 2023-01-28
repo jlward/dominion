@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from games.forms import GameCreateForm
+from games.forms import BuyKingdomCard, GameCreateForm, PlayTreasureForm
 from games.models import Game
 from players.models import Player
 
@@ -70,3 +70,40 @@ def play_game_as_player(request, game_id):
         turn=turn,
     )
     return render(request, 'play_game_as_player.html', context)
+
+
+@login_required
+@require_POST
+def play_treasure(request, game_id):
+    game = get_object_or_404(
+        Game,
+        pk=game_id,
+    )
+    player = request.user.player
+    deck = game.decks.get(player=player)
+    turn = game.get_current_turn()
+    form = PlayTreasureForm(request.POST, deck)
+    if form.is_valid():
+        deck.play_card(form.cleaned_data['card'])
+        turn.play_treasures([form.cleaned_data['card']])
+        deck.save()
+        game.save()
+        return JsonResponse(dict(okay=True))
+
+    return JsonResponse(dict(okay=False))
+
+
+@login_required
+@require_POST
+def buy_kingdom_card(request, game_id):
+    game = get_object_or_404(
+        Game,
+        pk=game_id,
+    )
+    turn = game.get_current_turn()
+    form = BuyKingdomCard(request.POST, game, turn)
+    if form.is_valid():
+        turn.perform_buy(form.cleaned_data['card'])
+        return JsonResponse(dict(okay=True))
+
+    return JsonResponse(dict(okay=False))

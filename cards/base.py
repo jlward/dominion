@@ -55,6 +55,10 @@ class Card:
         return CardTypes.Action in self.types
 
     @property
+    def is_treasure(self):
+        return CardTypes.Treasure in self.types
+
+    @property
     def is_base_card(self):
         base_cards = [
             'Copper',
