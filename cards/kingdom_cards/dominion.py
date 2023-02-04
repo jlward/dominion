@@ -96,3 +96,67 @@ class Chapel(Card):
             game=turn.game,
             card=self,
         )
+
+
+class Adventurer(Card):
+    pass
+
+
+class Bureaucrat(Card):
+    pass
+
+
+class Cellar(Card):
+    pass
+
+
+class Chancellor(Card):
+    pass
+
+
+class Feast(Card):
+    pass
+
+
+class Gardens(Card):
+    pass
+
+
+class Library(Card):
+    pass
+
+
+class Militia(Card):
+    pass
+
+
+class Mine(Card):
+    pass
+
+
+class Moat(Card):
+    pass
+
+
+class Moneylender(Card):
+    pass
+
+
+class Remodel(Card):
+    pass
+
+
+class Spy(Card):
+    pass
+
+
+class Thief(Card):
+    pass
+
+
+class ThroneRoom(Card):
+    pass
+
+
+class Workshop(Card):
+    pass
