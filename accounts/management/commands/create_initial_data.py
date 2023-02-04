@@ -33,7 +33,7 @@ class Command(BaseCommand):
         users = [
             ['staff@playdominion.com', None],
             ['jason.louard.ward@gmail.com', 'Ward'],
-            ['derek.jamerson@gmail.com', 'Probably D'],
+            ['derekjamerson@gmail.com', 'Probably D'],
         ]
         for email, handle in users:
             try:
