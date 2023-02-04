@@ -1,6 +1,7 @@
 from django.apps import apps
 from django.db import models
 
+from cards.fields import CardField
 from turns.managers import TurnManager
 
 
@@ -85,3 +86,23 @@ class Turn(models.Model):
         player_deck.save()
         self.is_current_turn = False
         self.save()
+
+
+class AdHocTurn(models.Model):
+    turn = models.ForeignKey(
+        'turns.Turn',
+        related_name='adhoc_turns',
+        on_delete=models.PROTECT,
+    )
+    player = models.ForeignKey(
+        'players.Player',
+        related_name='adhoc_turns',
+        on_delete=models.PROTECT,
+    )
+    game = models.ForeignKey(
+        'games.Game',
+        related_name='adhoc_turns',
+        on_delete=models.PROTECT,
+    )
+    is_current_turn = models.BooleanField(default=True, db_index=True)
+    card = CardField()
