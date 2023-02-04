@@ -1,6 +1,7 @@
 import uuid
 
 from django.apps import apps
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 from cards import get_cards_from_names_as_generator
@@ -39,6 +40,12 @@ class Game(models.Model):
             return
         deck.discard_pile.append(card.name)
         self.kingdom[card.name] -= 1
+
+    def trash_cards(self, deck, turn, cards):
+        deck.trash_cards(cards)
+        turn.trash_cards(cards)
+        deck.save()
+        self.save()
 
     @property
     def real_kingdom(self):
@@ -80,6 +87,13 @@ class Game(models.Model):
     def get_current_turn(self):
         if self.is_over:
             return None
+
+        try:
+            adhoc_turn = self.adhoc_turns.get(is_current_turn=True)
+            return adhoc_turn
+        except ObjectDoesNotExist:
+            pass
+
         return self.turns.get(is_current_turn=True)
 
     def end_turn(self, turn):

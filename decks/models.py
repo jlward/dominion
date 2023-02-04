@@ -77,3 +77,9 @@ class Deck(models.Model):
 
     def shuffle(self):
         random.shuffle(self.draw_pile)
+
+    # Assuming player can only trash from hand
+    def trash_cards(self, cards):
+        for card in cards:
+            self.game.trash_pile.append(card.name)
+            self.hand.pop(self.hand.index(card.name))

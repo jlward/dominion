@@ -24,4 +24,9 @@ urlpatterns = [
         turns.views.end_phase,
         name='turns_end_phase',
     ),
+    path(
+        '<int:turn_id>/perform_action',
+        turns.views.perform_action,
+        name='turns_adhocturn_perform_action',
+    ),
 ]

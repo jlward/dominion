@@ -79,6 +79,10 @@ class Turn(models.Model):
         player_deck.save()
         self.save()
 
+    def trash_cards(self, cards):
+        self.cards_trashed.extend(card.name for card in cards)
+        self.save()
+
     def perform_cleanup(self):
         player_deck = self.get_deck()
         player_deck.cleanup()
@@ -106,3 +110,13 @@ class AdHocTurn(models.Model):
     )
     is_current_turn = models.BooleanField(default=True, db_index=True)
     card = CardField()
+
+    @property
+    def form(self):
+        deck = self.game.decks.get(player=self.player)
+        return self.card.adhocturn_form(
+            game=self.game,
+            player=self.player,
+            deck=deck,
+            turn=self.turn,
+        )
