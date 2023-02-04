@@ -114,6 +114,26 @@ def play_treasure(request, game_id):
 
 @login_required
 @require_POST
+def play_all_treasures(request, game_id):
+    game = get_object_or_404(
+        Game,
+        pk=game_id,
+    )
+    player = request.user.player
+    deck = game.decks.get(player=player)
+    turn = game.get_current_turn()
+    cards = [card for card in deck.real_hand if card.is_treasure]
+    for card in cards:
+        deck.play_card(card)
+    turn.play_treasures(cards)
+    deck.save()
+    game.save()
+
+    return redirect(request.META['HTTP_REFERER'])
+
+
+@login_required
+@require_POST
 def buy_kingdom_card(request, game_id):
     game = get_object_or_404(
         Game,
