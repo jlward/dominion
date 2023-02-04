@@ -19,6 +19,7 @@ class Game(models.Model):
     is_over = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
+        self.check_game_over()
         self.game_hash = uuid.uuid4()
         return super().save(*args, **kwargs)
 
