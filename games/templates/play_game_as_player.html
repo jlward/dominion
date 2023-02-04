@@ -35,7 +35,13 @@
             <div id="buys">Buys <span class="float-right">({{ turn.available_buys }})</span></div>
             <div id="money">Money <span class="float-right">({{ turn.available_money }})</span></div>
             <div id="end-phase">
-                <form method="POST" action="{% url 'turns_end_phase' turn_id=turn.pk %}">
+                <form 
+                    method="POST" 
+                    action="{% url 'turns_end_phase' turn_id=turn.pk %}"
+                    {% if turn.state == 'action' and deck.no_actions %}
+                    class="auto-submit"
+                    {% endif %}
+                >
                     {% csrf_token %}
                     <button>End Phase</button>
                 </form>

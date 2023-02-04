@@ -47,6 +47,10 @@ class Deck(models.Model):
     def score(self):
         return sum(card.plus_victory_points for card in self.all_cards)
 
+    @property
+    def no_actions(self):
+        return list(card for card in self.real_hand if card.is_action) == []
+
     def __len__(self):
         return len(self.all_cards)
 

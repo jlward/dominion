@@ -97,9 +97,15 @@ function autoOn(){
     modal.modal('show');
 }
 
+function autoSubmit(){
+    form = $('form.auto-submit');
+    form.submit();
+}
+
 $(document).ready(function() {
     addDragEvents('#hand .card', '#played-cards');
     allowBuyKingdomCard();
     autoReload();
     autoOn();
+    autoSubmit();
 });
