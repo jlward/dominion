@@ -63,9 +63,15 @@ class Deck(models.Model):
         self.hand.remove(card.name)
         self.played_cards.append(card.name)
 
+    def discard_cards(self, cards=None):
+        if cards is None:
+            cards = self.real_hand
+
+        for card in cards:
+            self.discard_pile.append(self.hand.pop(self.hand.index(card.name)))
+
     def cleanup(self):
-        for _ in range(len(self.hand)):
-            self.discard_pile.append(self.hand.pop())
+        self.discard_cards()
 
         for _ in range(len(self.played_cards)):
             self.discard_pile.append(self.played_cards.pop())

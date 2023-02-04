@@ -15,7 +15,7 @@ class BaseCardForm(forms.Form):
     )
     source_object = None
     source_pile = None
-    action = None
+    actions = None
     min_cards = 1
     max_cards = 1
 
@@ -32,13 +32,15 @@ class BaseCardForm(forms.Form):
         ]
 
     def save(self):
-        if self.action == 'trash':
+        action_performed = False
+        if 'trash' in self.actions:
             self.game.trash_cards(
                 deck=self.deck,
                 turn=self.turn,
                 cards=self.cleaned_data['cards'],
             )
-        else:
+            action_performed = True
+        if not action_performed:
             raise NotImplementedError()
 
     def clean_cards(self):
