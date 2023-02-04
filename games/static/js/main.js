@@ -92,8 +92,14 @@ function autoReload(){
     setInterval(checkHash, 1000);
 }
 
+function autoOn(){
+    modal = $('.auto-on');
+    modal.modal('show');
+}
+
 $(document).ready(function() {
     addDragEvents('#hand .card', '#played-cards');
     allowBuyKingdomCard();
     autoReload();
+    autoOn();
 });

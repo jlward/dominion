@@ -17,6 +17,8 @@ class Card:
     extra_victory_points = 0
     cards_in_pile = 10
     unlimited = False
+    adhocturn_action_title = ''
+    adhocturn_form = None
 
     @property
     def name(self):

@@ -1,6 +1,8 @@
 from cards.base import Card
 from cards.constants import CardTypes
+from cards.forms.dominion import ChapelForm
 from cards.kingdom_cards.base_cards import Curse
+from turns.models import AdHocTurn
 
 
 class CouncilRoom(Card):
@@ -79,3 +81,18 @@ class Woodcutter(Card):
     card_cost = 3
     extra_buys = 1
     extra_treasure = 2
+
+
+class Chapel(Card):
+    types = [CardTypes.Action]
+    card_cost = 2
+    adhocturn_action_title = 'Select up to 4 cards to trash'
+    adhocturn_form = ChapelForm
+
+    def perform_specific_action(self, deck, turn):
+        AdHocTurn.objects.create(
+            turn=turn,
+            player=turn.player,
+            game=turn.game,
+            card=self,
+        )
