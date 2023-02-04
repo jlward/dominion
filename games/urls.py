@@ -43,6 +43,11 @@ urlpatterns = [
         name='games_play_treasure',
     ),
     path(
+        '<int:game_id>/play_all_treasures',
+        games.views.play_all_treasures,
+        name='games_play_all_treasures',
+    ),
+    path(
         '<int:game_id>/buy_kingdom_card',
         games.views.buy_kingdom_card,
         name='games_buy_kingdom_card',

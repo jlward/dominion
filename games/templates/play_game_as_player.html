@@ -40,6 +40,14 @@
                     <button>End Phase</button>
                 </form>
             </div>
+            {% if turn.state == 'buy' %}
+            <div>
+                <form method="POST" action="{% url 'games_play_all_treasures' game_id=game.pk %}">
+                    {% csrf_token %}
+                    <button>Play All Treasures</button>
+                </form>
+            </div>
+            {% endif %}
             {% endif %}
         {% else %}
             <div class='state'>
