@@ -14,7 +14,6 @@ class ChapelForm(BaseCardForm):
 class CellarForm(BaseCardForm):
     source_object = 'deck'
     source_pile = 'real_hand'
-    actions = ['discard', 'draw']
     min_cards = 0
     max_cards = 1000
 
