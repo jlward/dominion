@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from cards import get_cards_from_names
 
 
-class BaseCardForm(forms.Form):
+class ChooseCardsForm(forms.Form):
     cards = forms.MultipleChoiceField(
         choices=[],
         widget=forms.CheckboxSelectMultiple(
