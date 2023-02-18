@@ -1,6 +1,6 @@
 from cards.base import Card
 from cards.constants import CardTypes
-from cards.forms.dominion import CellarForm, ChapelForm
+from cards.forms.dominion import CellarForm, ChapelForm, MoneylenderForm
 from cards.kingdom_cards.base_cards import Curse
 from turns.models import AdHocTurn
 
@@ -150,8 +150,21 @@ class Cellar(Card):
 #     pass
 
 
-# class Moneylender(Card):
-#     pass
+class Moneylender(Card):
+    types = [CardTypes.Action]
+    card_cost = 4
+    adhocturn_action_title = 'Trash a Copper?'
+    adhocturn_form = MoneylenderForm
+
+    def perform_specific_action(self, deck, turn):
+        if 'Copper' not in deck.hand:
+            return
+        AdHocTurn.objects.create(
+            turn=turn,
+            player=turn.player,
+            game=turn.game,
+            card=self,
+        )
 
 
 # class Remodel(Card):

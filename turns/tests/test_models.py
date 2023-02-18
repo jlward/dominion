@@ -4,7 +4,6 @@ from cards.base import Card
 from cards.kingdom_cards.base_cards import Copper, Estate, Silver
 from cards.kingdom_cards.dominion import Village
 from decks.factories import DeckFactory
-from decks.models import Deck
 from turns.factories import AdHocTurnFactory, TurnFactory
 
 
