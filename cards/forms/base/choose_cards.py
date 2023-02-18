@@ -12,6 +12,7 @@ class ChooseCardsForm(forms.Form):
                 'class': 'kingdom-selector',
             },
         ),
+        required=False,
     )
     source_object = None
     source_pile = None
@@ -27,7 +28,10 @@ class ChooseCardsForm(forms.Form):
         self.adhoc_turn = adhoc_turn
         super().__init__(*args, **kwargs)
         source_pile = self.get_source_pile()
-        self.fields['cards'].choices = [
+        self.fields['cards'].choices = self.format_cards(source_pile)
+
+    def format_cards(self, source_pile):
+        return [
             (card.name, mark_safe(f'<img src="{card.url}" />')) for card in source_pile
         ]
 

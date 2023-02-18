@@ -4,6 +4,7 @@ from cards.forms.dominion import (
     CellarForm,
     ChapelForm,
     FeastForm,
+    MineForm,
     MoneylenderForm,
     SpyForm,
     WorkshopForm,
@@ -166,8 +167,19 @@ class Gardens(Card):
 #     pass
 
 
-# class Mine(Card):
-#     pass
+class Mine(Card):
+    types = [CardTypes.Action]
+    card_cost = 5
+    adhocturn_action_title = 'Trash a treasure? - Gain a treasure costing up to 3 more'
+    adhocturn_form = MineForm
+
+    def perform_specific_action(self, deck, turn):
+        AdHocTurn.objects.create(
+            turn=turn,
+            player=turn.player,
+            game=turn.game,
+            card=self,
+        )
 
 
 # class Moat(Card):
