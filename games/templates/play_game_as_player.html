@@ -131,6 +131,16 @@
             <div class="modal-body centered">
                 <form method="POST" action="{% url 'turns_adhocturn_perform_action' turn_id=turn.pk %}">
                     {% csrf_token %}
+                    {% if turn.form.extra_info %}
+                    {{ turn.form.extra_info }}
+                    </br>
+                    {% endif %}
+                    {% if turn.form.cards_to_display %}
+                    {% for card in turn.form.cards_to_display %}
+                    {% card_in_play card %}
+                    {% endfor %}
+                    </br>
+                    {% endif %}
                     {{ turn.form }}
                     <button class="btn btn-primary btn-confirm">Submit</button>
                 </form>

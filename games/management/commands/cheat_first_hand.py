@@ -9,6 +9,7 @@ class Command(BaseCommand):
         parser.add_argument('kingdom_cards', type=str, nargs='+')
         parser.add_argument('--starting-money', type=int, default=0)
         parser.add_argument('--starting-buys', type=int, default=1)
+        parser.add_argument('--keep-draw', action='store_true')
 
     def handle(self, *args, **options):
         kingdom_cards = options['kingdom_cards']
@@ -19,7 +20,8 @@ class Command(BaseCommand):
         turn.available_money = options['starting_money']
         turn.save()
         for deck in game.decks.all():
-            deck.draw_pile = []
+            if not options['keep_draw']:
+                deck.draw_pile = []
             deck.hand = kingdom_cards
             deck.save()
         print(game.pk)

@@ -110,13 +110,16 @@ class AdHocTurn(models.Model):
     )
     is_current_turn = models.BooleanField(default=True, db_index=True)
     card = CardField()
+    turn_order = models.IntegerField(default=0)
+    target_player = models.ForeignKey(
+        'players.Player',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
 
     @property
     def form(self):
-        deck = self.game.decks.get(player=self.player)
         return self.card.adhocturn_form(
-            game=self.game,
-            player=self.player,
-            deck=deck,
-            turn=self.turn,
+            adhoc_turn=self,
         )

@@ -1,7 +1,6 @@
 import uuid
 
 from django.apps import apps
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 from cards import get_cards_from_names_as_generator
@@ -96,11 +95,11 @@ class Game(models.Model):
         if self.is_over:
             return None
 
-        try:
-            adhoc_turn = self.adhoc_turns.get(is_current_turn=True)
-            return adhoc_turn
-        except ObjectDoesNotExist:
-            pass
+        adhoc_turns = self.adhoc_turns.filter(is_current_turn=True).order_by(
+            'turn_order',
+        )
+        if adhoc_turns.exists():
+            return adhoc_turns[0]
 
         return self.turns.get(is_current_turn=True)
 

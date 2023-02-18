@@ -1,3 +1,4 @@
+from cards import get_cards_from_names
 from cards.forms.base.simple import SimpleForm
 from cards.kingdom_cards.base_cards import Copper
 
@@ -64,3 +65,23 @@ class WorkshopForm(ChooseCardsForm):
         self.game.gain_card(self.deck, self.cleaned_data['cards'][0])
         self.deck.save()
         self.game.save()
+
+
+class SpyForm(SimpleForm):
+    def extra_info(self):
+        target_player = self.adhoc_turn.target_player
+        return f"This is {target_player}'s deck"
+
+    def cards_to_display(self):
+        card_name = self.game.decks.get(
+            player=self.adhoc_turn.target_player,
+        ).draw_pile.pop(0)
+        return get_cards_from_names([card_name])
+
+    def save(self):
+        if self.cleaned_data['selection'] != '0':
+            return
+        target_deck = self.game.decks.get(player=self.adhoc_turn.target_player)
+        target_card = target_deck.draw_pile.pop(0)
+        target_deck.discard_pile.append(target_card)
+        target_deck.save()
