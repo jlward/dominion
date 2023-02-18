@@ -1,3 +1,5 @@
+from django import forms
+
 from cards import get_cards_from_names
 from cards.forms.base.simple import SimpleForm
 from cards.kingdom_cards.base_cards import Copper
@@ -85,3 +87,53 @@ class SpyForm(SimpleForm):
         target_card = target_deck.draw_pile.pop(0)
         target_deck.discard_pile.append(target_card)
         target_deck.save()
+
+
+class MineForm(ChooseCardsForm):
+    source_object = 'deck'
+    source_pile = 'real_hand'
+    min_cards = 0
+    max_cards = 1
+    actions = ['trash']
+    kingdom_card = forms.ChoiceField(
+        choices=[],
+        widget=forms.RadioSelect(
+            attrs={
+                'class': 'kingdom-selector',
+            },
+        ),
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        kingdom_cards = [card for card in self.game.kingdom_options if card.is_treasure]
+        self.fields['kingdom_card'].choices = self.format_cards(kingdom_cards)
+        self.fields['cards'].label = 'Hand'
+
+    def get_source_pile(self):
+        hand = super().get_source_pile()
+        return [card for card in hand if card.is_treasure]
+
+    def clean_kingdom_card(self):
+        kingdom_card = self.cleaned_data['kingdom_card']
+        hand_cards = self.cleaned_data.get('cards')
+        if not hand_cards:
+            if kingdom_card:
+                raise forms.ValidationError('No trash card selected')
+            return self.cleaned_data['kingdom_card']
+        if not kingdom_card:
+            raise forms.ValidationError('No gain card selected')
+        self.cleaned_data['kingdom_card'] = get_cards_from_names([kingdom_card])[0]
+        hand_card = hand_cards[0]
+        if hand_card.cost + 3 < self.cleaned_data['kingdom_card'].cost:
+            raise forms.ValidationError('kingdom card seleceted is too expensive')
+        return self.cleaned_data['kingdom_card']
+
+    def save(self):
+        super().save()
+        if not self.cleaned_data['cards']:
+            return
+        kingdom_card = self.cleaned_data['kingdom_card']
+        self.game.gain_card(self.deck, kingdom_card)
+        self.deck.save()
