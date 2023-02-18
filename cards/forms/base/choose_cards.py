@@ -19,11 +19,12 @@ class ChooseCardsForm(forms.Form):
     min_cards = 1
     max_cards = 1
 
-    def __init__(self, game, player, deck, turn, *args, **kwargs):
-        self.game = game
-        self.player = player
-        self.deck = deck
-        self.turn = turn
+    def __init__(self, adhoc_turn, *args, **kwargs):
+        self.game = adhoc_turn.game
+        self.player = adhoc_turn.player
+        self.deck = self.game.decks.get(player=self.player)
+        self.turn = adhoc_turn.turn
+        self.adhoc_turn = adhoc_turn
         super().__init__(*args, **kwargs)
         source_pile = self.get_source_pile()
         self.fields['cards'].choices = [

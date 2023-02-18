@@ -22,14 +22,7 @@ def end_phase(request, turn_id):
 def perform_action(request, turn_id):
     turn = get_object_or_404(AdHocTurn, pk=turn_id)
     Form = turn.card.adhocturn_form
-    deck = turn.game.decks.get(player=turn.player)
-    form = Form(
-        game=turn.game,
-        player=turn.player,
-        deck=deck,
-        turn=turn.turn,
-        data=request.POST,
-    )
+    form = Form(data=request.POST, adhoc_turn=turn)
     if form.is_valid():
         form.save()
         turn.is_current_turn = False

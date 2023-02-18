@@ -5,6 +5,7 @@ from cards.forms.dominion import (
     ChapelForm,
     FeastForm,
     MoneylenderForm,
+    SpyForm,
     WorkshopForm,
 )
 from cards.kingdom_cards.base_cards import Curse
@@ -194,8 +195,30 @@ class Moneylender(Card):
 #     pass
 
 
-# class Spy(Card):
-#     pass
+class Spy(Card):
+    types = [CardTypes.Action, CardTypes.Attack]
+    card_cost = 4
+    extra_actions = 1
+    extra_cards = 1
+    adhocturn_action_title = 'Discard?'
+    adhocturn_form = SpyForm
+
+    def perform_specific_action(self, deck, turn):
+        for i, player in enumerate(deck.game.players.all()):
+            player_deck = player.decks.get(game=deck.game)
+            if len(player_deck.draw_pile) < 1:
+                player_deck.full_shuffle()
+                player_deck.save()
+                if len(player_deck.draw_pile) < 1:
+                    continue
+            AdHocTurn.objects.create(
+                turn=turn,
+                player=turn.player,
+                game=turn.game,
+                card=self,
+                turn_order=i,
+                target_player=player,
+            )
 
 
 # class Thief(Card):
