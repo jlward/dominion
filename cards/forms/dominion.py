@@ -48,3 +48,19 @@ class FeastForm(ChooseCardsForm):
         self.game.gain_card(self.deck, self.cleaned_data['cards'][0])
         self.deck.save()
         self.game.save()
+
+
+class WorkshopForm(ChooseCardsForm):
+    source_object = 'game'
+    source_pile = 'kingdom_options'
+    min_cards = 1
+    max_cards = 1
+
+    def get_source_pile(self):
+        source_pile = super().get_source_pile()
+        return [card for card in source_pile if card.cost <= 4]
+
+    def save(self):
+        self.game.gain_card(self.deck, self.cleaned_data['cards'][0])
+        self.deck.save()
+        self.game.save()

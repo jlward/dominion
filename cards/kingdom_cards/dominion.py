@@ -1,6 +1,12 @@
 from cards.base import Card
 from cards.constants import CardTypes
-from cards.forms.dominion import CellarForm, ChapelForm, FeastForm, MoneylenderForm
+from cards.forms.dominion import (
+    CellarForm,
+    ChapelForm,
+    FeastForm,
+    MoneylenderForm,
+    WorkshopForm,
+)
 from cards.kingdom_cards.base_cards import Curse
 from turns.models import AdHocTurn
 
@@ -195,5 +201,16 @@ class Moneylender(Card):
 #     pass
 
 
-# class Workshop(Card):
-#     pass
+class Workshop(Card):
+    types = [CardTypes.Action]
+    card_cost = 3
+    adhocturn_action_title = 'Gain a card costing up to 4'
+    adhocturn_form = WorkshopForm
+
+    def perform_specific_action(self, deck, turn):
+        AdHocTurn.objects.create(
+            turn=turn,
+            player=turn.player,
+            game=turn.game,
+            card=self,
+        )
