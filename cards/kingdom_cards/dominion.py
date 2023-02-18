@@ -1,6 +1,6 @@
 from cards.base import Card
 from cards.constants import CardTypes
-from cards.forms.dominion import CellarForm, ChapelForm, MoneylenderForm
+from cards.forms.dominion import CellarForm, ChapelForm, FeastForm, MoneylenderForm
 from cards.kingdom_cards.base_cards import Curse
 from turns.models import AdHocTurn
 
@@ -126,8 +126,20 @@ class Cellar(Card):
 #     pass
 
 
-# class Feast(Card):
-#     pass
+class Feast(Card):
+    types = [CardTypes.Action]
+    card_cost = 4
+    adhocturn_action_title = 'Gain a card costing up to 5'
+    adhocturn_form = FeastForm
+
+    def perform_specific_action(self, deck, turn):
+        deck.trash_cards(cards=[Feast()], source='played_cards')
+        AdHocTurn.objects.create(
+            turn=turn,
+            player=turn.player,
+            game=turn.game,
+            card=self,
+        )
 
 
 # class Gardens(Card):

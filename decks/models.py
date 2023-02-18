@@ -89,7 +89,10 @@ class Deck(models.Model):
         random.shuffle(self.draw_pile)
 
     # Assuming player can only trash from hand
-    def trash_cards(self, cards):
+    def trash_cards(self, cards, source='hand'):
+        if source not in ['hand', 'played_cards']:
+            raise ValueError('invaid source')
+        card_source = getattr(self, source)
         for card in cards:
             self.game.trash_pile.append(card.name)
-            self.hand.pop(self.hand.index(card.name))
+            card_source.pop(card_source.index(card.name))

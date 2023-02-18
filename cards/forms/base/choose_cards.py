@@ -25,8 +25,7 @@ class ChooseCardsForm(forms.Form):
         self.deck = deck
         self.turn = turn
         super().__init__(*args, **kwargs)
-        source_object = getattr(self, self.source_object)
-        source_pile = getattr(source_object, self.source_pile)
+        source_pile = self.get_source_pile()
         self.fields['cards'].choices = [
             (card.name, mark_safe(f'<img src="{card.url}" />')) for card in source_pile
         ]
@@ -53,3 +52,7 @@ class ChooseCardsForm(forms.Form):
 
         self.cleaned_data['cards'] = get_cards_from_names(cards)
         return self.cleaned_data['cards']
+
+    def get_source_pile(self):
+        source_object = getattr(self, self.source_object)
+        return getattr(source_object, self.source_pile)
