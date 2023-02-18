@@ -157,6 +157,8 @@ class Moneylender(Card):
     adhocturn_form = MoneylenderForm
 
     def perform_specific_action(self, deck, turn):
+        if 'Copper' not in deck.hand:
+            return
         AdHocTurn.objects.create(
             turn=turn,
             player=turn.player,

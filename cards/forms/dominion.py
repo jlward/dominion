@@ -28,8 +28,9 @@ class CellarForm(ChooseCardsForm):
 
 class MoneylenderForm(SimpleForm):
     def save(self):
-        if self.cleaned_data['selection'] == 'Yes':
-            self.deck.trash_cards(Copper())
-            self.turn.available_money += 3
-            self.deck.save()
-            self.turn.save()
+        if self.cleaned_data['selection'] != '0':
+            return
+        self.deck.trash_cards([Copper()])
+        self.turn.available_money += 3
+        self.deck.save()
+        self.turn.save()

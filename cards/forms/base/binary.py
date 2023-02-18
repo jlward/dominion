@@ -6,7 +6,10 @@ from cards import get_cards_from_names
 
 class SimpleForm(forms.Form):
     selection = forms.ChoiceField(
-        choices=['Yes', 'No'],
+        choices=[
+            (0, 'Yes'),
+            (1, 'No'),
+        ],
         widget=forms.RadioSelect(),
     )
 
