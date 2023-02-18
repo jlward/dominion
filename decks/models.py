@@ -54,14 +54,14 @@ class Deck(models.Model):
     def __len__(self):
         return len(self.all_cards)
 
-    def draw_cards(self, num):
+    def draw_cards(self, num, destination='hand'):
         for _ in range(num):
             if len(self.draw_pile) == 0:
                 if len(self.discard_pile) == 0:
                     break
                 self.full_shuffle()
             card = self.draw_pile.pop(0)
-            self.hand.append(card)
+            getattr(self, destination).append(card)
 
     def play_card(self, card):
         self.hand.remove(card.name)
