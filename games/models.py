@@ -61,6 +61,13 @@ class Game(models.Model):
         return result
 
     @property
+    def kingdom_options(self):
+        for row in self.real_kingdom.values():
+            if row['count'] == 0:
+                continue
+            yield row['card']
+
+    @property
     def real_base_kingdom(self):
         kingdom = self.real_kingdom
         result = [row for row in kingdom.values() if row['card'].is_base_card]
