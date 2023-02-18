@@ -1,6 +1,4 @@
-from django import forms
-
-from cards.forms.base.binary import SimpleForm
+from cards.forms.base.simple import SimpleForm
 from cards.kingdom_cards.base_cards import Copper
 
 from .base.choose_cards import ChooseCardsForm

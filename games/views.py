@@ -1,11 +1,10 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from games.forms import BuyKingdomCard, GameCreateForm, PlayActionForm, PlayTreasureForm
 from games.models import Game
-from players.models import Player
 
 
 @login_required

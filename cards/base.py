@@ -1,8 +1,3 @@
-import importlib
-import os
-import uuid
-
-from django.conf import settings
 from django.templatetags.static import static
 
 from cards.constants import CardTypes

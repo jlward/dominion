@@ -1,5 +1,4 @@
 from django import forms
-from django.templatetags.static import static
 from django.utils.safestring import mark_safe
 
 from cards import get_all_cards, get_available_kingdom_cards

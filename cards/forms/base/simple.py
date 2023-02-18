@@ -1,7 +1,4 @@
 from django import forms
-from django.utils.safestring import mark_safe
-
-from cards import get_cards_from_names
 
 
 class SimpleForm(forms.Form):
