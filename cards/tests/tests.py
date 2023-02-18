@@ -30,7 +30,7 @@ class CardTestCase(TestCase):
 
     def test_card_victory_points_returns_three(self):
         card = Gold()
-        self.assertEqual(card.plus_victory_points, 0)
+        self.assertEqual(card.get_victory_points(None), 0)
 
     def test_card_cost_returns_six(self):
         card = Gold()
