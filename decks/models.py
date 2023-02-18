@@ -45,7 +45,7 @@ class Deck(models.Model):
 
     @property
     def score(self):
-        return sum(card.plus_victory_points for card in self.all_cards)
+        return sum(card.get_victory_points(self) for card in self.all_cards)
 
     @property
     def no_actions(self):

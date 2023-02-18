@@ -148,8 +148,13 @@ class Feast(Card):
         )
 
 
-# class Gardens(Card):
-#     pass
+class Gardens(Card):
+    types = [CardTypes.Victory]
+    card_cost = 4
+
+    def get_victory_points(self, deck, *args, **kwargs):
+        num_cards = len(deck.all_cards)
+        return num_cards // 10
 
 
 # class Library(Card):
