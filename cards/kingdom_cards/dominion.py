@@ -216,7 +216,7 @@ class Spy(Card):
     adhocturn_form = SpyForm
 
     def perform_specific_action(self, deck, turn):
-        for i, player in enumerate(deck.game.players.all()):
+        for player in deck.game.players.all():
             player_deck = player.decks.get(game=deck.game)
             if len(player_deck.draw_pile) < 1:
                 player_deck.full_shuffle()
@@ -228,7 +228,6 @@ class Spy(Card):
                 player=turn.player,
                 game=turn.game,
                 card=self,
-                turn_order=i,
                 target_player=player,
             )
 

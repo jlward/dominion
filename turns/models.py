@@ -123,3 +123,9 @@ class AdHocTurn(models.Model):
         return self.card.adhocturn_form(
             adhoc_turn=self,
         )
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # if we delete any adhoc turns this will break
+            self.turn_order = AdHocTurn.objects.count() + 1
+        return super().save(*args, **kwargs)
