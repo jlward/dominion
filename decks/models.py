@@ -64,6 +64,8 @@ class Deck(models.Model):
     def draw_cards(self, num, destination='hand'):
         for _ in range(num):
             card = self.top_deck()
+            if card is None:
+                break
             getattr(self, destination).append(card)
 
     def play_card(self, card):

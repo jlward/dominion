@@ -14,4 +14,4 @@ class AdHocTurnManager(models.Manager):
             turn.turn_order = obj.turn_order + i + 1
             turn.save()
 
-        return object
+        return obj
