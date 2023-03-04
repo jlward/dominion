@@ -6,6 +6,7 @@ from cards.forms.dominion import (
     FeastForm,
     MineForm,
     MoneylenderForm,
+    RemodelForm,
     SpyForm,
     ThroneRoomForm,
     WorkshopForm,
@@ -204,8 +205,19 @@ class Moneylender(Card):
         )
 
 
-# class Remodel(Card):
-#     pass
+class Remodel(Card):
+    types = [CardTypes.Action]
+    card_cost = 4
+    adhocturn_action_title = 'Trash a card? - Gain a card costing up to 2 more'
+    adhocturn_form = RemodelForm
+
+    def perform_specific_action(self, deck, turn):
+        AdHocTurn.objects.create(
+            turn=turn,
+            player=turn.player,
+            game=turn.game,
+            card=self,
+        )
 
 
 class Spy(Card):
