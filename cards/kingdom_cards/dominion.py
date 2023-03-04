@@ -223,8 +223,8 @@ class Gardens(Card):
 #     pass
 
 
-# class Militia(Card):
-#     pass
+class Militia(Card):
+    pass
 
 
 class Mine(Card):
