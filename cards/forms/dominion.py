@@ -236,3 +236,21 @@ class BureaucratForm(ChooseCardsForm):
         deck = self.adhoc_turn.player.decks.get(game=self.game)
         deck.move_to_top_deck(cards[0])
         deck.save()
+
+
+class MilitiaForm(ChooseCardsForm):
+    source_object = 'deck'
+    source_pile = 'real_hand'
+    max_cards = 3
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.min_cards = min([3, len(self.deck.hand)])
+
+    def save(self):
+        hand_copy = self.deck.hand[:]
+        for card in self.cleaned_data['cards']:
+            hand_copy.remove(card.name)
+
+        self.deck.discard_cards(get_cards_from_names(hand_copy))
+        self.deck.save()

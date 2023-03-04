@@ -7,6 +7,7 @@ from cards.forms.dominion import (
     ChancellorForm,
     ChapelForm,
     FeastForm,
+    MilitiaForm,
     MineForm,
     MoneylenderForm,
     RemodelForm,
@@ -143,7 +144,6 @@ class Bureaucrat(Card):
     def perform_specific_action(self, deck, turn):
         deck.game.gain_card(deck, Silver(), destination='draw_pile')
         for player in deck.game.players.all():
-            print(player, player.pk, turn.player_id)
             if player.pk == turn.player_id:
                 continue
             player_deck = player.decks.get(game=deck.game)
@@ -224,7 +224,23 @@ class Gardens(Card):
 
 
 class Militia(Card):
-    pass
+    types = [CardTypes.Action, CardTypes.Attack]
+    card_cost = 4
+    extra_treasure = 2
+    # TODO fix title for less than 3 cards in hand
+    adhocturn_action_title = 'Pick 3 cards to keep'
+    adhocturn_form = MilitiaForm
+
+    def perform_specific_action(self, deck, turn):
+        for player in deck.game.players.all():
+            if player.pk == turn.player_id:
+                continue
+            AdHocTurn.objects.create(
+                turn=turn,
+                player=player,
+                game=turn.game,
+                card=self,
+            )
 
 
 class Mine(Card):
