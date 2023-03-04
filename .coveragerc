@@ -8,6 +8,7 @@ omit =
     *wsgi.py
     *factories.py
     accounts/management/commands/create_initial_data.py
+    testing/*
 
 [report]
 show_missing = True
