@@ -209,3 +209,12 @@ class RemodelForm(ChooseCardsForm):
         kingdom_card = self.cleaned_data['kingdom_card']
         self.game.gain_card(self.deck, kingdom_card)
         self.deck.save()
+
+
+class ChancellorForm(SimpleForm):
+    def save(self):
+        if self.cleaned_data['selection'] != '0':
+            return
+        self.deck.discard_pile.extend(self.deck.draw_pile)
+        self.deck.draw_pile = []
+        self.deck.save()

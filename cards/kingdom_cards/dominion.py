@@ -3,6 +3,7 @@ from cards.base import Card
 from cards.constants import CardTypes
 from cards.forms.dominion import (
     CellarForm,
+    ChancellorForm,
     ChapelForm,
     FeastForm,
     MineForm,
@@ -152,8 +153,20 @@ class Cellar(Card):
         )
 
 
-# class Chancellor(Card):
-#     pass
+class Chancellor(Card):
+    types = [CardTypes.Action]
+    card_cost = 3
+    extra_treasure = 2
+    adhocturn_action_title = 'Put deck in discard?'
+    adhocturn_form = ChancellorForm
+
+    def perform_specific_action(self, deck, turn):
+        AdHocTurn.objects.create(
+            turn=turn,
+            player=turn.player,
+            game=turn.game,
+            card=self,
+        )
 
 
 class Feast(Card):
