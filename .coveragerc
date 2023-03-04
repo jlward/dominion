@@ -6,6 +6,8 @@ omit =
     manage.py
     *asgi.py
     *wsgi.py
+    *factories.py
+    accounts/management/commands/create_initial_data.py
 
 [report]
 show_missing = True
