@@ -156,6 +156,5 @@ class ThroneRoomForm(ChooseCardsForm):
 
     def save(self):
         for card in self.cleaned_data['cards']:
-            print(card)
             self.turn.play_action(card, consume=False)
             self.turn.play_action(card, consume=False, ghost_action=True)

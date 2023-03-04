@@ -2,7 +2,7 @@ from django.apps import apps
 from django.db import models
 
 from cards.fields import CardField
-from turns.managers import TurnManager
+from turns.managers import AdHocTurnManager, TurnManager
 
 
 class Turn(models.Model):
@@ -119,6 +119,8 @@ class AdHocTurn(models.Model):
         null=True,
         blank=True,
     )
+
+    objects = AdHocTurnManager()
 
     @property
     def form(self):
