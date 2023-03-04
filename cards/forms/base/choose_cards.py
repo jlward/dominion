@@ -19,6 +19,7 @@ class ChooseCardsForm(forms.Form):
     actions = None
     min_cards = 1
     max_cards = 1
+    card_filter = None
 
     def __init__(self, adhoc_turn, *args, **kwargs):
         self.game = adhoc_turn.game
@@ -31,6 +32,10 @@ class ChooseCardsForm(forms.Form):
         self.fields['cards'].choices = self.format_cards(source_pile)
 
     def format_cards(self, source_pile):
+        if self.card_filter:
+            source_pile = list(
+                card for card in source_pile if getattr(card, self.card_filter)
+            )
         return [
             (card.name, mark_safe(f'<img src="{card.url}" />')) for card in source_pile
         ]

@@ -79,6 +79,11 @@ class Deck(models.Model):
         for card in cards:
             self.discard_pile.append(self.hand.pop(self.hand.index(card.name)))
 
+    def move_to_top_deck(self, card, source='hand'):
+        card_source = getattr(self, source)
+        card = card_source.pop(card_source.index(card.name))
+        self.draw_pile.insert(0, card)
+
     def cleanup(self):
         self.discard_cards()
 

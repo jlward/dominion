@@ -27,4 +27,5 @@ def perform_action(request, turn_id):
         form.save()
         turn.is_current_turn = False
         turn.save()
+        turn.game.save()
     return redirect(request.META['HTTP_REFERER'])

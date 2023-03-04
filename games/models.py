@@ -35,10 +35,11 @@ class Game(models.Model):
 
         return order
 
-    def gain_card(self, deck, card):
+    def gain_card(self, deck, card, destination='discard_pile'):
+        destination_pile = getattr(deck, destination)
         if self.kingdom[card.name] == 0:
             return
-        deck.discard_pile.append(card.name)
+        destination_pile.insert(0, card.name)
         self.kingdom[card.name] -= 1
 
     def trash_cards(self, deck, turn, cards):

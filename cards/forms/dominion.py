@@ -218,3 +218,21 @@ class ChancellorForm(SimpleForm):
         self.deck.discard_pile.extend(self.deck.draw_pile)
         self.deck.draw_pile = []
         self.deck.save()
+
+
+class BureaucratForm(ChooseCardsForm):
+    source_object = 'deck'
+    source_pile = 'real_hand'
+    # TODO empty hand check
+    min_cards = 1
+    max_cards = 1
+    card_filter = 'is_victory'
+
+    def save(self):
+        cards = self.cleaned_data['cards']
+        if not cards:
+            return
+
+        deck = self.adhoc_turn.player.decks.get(game=self.game)
+        deck.move_to_top_deck(cards[0])
+        deck.save()

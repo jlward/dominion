@@ -2,6 +2,7 @@ from cards import get_card_from_name
 from cards.base import Card
 from cards.constants import CardTypes
 from cards.forms.dominion import (
+    BureaucratForm,
     CellarForm,
     ChancellorForm,
     ChapelForm,
@@ -13,7 +14,7 @@ from cards.forms.dominion import (
     ThroneRoomForm,
     WorkshopForm,
 )
-from cards.kingdom_cards.base_cards import Curse
+from cards.kingdom_cards.base_cards import Curse, Silver
 from turns.models import AdHocTurn
 
 
@@ -133,8 +134,32 @@ class Adventurer(Card):
         deck.save()
 
 
-# class Bureaucrat(Card):
-#     pass
+class Bureaucrat(Card):
+    types = [CardTypes.Action, CardTypes.Attack]
+    card_cost = 4
+    adhocturn_action_title = 'Reveal a Victory Card to put on top of your deck'
+    adhocturn_form = BureaucratForm
+
+    def perform_specific_action(self, deck, turn):
+        deck.game.gain_card(deck, Silver(), destination='draw_pile')
+        for player in deck.game.players.all():
+            print(player, player.pk, turn.player_id)
+            if player.pk == turn.player_id:
+                continue
+            player_deck = player.decks.get(game=deck.game)
+            v_in_hand = list(card for card in player_deck.real_hand if card.is_victory)
+            if not v_in_hand:
+                continue
+            if len(v_in_hand) > 1:
+                AdHocTurn.objects.create(
+                    turn=turn,
+                    player=player,
+                    game=turn.game,
+                    card=self,
+                )
+            else:
+                player_deck.move_to_top_deck(v_in_hand[0])
+                player_deck.save()
 
 
 class Cellar(Card):
