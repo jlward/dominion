@@ -1,3 +1,4 @@
+from cards import get_card_from_name
 from cards.base import Card
 from cards.constants import CardTypes
 from cards.forms.dominion import (
@@ -108,8 +109,27 @@ class Chapel(Card):
         )
 
 
-# class Adventurer(Card):
-#     pass
+class Adventurer(Card):
+    types = [CardTypes.Action]
+    card_cost = 6
+
+    def perform_specific_action(self, deck, turn):
+        revealed_cards = []
+        revealed_treasures = []
+
+        while len(revealed_treasures) < 2:
+            top_deck = deck.top_deck()
+            if top_deck is None:
+                break
+            card = get_card_from_name(top_deck)
+            if card.is_treasure:
+                revealed_treasures.append(card.name)
+            else:
+                revealed_cards.append(card.name)
+
+        deck.hand.extend(revealed_treasures)
+        deck.discard_pile.extend(revealed_cards)
+        deck.save()
 
 
 # class Bureaucrat(Card):

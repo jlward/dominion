@@ -22,6 +22,8 @@ def get_all_cards():
                 continue
             if klass in ['Card', 'CardTypes']:
                 continue
+            if not klass[0].isupper():
+                continue
             Klass = getattr(module_file, klass)
             if not issubclass(Klass, Card):
                 continue
@@ -32,6 +34,10 @@ def get_all_cards():
 
 def get_available_kingdom_cards():
     return {k: v for k, v in get_all_cards().items() if not v().is_base_card}
+
+
+def get_card_from_name(card):
+    return get_all_cards()[card]()
 
 
 def get_cards_from_names(cards):
