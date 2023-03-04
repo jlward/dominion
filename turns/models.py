@@ -2,7 +2,7 @@ from django.apps import apps
 from django.db import models
 
 from cards.fields import CardField
-from turns.managers import TurnManager
+from turns.managers import AdHocTurnManager, TurnManager
 
 
 class Turn(models.Model):
@@ -55,12 +55,14 @@ class Turn(models.Model):
         Deck = apps.get_model('decks', 'Deck')
         return Deck.objects.get(game_id=self.game_id, player_id=self.player_id)
 
-    def play_action(self, action):
+    def play_action(self, action, consume=True, ghost_action=False):
         player_deck = self.get_deck()
-        player_deck.play_card(action)
+        if not ghost_action:
+            player_deck.play_card(action)
         self.actions_played.append(action.name)
         action.perform_action(deck=player_deck, turn=self)
-        self.available_actions -= 1
+        if consume:
+            self.available_actions -= 1
         player_deck.save()
         self.save()
 
@@ -117,6 +119,8 @@ class AdHocTurn(models.Model):
         null=True,
         blank=True,
     )
+
+    objects = AdHocTurnManager()
 
     @property
     def form(self):

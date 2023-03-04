@@ -7,6 +7,7 @@ from cards.forms.dominion import (
     MineForm,
     MoneylenderForm,
     SpyForm,
+    ThroneRoomForm,
     WorkshopForm,
 )
 from cards.kingdom_cards.base_cards import Curse
@@ -236,8 +237,19 @@ class Spy(Card):
 #     pass
 
 
-# class ThroneRoom(Card):
-#     pass
+class ThroneRoom(Card):
+    types = [CardTypes.Action]
+    card_cost = 4
+    adhocturn_action_title = 'Pick an action to play twice'
+    adhocturn_form = ThroneRoomForm
+
+    def perform_specific_action(self, deck, turn):
+        AdHocTurn.objects.create(
+            turn=turn,
+            player=turn.player,
+            game=turn.game,
+            card=self,
+        )
 
 
 class Workshop(Card):

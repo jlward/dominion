@@ -75,17 +75,22 @@ class SpyForm(SimpleForm):
         return f"This is {target_player}'s deck"
 
     def cards_to_display(self):
-        card_name = self.game.decks.get(
+        deck = self.game.decks.get(
             player=self.adhoc_turn.target_player,
-        ).draw_pile.pop(0)
+        )
+        if len(deck.draw_pile) < 1:
+            deck.full_shuffle()
+            deck.save()
+            if len(deck.draw_pile) < 1:
+                return
+        card_name = deck.draw_pile.pop(0)
         return get_cards_from_names([card_name])
 
     def save(self):
         if self.cleaned_data['selection'] != '0':
             return
         target_deck = self.game.decks.get(player=self.adhoc_turn.target_player)
-        target_card = target_deck.draw_pile.pop(0)
-        target_deck.discard_pile.append(target_card)
+        target_deck.draw_cards(1, destination='discard_pile')
         target_deck.save()
 
 
@@ -137,3 +142,19 @@ class MineForm(ChooseCardsForm):
         kingdom_card = self.cleaned_data['kingdom_card']
         self.game.gain_card(self.deck, kingdom_card)
         self.deck.save()
+
+
+class ThroneRoomForm(ChooseCardsForm):
+    source_object = 'deck'
+    source_pile = 'real_hand'
+    min_cards = 0
+    max_cards = 1
+
+    def get_source_pile(self):
+        hand = super().get_source_pile()
+        return [card for card in hand if card.is_action]
+
+    def save(self):
+        for card in self.cleaned_data['cards']:
+            self.turn.play_action(card, consume=False)
+            self.turn.play_action(card, consume=False, ghost_action=True)
