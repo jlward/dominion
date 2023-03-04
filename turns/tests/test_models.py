@@ -1,8 +1,10 @@
+from unittest import mock
+
 from django.test import TestCase
 
 from cards.base import Card
 from cards.kingdom_cards.base_cards import Copper, Estate, Silver
-from cards.kingdom_cards.dominion import Village
+from cards.kingdom_cards.dominion import Smithy, Village
 from decks.factories import DeckFactory
 from turns.factories import AdHocTurnFactory, TurnFactory
 
@@ -11,8 +13,13 @@ class TurnPlayActionTestCase(TestCase):
     def setUp(self):
         super().setUp()
         self.turn = TurnFactory()
-        self.deck = DeckFactory(game=self.turn.game, player=self.turn.player)
+        self.deck = DeckFactory(
+            game=self.turn.game,
+            player=self.turn.player,
+            hand=['Village', 'Smithy'],
+        )
         self.village = Village()
+        self.smithy = Smithy()
 
     def assert_action_played(self):
         self.deck.refresh_from_db()
@@ -21,9 +28,31 @@ class TurnPlayActionTestCase(TestCase):
         self.assertEqual(self.deck.played_cards, ['Village'])
         self.assertEqual(
             self.deck.hand,
-            ['Copper', 'Copper', 'Silver', 'Estate', 'Smithy'],
+            ['Smithy', 'Smithy'],
         )
         self.assertEqual(self.turn.available_actions, 2)
+
+    def test_ghost_action(self):
+        with mock.patch('decks.models.Deck.play_card') as play_card:
+            self.turn.play_action(self.village, ghost_action=True)
+        play_card.assert_not_called()
+
+    def test_not_ghost_action(self):
+        with mock.patch('decks.models.Deck.play_card') as play_card:
+            self.turn.play_action(self.village, ghost_action=False)
+        play_card.assert_called_once_with(self.village)
+
+    def test_consumed(self):
+        actions = self.turn.available_actions
+        self.turn.play_action(self.smithy, consume=True)
+        self.turn.refresh_from_db()
+        self.assertEqual(self.turn.available_actions, actions - 1)
+
+    def test_not_consumed(self):
+        actions = self.turn.available_actions
+        self.turn.play_action(self.smithy, consume=False)
+        self.turn.refresh_from_db()
+        self.assertEqual(self.turn.available_actions, actions)
 
     def test_smoke(self):
         self.turn.play_action(self.village)
