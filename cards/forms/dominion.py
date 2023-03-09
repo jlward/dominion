@@ -7,6 +7,24 @@ from cards.kingdom_cards.base_cards import Copper
 from .base.choose_cards import ChooseCardsForm
 
 
+class BureaucratForm(ChooseCardsForm):
+    source_object = 'deck'
+    source_pile = 'real_hand'
+    # TODO empty hand check
+    min_cards = 1
+    max_cards = 1
+    card_filter = 'is_victory'
+
+    def save(self):
+        cards = self.cleaned_data['cards']
+        if not cards:
+            return
+
+        deck = self.adhoc_turn.player.decks.get(game=self.game)
+        deck.move_to_top_deck(cards[0])
+        deck.save()
+
+
 class ChapelForm(ChooseCardsForm):
     source_object = 'deck'
     source_pile = 'real_hand'
@@ -27,14 +45,13 @@ class CellarForm(ChooseCardsForm):
         self.deck.save()
 
 
-class MoneylenderForm(SimpleForm):
+class ChancellorForm(SimpleForm):
     def save(self):
         if self.cleaned_data['selection'] != '0':
             return
-        self.deck.trash_cards([Copper()])
-        self.turn.available_money += 3
+        self.deck.discard_pile.extend(self.deck.draw_pile)
+        self.deck.draw_pile = []
         self.deck.save()
-        self.turn.save()
 
 
 class FeastForm(ChooseCardsForm):
@@ -53,45 +70,22 @@ class FeastForm(ChooseCardsForm):
         self.game.save()
 
 
-class WorkshopForm(ChooseCardsForm):
-    source_object = 'game'
-    source_pile = 'kingdom_options'
-    min_cards = 1
-    max_cards = 1
+class MilitiaForm(ChooseCardsForm):
+    source_object = 'deck'
+    source_pile = 'real_hand'
+    max_cards = 3
 
-    def get_source_pile(self):
-        source_pile = super().get_source_pile()
-        return [card for card in source_pile if card.cost <= 4]
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.min_cards = min([3, len(self.deck.hand)])
 
     def save(self):
-        self.game.gain_card(self.deck, self.cleaned_data['cards'][0])
+        hand_copy = self.deck.hand[:]
+        for card in self.cleaned_data['cards']:
+            hand_copy.remove(card.name)
+
+        self.deck.discard_cards(get_cards_from_names(hand_copy))
         self.deck.save()
-        self.game.save()
-
-
-class SpyForm(SimpleForm):
-    def extra_info(self):
-        target_player = self.adhoc_turn.target_player
-        return f"This is {target_player}'s deck"
-
-    def cards_to_display(self):
-        deck = self.game.decks.get(
-            player=self.adhoc_turn.target_player,
-        )
-        if len(deck.draw_pile) < 1:
-            deck.full_shuffle()
-            deck.save()
-            if len(deck.draw_pile) < 1:
-                return
-        card_name = deck.draw_pile.pop(0)
-        return get_cards_from_names([card_name])
-
-    def save(self):
-        if self.cleaned_data['selection'] != '0':
-            return
-        target_deck = self.game.decks.get(player=self.adhoc_turn.target_player)
-        target_deck.draw_cards(1, destination='discard_pile')
-        target_deck.save()
 
 
 class MineForm(ChooseCardsForm):
@@ -144,20 +138,14 @@ class MineForm(ChooseCardsForm):
         self.deck.save()
 
 
-class ThroneRoomForm(ChooseCardsForm):
-    source_object = 'deck'
-    source_pile = 'real_hand'
-    min_cards = 0
-    max_cards = 1
-
-    def get_source_pile(self):
-        hand = super().get_source_pile()
-        return [card for card in hand if card.is_action]
-
+class MoneylenderForm(SimpleForm):
     def save(self):
-        for card in self.cleaned_data['cards']:
-            self.turn.play_action(card, consume=False)
-            self.turn.play_action(card, consume=False, ghost_action=True)
+        if self.cleaned_data['selection'] != '0':
+            return
+        self.deck.trash_cards([Copper()])
+        self.turn.available_money += 3
+        self.deck.save()
+        self.turn.save()
 
 
 class RemodelForm(ChooseCardsForm):
@@ -211,46 +199,58 @@ class RemodelForm(ChooseCardsForm):
         self.deck.save()
 
 
-class ChancellorForm(SimpleForm):
+class SpyForm(SimpleForm):
+    def extra_info(self):
+        target_player = self.adhoc_turn.target_player
+        return f"This is {target_player}'s deck"
+
+    def cards_to_display(self):
+        deck = self.game.decks.get(
+            player=self.adhoc_turn.target_player,
+        )
+        if len(deck.draw_pile) < 1:
+            deck.full_shuffle()
+            deck.save()
+            if len(deck.draw_pile) < 1:
+                return
+        card_name = deck.draw_pile.pop(0)
+        return get_cards_from_names([card_name])
+
     def save(self):
         if self.cleaned_data['selection'] != '0':
             return
-        self.deck.discard_pile.extend(self.deck.draw_pile)
-        self.deck.draw_pile = []
-        self.deck.save()
+        target_deck = self.game.decks.get(player=self.adhoc_turn.target_player)
+        target_deck.draw_cards(1, destination='discard_pile')
+        target_deck.save()
 
 
-class BureaucratForm(ChooseCardsForm):
+class ThroneRoomForm(ChooseCardsForm):
     source_object = 'deck'
     source_pile = 'real_hand'
-    # TODO empty hand check
+    min_cards = 0
+    max_cards = 1
+
+    def get_source_pile(self):
+        hand = super().get_source_pile()
+        return [card for card in hand if card.is_action]
+
+    def save(self):
+        for card in self.cleaned_data['cards']:
+            self.turn.play_action(card, consume=False)
+            self.turn.play_action(card, consume=False, ghost_action=True)
+
+
+class WorkshopForm(ChooseCardsForm):
+    source_object = 'game'
+    source_pile = 'kingdom_options'
     min_cards = 1
     max_cards = 1
-    card_filter = 'is_victory'
+
+    def get_source_pile(self):
+        source_pile = super().get_source_pile()
+        return [card for card in source_pile if card.cost <= 4]
 
     def save(self):
-        cards = self.cleaned_data['cards']
-        if not cards:
-            return
-
-        deck = self.adhoc_turn.player.decks.get(game=self.game)
-        deck.move_to_top_deck(cards[0])
-        deck.save()
-
-
-class MilitiaForm(ChooseCardsForm):
-    source_object = 'deck'
-    source_pile = 'real_hand'
-    max_cards = 3
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.min_cards = min([3, len(self.deck.hand)])
-
-    def save(self):
-        hand_copy = self.deck.hand[:]
-        for card in self.cleaned_data['cards']:
-            hand_copy.remove(card.name)
-
-        self.deck.discard_cards(get_cards_from_names(hand_copy))
+        self.game.gain_card(self.deck, self.cleaned_data['cards'][0])
         self.deck.save()
+        self.game.save()

@@ -44,3 +44,14 @@ class BaseTestCase(TestCase):
         is_type = f'is_{type}'
         for card in get_cards_from_names(cards):
             self.assertEqual(getattr(card, is_type), expected)
+
+    @contextmanager
+    def assert_count_increase(self, deck, source, change):
+        before = len(getattr(deck, source))
+        yield
+        after = len(getattr(deck, source))
+        self.assertEqual(after - before, change)
+
+    def assert_top_decks(self, deck, cards):
+        top_cards = deck.draw_pile[: len(cards)]
+        self.assertEqual(top_cards, cards)
