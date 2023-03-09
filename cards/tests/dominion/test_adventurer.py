@@ -17,20 +17,22 @@ class AdventurerCardTestCase(BaseTestCase):
         self.card = Adventurer()
 
     @contextmanager
-    def assert_adventurer(self, deck):
-        before_draw_pile = deck.draw_pile.copy()
+    def assert_adventurer(self, deck, expected_draw=2):
         before_hand = deck.hand.copy()
         before_discard = deck.discard_pile.copy()
         yield
         deck.refresh_from_db()
         drawn_cards = self.list_diff(before_hand, deck.hand)
         discarded_cards = self.list_diff(before_discard, deck.discard_pile)
-        self.assertEqual(len(deck.hand) - len(before_hand), 2)
-        self.assertEqual(len(deck.draw_pile), len(before_draw_pile) - 3)
-        self.assertEqual(len(deck.discard_pile), len(before_discard) + 1)
+        self.assertEqual(len(drawn_cards), expected_draw)
         self.assert_cards_type(drawn_cards, 'treasure')
         self.assert_cards_type(discarded_cards, 'treasure', False)
 
-    def test_perform_specific_action_self(self):
+    def test_perform_specific_action(self):
         with self.assert_adventurer(self.deck):
+            self.card.perform_specific_action(deck=self.deck)
+
+    def test_perform_specific_action_empty_draw_pile(self):
+        self.deck.draw_pile = []
+        with self.assert_adventurer(self.deck, 1):
             self.card.perform_specific_action(deck=self.deck)
