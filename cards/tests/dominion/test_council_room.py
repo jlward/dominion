@@ -8,7 +8,7 @@ from players.factories import PlayerFactory
 from turns.factories import TurnFactory
 
 
-class TestCouncilRoomTestCase(TestCase):
+class CouncilRoomCardTestCase(TestCase):
     def setUp(self):
         super().setUp()
         self.player = PlayerFactory()
@@ -17,7 +17,7 @@ class TestCouncilRoomTestCase(TestCase):
         self.turn = TurnFactory(player=self.player, game=self.game)
         self.deck = self.game.decks.get(player=self.player)
         self.other_deck = self.game.decks.get(player=self.other_player)
-        self.council_room = CouncilRoom()
+        self.card = CouncilRoom()
 
     @contextmanager
     def assert_council_room(self, deck, num_cards):
@@ -32,11 +32,11 @@ class TestCouncilRoomTestCase(TestCase):
 
     def test_perform_specific_action_self(self):
         with self.assert_council_room(self.deck, 0):
-            self.council_room.perform_specific_action(deck=self.deck, turn=self.turn)
+            self.card.perform_specific_action(deck=self.deck, turn=self.turn)
 
     def test_perform_specific_action_other(self):
         with self.assert_council_room(self.other_deck, 1):
-            self.council_room.perform_specific_action(
+            self.card.perform_specific_action(
                 deck=self.other_deck,
                 turn=self.turn,
             )

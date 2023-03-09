@@ -116,7 +116,7 @@ class Adventurer(Card):
     types = [CardTypes.Action]
     card_cost = 6
 
-    def perform_specific_action(self, deck, turn):
+    def perform_specific_action(self, deck):
         revealed_cards = []
         revealed_treasures = []
 

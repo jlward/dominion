@@ -1,8 +1,10 @@
+from collections import Counter
 from contextlib import contextmanager
 
 from django.test import TestCase
 from faker import Faker
 
+from cards import get_cards_from_names
 from games.models import Game
 from players.factories import PlayerFactory
 from turns.models import AdHocTurn
@@ -34,3 +36,11 @@ class BaseTestCase(TestCase):
 
     def build_card_form(self, adhoc_turn, **kwargs):
         return self.card.adhocturn_form(data=kwargs, adhoc_turn=adhoc_turn)
+
+    def list_diff(self, before, after):
+        return list((Counter(after) - Counter(before)).elements())
+
+    def assert_cards_type(self, cards, type, expected=True):
+        is_type = f'is_{type}'
+        for card in get_cards_from_names(cards):
+            self.assertEqual(getattr(card, is_type), expected)
