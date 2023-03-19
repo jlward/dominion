@@ -6,7 +6,7 @@ from players.factories import PlayerFactory
 from turns.factories import TurnFactory
 
 
-class TestWitchTestCase(TestCase):
+class WitchCardTestCase(TestCase):
     def setUp(self):
         super().setUp()
         self.player = PlayerFactory()
