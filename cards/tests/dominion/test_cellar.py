@@ -1,20 +1,20 @@
 from unittest import mock
 
-from cards.kingdom_cards.dominion import Chapel
+from cards.kingdom_cards.dominion import Cellar
 from games.factories import GameFactory
 from players.factories import PlayerFactory
 from testing import BaseTestCase
 from turns.factories import AdHocTurnFactory, TurnFactory
 
 
-class ChapelCardTestCase(BaseTestCase):
+class CellarCardTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.player = PlayerFactory()
         self.game = GameFactory(players=[self.player] + PlayerFactory.create_batch(11))
         self.turn = TurnFactory(player=self.player, game=self.game)
         self.deck = self.game.decks.get(player=self.player)
-        self.card = Chapel()
+        self.card = Cellar()
 
     def test_perform_specific_action(self):
         with self.assert_adhoc_turn_created():
@@ -31,14 +31,14 @@ class ChapelCardTestCase(BaseTestCase):
         )
 
 
-class ChapelFormTestCase(BaseTestCase):
+class CellarFormTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.player = PlayerFactory()
         self.game = GameFactory(players=[self.player] + PlayerFactory.create_batch(11))
         self.turn = TurnFactory(player=self.player, game=self.game)
         self.deck = self.game.decks.get(player=self.player)
-        self.card = Chapel()
+        self.card = Cellar()
         self.adhoc_turn = AdHocTurnFactory(
             player=self.player,
             game=self.game,
@@ -46,20 +46,15 @@ class ChapelFormTestCase(BaseTestCase):
             card=self.card,
         )
 
-    def test_cards_are_trashed(self):
+    def test_cards_are_discarded(self):
         form = self.build_card_form(adhoc_turn=self.adhoc_turn, cards=['Copper'])
         assert form.is_valid()
-        with mock.patch('games.models.Game.trash_cards') as trash_cards:
+        with mock.patch('decks.models.Deck.discard_cards') as discard_cards, mock.patch(
+            'decks.models.Deck.draw_cards',
+        ) as draw_cards:
             form.save()
-        trash_cards.assert_called_once_with(
-            deck=self.deck,
-            turn=self.turn,
-            cards=mock.ANY,
-        )
-
-    def test_more_than_max_not_valid(self):
-        form = self.build_card_form(adhoc_turn=self.adhoc_turn, cards=self.deck.hand)
-        assert not form.is_valid()
+        discard_cards.assert_called_once_with(mock.ANY)
+        draw_cards.assert_called_once_with(1)
 
     def test_is_valid_false_card_not_in_hand(self):
         form = self.build_card_form(adhoc_turn=self.adhoc_turn, cards=['Witch'])
