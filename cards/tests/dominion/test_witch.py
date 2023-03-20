@@ -13,7 +13,7 @@ class WitchCardTestCase(TestCase):
         self.game = GameFactory(players=[self.player] + PlayerFactory.create_batch(11))
         self.turn = TurnFactory(player=self.player, game=self.game)
         self.deck = self.game.decks.get(player=self.player)
-        self.witch = Witch()
+        self.card = Witch()
 
     def assert_witch(self):
         self.game.refresh_from_db()
@@ -34,5 +34,5 @@ class WitchCardTestCase(TestCase):
             self.assertIn('Curse', player_deck.discard_pile)
 
     def test_perform_specific_action(self):
-        self.witch.perform_specific_action(deck=self.deck, turn=self.turn)
+        self.card.perform_specific_action(deck=self.deck, turn=self.turn)
         self.assert_witch()
