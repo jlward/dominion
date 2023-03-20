@@ -30,7 +30,7 @@ class ChancellorCardTestCase(BaseTestCase):
 
 
 # form.save() does nothing
-# these tests don't work. they do nothing at all. they don't seem to enter the save() of the form. missing some major piece here.
+# these tests don't work. they do nothing at all. they don't seem to enter the save() of the form. missing some major piece here..
 class ChancellorFormTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
