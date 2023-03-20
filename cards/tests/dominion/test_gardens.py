@@ -22,3 +22,7 @@ class GardensCardTestCase(TestCase):
     def test_victory_points_med_deck(self):
         self.deck.draw_pile.extend(['Copper'] * 22)
         self.assertEqual(self.card.get_victory_points(self.deck), 3)
+
+    def test_victory_points_large_deck(self):
+        self.deck.draw_pile.extend(['Village'] * 90)
+        self.assertEqual(self.card.get_victory_points(self.deck), 10)
