@@ -18,8 +18,8 @@ class AdventurerCardTestCase(BaseTestCase):
 
     @contextmanager
     def assert_adventurer(self, deck, expected_draw=2):
-        before_hand = deck.hand.copy()
-        before_discard = deck.discard_pile.copy()
+        before_hand = deck.hand[:]
+        before_discard = deck.discard_pile[:]
         yield
         deck.refresh_from_db()
         drawn_cards = self.list_diff(before_hand, deck.hand)
