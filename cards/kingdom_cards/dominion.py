@@ -142,7 +142,7 @@ class Feast(Card):
 
     def perform_specific_action(self, deck, turn):
         deck.trash_cards(cards=[Feast()], source='played_cards')
-        AdHocTurn.objects.create(
+        return AdHocTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,

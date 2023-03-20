@@ -106,3 +106,5 @@ class Deck(models.Model):
         for card in cards:
             self.game.trash_pile.append(card.name)
             card_source.pop(card_source.index(card.name))
+        self.save()
+        self.game.save()
