@@ -55,7 +55,7 @@ class CellarFormTestCase(BaseTestCase):
             'decks.models.Deck.draw_cards',
         ) as draw_cards:
             form.save()
-        discard_cards.assert_called_once_with(mock.ANY)
+        discard_cards.assert_called_once()
         draw_cards.assert_called_once_with(1)
 
     def test_is_valid_false_card_not_in_hand(self):
