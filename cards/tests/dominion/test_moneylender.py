@@ -30,7 +30,7 @@ class MoneylenderCardTestCase(BaseTestCase):
 
     def test_perform_specific_action_no_copper(self):
         self.deck.hand = ['Estate'] * 4
-        with self.assert_adhoc_turn_not_created():
+        with self.assert_adhoc_turn_created(count=0):
             self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
