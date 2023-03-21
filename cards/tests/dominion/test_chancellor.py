@@ -46,20 +46,26 @@ class ChancellorFormTestCase(BaseTestCase):
             card=self.card,
         )
 
-    def test_deck_not_in_discard(self):
+    def test_decline_deck_to_discard(self):
         discard = self.deck.discard_pile[:]
         draw = self.deck.draw_pile[:]
-        form = self.build_card_form(adhoc_turn=self.adhoc_turn, selection='1')
+        form = self.build_card_form(
+            adhoc_turn=self.adhoc_turn,
+            selection=self.card.adhocturn_form.selection_no,
+        )
         assert form.is_valid()
         form.save()
         self.deck.refresh_from_db()
         self.assertEqual(self.deck.discard_pile, discard)
         self.assertEqual(self.deck.draw_pile, draw)
 
-    def test_deck_in_discard(self):
+    def test_accept_deck_to_discard(self):
         discard = self.deck.discard_pile[:]
         draw = self.deck.draw_pile[:]
-        form = self.build_card_form(adhoc_turn=self.adhoc_turn, selection='0')
+        form = self.build_card_form(
+            adhoc_turn=self.adhoc_turn,
+            selection=self.card.adhocturn_form.selection_yes,
+        )
         assert form.is_valid()
         form.save()
         self.deck.refresh_from_db()

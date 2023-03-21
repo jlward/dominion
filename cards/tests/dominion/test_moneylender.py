@@ -56,7 +56,10 @@ class MoneylenderFormTestCase(BaseTestCase):
         trash = self.game.trash_pile[:]
         hand = self.deck.hand[:]
         money = self.turn.available_money
-        form = self.build_card_form(adhoc_turn=self.adhoc_turn, selection='1')
+        form = self.build_card_form(
+            adhoc_turn=self.adhoc_turn,
+            selection=self.card.adhocturn_form.selection_no,
+        )
         assert form.is_valid()
         form.save()
         self.deck.refresh_from_db()
@@ -70,7 +73,10 @@ class MoneylenderFormTestCase(BaseTestCase):
         trash = self.game.trash_pile[:]
         hand = self.deck.hand[:]
         money = self.turn.available_money
-        form = self.build_card_form(adhoc_turn=self.adhoc_turn, selection='0')
+        form = self.build_card_form(
+            adhoc_turn=self.adhoc_turn,
+            selection=self.card.adhocturn_form.selection_yes,
+        )
         assert form.is_valid()
         form.save()
         self.deck.refresh_from_db()
