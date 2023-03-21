@@ -55,6 +55,7 @@ class MilitiaFormTestCase(BaseTestCase):
 
     def test_hand_full(self):
         deck = self.game.decks.get(player=self.target_player)
+        # cards = the cards being kept
         form = self.build_card_form(adhoc_turn=self.adhoc_turn, cards=deck.hand[:3])
         assert form.is_valid()
         with mock.patch('decks.models.Deck.discard_cards') as discard_cards:
