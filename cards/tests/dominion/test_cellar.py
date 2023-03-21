@@ -46,7 +46,7 @@ class CellarFormTestCase(BaseTestCase):
             card=self.card,
         )
 
-    def test_cards_are_discarded(self):
+    def test_cards_are_discarded_cards_are_drawn(self):
         form = self.build_card_form(adhoc_turn=self.adhoc_turn, cards=['Copper'])
         assert form.is_valid()
         with mock.patch(
