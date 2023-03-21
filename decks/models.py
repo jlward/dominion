@@ -101,7 +101,7 @@ class Deck(models.Model):
     # Assuming player can only trash from hand
     def trash_cards(self, cards, source='hand'):
         if source not in ['hand', 'played_cards']:
-            raise ValueError('invaid source')
+            raise ValueError('invalid source')
         card_source = getattr(self, source)
         for card in cards:
             self.game.trash_pile.append(card.name)
