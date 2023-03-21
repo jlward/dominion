@@ -196,15 +196,19 @@ class Militia(Card):
     adhocturn_form = MilitiaForm
 
     def perform_specific_action(self, deck, turn):
+        results = []
         for player in deck.game.players.all():
             if player.pk == turn.player_id:
                 continue
-            AdHocTurn.objects.create(
-                turn=turn,
-                player=player,
-                game=turn.game,
-                card=self,
+            results.append(
+                AdHocTurn.objects.create(
+                    turn=turn,
+                    player=player,
+                    game=turn.game,
+                    card=self,
+                ),
             )
+        return results
 
 
 class Mine(Card):
