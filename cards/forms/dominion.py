@@ -47,7 +47,7 @@ class CellarForm(ChooseCardsForm):
 
 class ChancellorForm(SimpleForm):
     def save(self):
-        if self.cleaned_data['selection'] != '0':
+        if self.cleaned_data['selection'] != self.selection_yes:
             return
         self.deck.discard_pile.extend(self.deck.draw_pile)
         self.deck.draw_pile = []
@@ -140,7 +140,7 @@ class MineForm(ChooseCardsForm):
 
 class MoneylenderForm(SimpleForm):
     def save(self):
-        if self.cleaned_data['selection'] != '0':
+        if self.cleaned_data['selection'] != self.selection_yes:
             return
         self.deck.trash_cards([Copper()])
         self.turn.available_money += 3

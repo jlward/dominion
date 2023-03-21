@@ -2,10 +2,12 @@ from django import forms
 
 
 class SimpleForm(forms.Form):
+    selection_yes = '1'
+    selection_no = '0'
     selection = forms.ChoiceField(
         choices=[
-            (0, 'Yes'),
-            (1, 'No'),
+            (selection_yes, 'Yes'),
+            (selection_no, 'No'),
         ],
         widget=forms.RadioSelect(),
     )

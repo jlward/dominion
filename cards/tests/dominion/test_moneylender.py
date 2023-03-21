@@ -1,18 +1,18 @@
-from cards.kingdom_cards.dominion import Chancellor
+from cards.kingdom_cards.dominion import Moneylender
 from games.factories import GameFactory
 from players.factories import PlayerFactory
 from testing import BaseTestCase
 from turns.factories import AdHocTurnFactory, TurnFactory
 
 
-class ChancellorCardTestCase(BaseTestCase):
+class MoneylenderCardTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.player = PlayerFactory()
         self.game = GameFactory(players=[self.player] + PlayerFactory.create_batch(11))
         self.turn = TurnFactory(player=self.player, game=self.game)
         self.deck = self.game.decks.get(player=self.player)
-        self.card = Chancellor()
+        self.card = Moneylender()
 
     def test_perform_specific_action(self):
         with self.assert_adhoc_turn_created():
@@ -28,17 +28,23 @@ class ChancellorCardTestCase(BaseTestCase):
             card=self.card,
         )
 
+    def test_perform_specific_action_no_copper(self):
+        self.deck.hand = ['Estate'] * 4
+        with self.assert_adhoc_turn_created(count=0):
+            self.card.perform_specific_action(
+                deck=self.deck,
+                turn=self.turn,
+            )
 
-# form.save() does nothing
-# these tests don't work. they do nothing at all. they don't seem to enter the save() of the form. missing some major piece here..
-class ChancellorFormTestCase(BaseTestCase):
+
+class MoneylenderFormTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.player = PlayerFactory()
         self.game = GameFactory(players=[self.player] + PlayerFactory.create_batch(11))
         self.turn = TurnFactory(player=self.player, game=self.game)
         self.deck = self.game.decks.get(player=self.player)
-        self.card = Chancellor()
+        self.card = Moneylender()
         self.adhoc_turn = AdHocTurnFactory(
             player=self.player,
             game=self.game,
@@ -46,9 +52,10 @@ class ChancellorFormTestCase(BaseTestCase):
             card=self.card,
         )
 
-    def test_decline_deck_to_discard(self):
-        discard = self.deck.discard_pile[:]
-        draw = self.deck.draw_pile[:]
+    def test_decline_trashing(self):
+        trash = self.game.trash_pile[:]
+        hand = self.deck.hand[:]
+        money = self.turn.available_money
         form = self.build_card_form(
             adhoc_turn=self.adhoc_turn,
             selection=self.card.adhocturn_form.selection_no,
@@ -56,12 +63,16 @@ class ChancellorFormTestCase(BaseTestCase):
         assert form.is_valid()
         form.save()
         self.deck.refresh_from_db()
-        self.assertEqual(self.deck.discard_pile, discard)
-        self.assertEqual(self.deck.draw_pile, draw)
+        self.game.refresh_from_db()
+        self.turn.refresh_from_db()
+        self.assertEqual(self.game.trash_pile, trash)
+        self.assertEqual(self.deck.hand, hand)
+        self.assertEqual(self.turn.available_money, money)
 
-    def test_accept_deck_to_discard(self):
-        discard = self.deck.discard_pile[:]
-        draw = self.deck.draw_pile[:]
+    def test_trash_copper(self):
+        trash = self.game.trash_pile[:]
+        hand = self.deck.hand[:]
+        money = self.turn.available_money
         form = self.build_card_form(
             adhoc_turn=self.adhoc_turn,
             selection=self.card.adhocturn_form.selection_yes,
@@ -69,5 +80,6 @@ class ChancellorFormTestCase(BaseTestCase):
         assert form.is_valid()
         form.save()
         self.deck.refresh_from_db()
-        self.assertEqual(self.deck.discard_pile, discard + draw)
-        self.assertEqual(self.deck.draw_pile, [])
+        self.assertEqual(len(self.game.trash_pile), len(trash) + 1)
+        self.assertEqual(len(self.deck.hand), len(hand) - 1)
+        self.assertEqual(self.turn.available_money, money + 3)

@@ -239,7 +239,7 @@ class Moneylender(Card):
     def perform_specific_action(self, deck, turn):
         if 'Copper' not in deck.hand:
             return
-        AdHocTurn.objects.create(
+        return AdHocTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
