@@ -83,7 +83,8 @@ class MilitiaFormTestCase(BaseTestCase):
         assert not form.is_valid()
 
     def test_keep_invalid_cards(self):
-        form = (
-            self.build_card_form(adhoc_turn=self.adhoc_turn, cards=['Witch', 'Witch']),
+        form = self.build_card_form(
+            adhoc_turn=self.adhoc_turn,
+            cards=['Witch', 'Witch'],
         )
         assert not form.is_valid()
