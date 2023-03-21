@@ -28,6 +28,13 @@ class BaseTestCase(TestCase):
         after_turn_count = AdHocTurn.objects.count()
         self.assertEqual(after_turn_count, before_turn_count + count)
 
+    @contextmanager
+    def assert_adhoc_turn_not_created(self, count=1):
+        before_turn_count = AdHocTurn.objects.count()
+        yield
+        after_turn_count = AdHocTurn.objects.count()
+        self.assertEqual(after_turn_count, before_turn_count)
+
     def assert_adhoc_turn(self, *, adhoc_turn, turn, player, game, card):
         self.assertEqual(adhoc_turn.turn, turn)
         self.assertEqual(adhoc_turn.player, player)
