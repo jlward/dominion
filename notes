@@ -1,0 +1,6 @@
+- queued to stack
+  - delete migrations and rebuild
+- property/field for turns
+  - deck and target deck
+- maybe new model for Turns
+  - Turn vs SimpleAction, SpecificAction, QueueedAction......

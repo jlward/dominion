@@ -102,6 +102,11 @@ class Game(models.Model):
         if adhoc_turns.exists():
             return adhoc_turns[0]
 
+        QueuedTurn = apps.get_model('turns', 'QueuedTurn')
+        adhoc_turn = QueuedTurn.objects.process_for_game(self)
+        if adhoc_turn:
+            return adhoc_turn
+
         return self.turns.get(is_current_turn=True)
 
     def end_turn(self, turn):

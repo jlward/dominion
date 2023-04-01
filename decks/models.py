@@ -51,6 +51,10 @@ class Deck(models.Model):
     def no_actions(self):
         return list(card for card in self.real_hand if card.is_action) == []
 
+    @property
+    def no_treasure(self):
+        return list(card for card in self.real_hand if card.is_treasure) == []
+
     def __len__(self):
         return len(self.all_cards)
 

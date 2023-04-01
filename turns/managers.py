@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.db import models
 
 
@@ -6,12 +7,29 @@ class TurnManager(models.Manager):
 
 
 class AdHocTurnManager(models.Manager):
-    def create(self, *args, **kwargs):
-        game = kwargs['game']
-        turns = self.filter(game=game, is_current_turn=True).order_by('turn_order')[1:]
-        obj = super().create(*args, **kwargs)
-        for i, turn in enumerate(turns):
-            turn.turn_order = obj.turn_order + i + 1
-            turn.save()
+    pass
 
-        return obj
+
+class QueuedTurnManager(models.Manager):
+    def process_for_game(self, game):
+        queued_turns = game.queued_turns.filter(is_current_turn=True).order_by(
+            '-turn_order',
+        )
+        AdHocTurn = apps.get_model('turns', 'AdHocTurn')
+        for turn in queued_turns:
+            turn.is_current_turn = False
+            turn.save()
+            if turn.perform_simple_actions:
+                deck = turn.game.decks.get(player=turn.player)
+                turn.card.perform_simple_actions(deck, turn.turn)
+                continue
+            turn.card.perform_specific_queued_action(turn)
+            if turn.card.should_create_adhoc_turn(turn):
+                return AdHocTurn.objects.create(
+                    turn=turn.turn,
+                    player=turn.player,
+                    game=turn.game,
+                    card=turn.card,
+                    target_player=turn.target_player,
+                )
+        return None
