@@ -277,6 +277,7 @@ class Spy(Card):
     adhocturn_form = SpyForm
 
     def perform_specific_action(self, deck, turn):
+        ad_hoc_turns = []
         for player in deck.game.players.all():
             player_deck = player.decks.get(game=deck.game)
             if len(player_deck.draw_pile) < 1:
@@ -284,13 +285,15 @@ class Spy(Card):
                 player_deck.save()
                 if len(player_deck.draw_pile) < 1:
                     continue
-            AdHocTurn.objects.create(
+            ad_hoc_turn = AdHocTurn.objects.create(
                 turn=turn,
                 player=turn.player,
                 game=turn.game,
                 card=self,
                 target_player=player,
             )
+            ad_hoc_turns.append(ad_hoc_turn)
+        return ad_hoc_turns
 
 
 # class Thief(Card):

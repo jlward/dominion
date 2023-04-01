@@ -217,7 +217,7 @@ class SpyForm(SimpleForm):
         return get_cards_from_names([card_name])
 
     def save(self):
-        if self.cleaned_data['selection'] != '0':
+        if self.cleaned_data['selection'] != self.selection_yes:
             return
         target_deck = self.game.decks.get(player=self.adhoc_turn.target_player)
         target_deck.draw_cards(1, destination='discard_pile')
