@@ -68,3 +68,10 @@ class SpyFormTestCase(BaseTestCase):
         with mock.patch('decks.models.Deck.draw_cards') as draw_cards:
             form.save()
         draw_cards.assert_not_called()
+
+    def test_extra_info(self):
+        form = self.build_card_form(
+            adhoc_turn=self.adhoc_turn,
+        )
+        expected = f"This is {self.player}'s deck"
+        self.assertEqual(form.extra_info(), expected)
