@@ -17,13 +17,13 @@ class ThroneRoomCardTestCase(BaseTestCase):
         self.card = ThroneRoom()
 
     def test_perform_specific_action(self):
-        with self.assert_adhoc_turn_created():
-            adhoc_turn = self.card.perform_specific_action(
+        with self.assert_queued_turn_created():
+            queued_turn = self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
             )
-        self.assert_adhoc_turn(
-            adhoc_turn=adhoc_turn,
+        self.assert_queued_turn(
+            queued_turn=queued_turn,
             turn=self.turn,
             player=self.player,
             game=self.game,

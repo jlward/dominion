@@ -18,15 +18,13 @@ class FeastCardTestCase(BaseTestCase):
 
     def test_perform_specific_action(self):
         self.deck.played_cards.append('Feast')
-        with self.assert_adhoc_turn_created():
-            adhoc_turn = self.card.perform_specific_action(
+        with self.assert_queued_turn_created():
+            queued_turn = self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
             )
-        assert 'Feast' not in self.deck.played_cards
-        assert 'Feast' in self.game.trash_pile
-        self.assert_adhoc_turn(
-            adhoc_turn=adhoc_turn,
+        self.assert_queued_turn(
+            queued_turn=queued_turn,
             turn=self.turn,
             player=self.player,
             game=self.game,

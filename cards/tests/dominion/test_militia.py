@@ -17,18 +17,20 @@ class MilitiaCardTestCase(BaseTestCase):
         self.card = Militia()
 
     def test_perform_specific_action(self):
-        with self.assert_adhoc_turn_created(len(self.game.players.all()) - 1):
-            adhoc_turns = self.card.perform_specific_action(
+        with self.assert_queued_turn_created(len(self.game.players.all())):
+            queued_turns = self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
             )
         for player in self.game.players.all():
             if player.pk == self.player.pk:
                 continue
-            player_turns = [turn for turn in adhoc_turns if turn.player.pk == player.pk]
+            player_turns = [
+                turn for turn in queued_turns if turn.player.pk == player.pk
+            ]
             self.assertEqual(len(player_turns), 1)
-            self.assert_adhoc_turn(
-                adhoc_turn=player_turns[0],
+            self.assert_queued_turn(
+                queued_turn=player_turns[0],
                 turn=self.turn,
                 player=player,
                 game=self.game,

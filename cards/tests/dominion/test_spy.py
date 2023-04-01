@@ -17,19 +17,21 @@ class SpyCardTestCase(BaseTestCase):
         self.card = Spy()
 
     def test_perform_specific_action(self):
-        with self.assert_adhoc_turn_created(12):
-            adhoc_turns = self.card.perform_specific_action(
+        with self.assert_queued_turn_created(13):
+            queued_turns = self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
             )
         target_players = []
-        for adhoc_turn in adhoc_turns:
-            self.assertEqual(adhoc_turn.turn, self.turn)
-            self.assertEqual(adhoc_turn.player, self.player)
-            self.assertEqual(adhoc_turn.game, self.game)
-            self.assertEqual(adhoc_turn.card, self.card)
+        for queued_turn in queued_turns:
+            if queued_turn.perform_simple_actions:
+                continue
+            self.assertEqual(queued_turn.turn, self.turn)
+            self.assertEqual(queued_turn.player, self.player)
+            self.assertEqual(queued_turn.game, self.game)
+            self.assertEqual(queued_turn.card, self.card)
 
-            target_players.append(adhoc_turn.target_player)
+            target_players.append(queued_turn.target_player)
         self.assertCountEqual(target_players, self.game.players.all())
 
 

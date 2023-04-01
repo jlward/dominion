@@ -15,17 +15,27 @@ class ChancellorCardTestCase(BaseTestCase):
         self.card = Chancellor()
 
     def test_perform_specific_action(self):
-        with self.assert_adhoc_turn_created():
-            adhoc_turn = self.card.perform_specific_action(
+        with self.assert_queued_turn_created(2):
+            queued_turns = self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
             )
-        self.assert_adhoc_turn(
-            adhoc_turn=adhoc_turn,
+        queued_turn = queued_turns[0]
+        self.assert_queued_turn(
+            queued_turn=queued_turn,
             turn=self.turn,
             player=self.player,
             game=self.game,
             card=self.card,
+        )
+        queued_turn = queued_turns[1]
+        self.assert_queued_turn(
+            queued_turn=queued_turn,
+            turn=self.turn,
+            player=self.player,
+            game=self.game,
+            card=self.card,
+            perform_simple_actions=True,
         )
 
 

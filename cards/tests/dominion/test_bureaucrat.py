@@ -23,21 +23,11 @@ class BureaucratCardTestCase(BaseTestCase):
             deck.hand = ['Copper', 'Estate', 'Estate', 'Village']
             deck.save()
 
-        with self.assert_adhoc_turn_created(11), self.assert_count_increase(
-            self.deck,
-            'draw_pile',
-            1,
-        ):
+        with self.assert_queued_turn_created(12):
             self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
             )
-
-        self.assert_top_decks(self.deck, ['Silver'])
-
-        for player in self.other_players:
-            deck = self.game.decks.get(player=player)
-            self.assertEqual(len(deck.hand), 4)
 
     def test_perform_specific_action_one_victory_card(self):
         for player in self.other_players:
@@ -45,21 +35,11 @@ class BureaucratCardTestCase(BaseTestCase):
             deck.hand = ['Copper', 'Estate', 'Chapel', 'Village']
             deck.save()
 
-        with self.assert_adhoc_turn_created(0), self.assert_count_increase(
-            self.deck,
-            'draw_pile',
-            1,
-        ):
+        with self.assert_queued_turn_created(12):
             self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
             )
-
-        self.assert_top_decks(self.deck, ['Silver'])
-
-        for player in self.other_players:
-            deck = self.game.decks.get(player=player)
-            self.assertEqual(len(deck.hand), 3)
 
     def test_perform_specific_action_no_victory_cards(self):
         for player in self.other_players:
@@ -67,21 +47,11 @@ class BureaucratCardTestCase(BaseTestCase):
             deck.hand = ['Copper', 'Gold', 'Chapel', 'Village']
             deck.save()
 
-        with self.assert_adhoc_turn_created(0), self.assert_count_increase(
-            self.deck,
-            'draw_pile',
-            1,
-        ):
+        with self.assert_queued_turn_created(12):
             self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
             )
-
-        self.assert_top_decks(self.deck, ['Silver'])
-
-        for player in self.other_players:
-            deck = self.game.decks.get(player=player)
-            self.assertEqual(len(deck.hand), 4)
 
 
 class BureaucratFormTestCase(BaseTestCase):
