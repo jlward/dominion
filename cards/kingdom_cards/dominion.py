@@ -61,12 +61,19 @@ class Bureaucrat(Card):
                     card=self,
                 ),
             )
+        queued_turns.append(
+            QueuedTurn.objects.create(
+                turn=turn,
+                player=player,
+                game=turn.game,
+                card=self,
+                perform_simple_actions=True,
+            ),
+        )
         return queued_turns
 
-    def perform_specific_queued_action(self, queued_turn):
-        super().perform_specific_queued_action(queued_turn)
-        # TODO stop doing this. add deck to turns
-        deck = queued_turn.game.decks.get(player=queued_turn.player)
+    def perform_simple_actions(self, deck, turn):
+        super().perform_simple_actions(deck, turn)
         deck.game.gain_card(deck, Silver(), destination='draw_pile')
         deck.save()
 
@@ -208,7 +215,10 @@ class Feast(Card):
         super().perform_specific_queued_action(queued_turn)
         # TODO stop doing this. add deck to turns
         deck = queued_turn.game.decks.get(player=queued_turn.player)
-        deck.trash_cards(cards=[Feast()], source='played_cards')
+        try:
+            deck.trash_cards(cards=[Feast()], source='played_cards')
+        except ValueError:
+            pass
 
     def should_create_adhoc_turn(self, queued_turn):
         return True
