@@ -7,6 +7,7 @@ from cards.forms.dominion import (
     ChancellorForm,
     ChapelForm,
     FeastForm,
+    LibraryForm,
     MilitiaForm,
     MineForm,
     MoneylenderForm,
@@ -248,8 +249,38 @@ class Laboratory(Card):
     extra_actions = 1
 
 
-# class Library(Card):
-#     pass
+class Library(Card):
+    types = [CardTypes.Action]
+    card_cost = 5
+    adhocturn_action_title = 'Add card to hand?'
+    adhocturn_form = LibraryForm
+
+    def perform_specific_action(self, deck, turn):
+        return QueuedTurn.objects.create(
+            turn=turn,
+            player=turn.player,
+            game=turn.game,
+            card=self,
+        )
+
+    def should_create_adhoc_turn(self, queued_turn):
+        deck = queued_turn.game.decks.get(player=queued_turn.player)
+        result = False
+        while len(deck.hand) < 7:
+            card_name = deck.top_deck()
+            if card_name is None:
+                break
+            card = get_card_from_name(card_name)
+            if card.is_action:
+                deck.draw_pile.insert(0, card.name)
+                result = True
+                break
+            deck.hand.append(card.name)
+        if not result:
+            deck.discard_pile.extend(deck.narnia_pile)
+            deck.narnia_pile = []
+        deck.save()
+        return result
 
 
 class Market(Card):

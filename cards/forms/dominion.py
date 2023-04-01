@@ -3,6 +3,7 @@ from django import forms
 from cards import get_cards_from_names
 from cards.forms.base.simple import SimpleForm
 from cards.kingdom_cards.base_cards import Copper
+from turns.models import QueuedTurn
 
 from .base.choose_cards import ChooseCardsForm
 
@@ -65,6 +66,35 @@ class FeastForm(ChooseCardsForm):
         self.game.gain_card(self.deck, self.cleaned_data['cards'][0])
         self.deck.save()
         self.game.save()
+
+
+class LibraryForm(SimpleForm):
+    def cards_to_display(self):
+        deck = self.game.decks.get(
+            player=self.adhoc_turn.player,
+        )
+        card_name = deck.draw_pile.pop(0)
+        return get_cards_from_names([card_name])
+
+    def save(self):
+        deck = self.game.decks.get(
+            player=self.adhoc_turn.player,
+        )
+        if self.cleaned_data['selection'] == self.selection_yes:
+            deck.draw_cards(1)
+        else:
+            deck.draw_cards(1, destination='narnia_pile')
+        if len(deck.hand) < 7:
+            QueuedTurn.objects.create(
+                turn=self.turn,
+                player=self.player,
+                game=self.game,
+                card=self.adhoc_turn.card,
+            )
+        else:
+            deck.discard_pile.extend(deck.narnia_pile)
+            deck.narnia_pile = []
+        deck.save()
 
 
 class MilitiaForm(ChooseCardsForm):
