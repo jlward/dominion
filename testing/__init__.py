@@ -5,6 +5,7 @@ from django.test import TestCase
 from faker import Faker
 
 from cards import get_cards_from_names
+from cards.forms.base.simple import SimpleForm
 from games.models import Game
 from players.factories import PlayerFactory
 from turns.models import AdHocTurn
@@ -12,6 +13,8 @@ from turns.models import AdHocTurn
 
 class BaseTestCase(TestCase):
     faker = Faker()
+    SELECTION_YES = SimpleForm.selection_yes
+    SELECTION_NO = SimpleForm.selection_no
 
     def create_game(self, kingdom_cards=None):
         if kingdom_cards is None:
