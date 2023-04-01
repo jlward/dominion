@@ -16,7 +16,7 @@ from cards.forms.dominion import (
     WorkshopForm,
 )
 from cards.kingdom_cards.base_cards import Curse, Silver
-from turns.models import AdHocTurn
+from turns.models import QueuedTurn
 
 
 class Adventurer(Card):
@@ -49,25 +49,37 @@ class Bureaucrat(Card):
     adhocturn_form = BureaucratForm
 
     def perform_specific_action(self, deck, turn):
-        deck.game.gain_card(deck, Silver(), destination='draw_pile')
-        deck.save()
+        queued_turns = []
         for player in deck.game.players.all():
             if player.pk == turn.player_id:
                 continue
-            player_deck = player.decks.get(game=deck.game)
-            v_in_hand = list(card for card in player_deck.real_hand if card.is_victory)
-            if not v_in_hand:
-                continue
-            if len(v_in_hand) > 1:
-                AdHocTurn.objects.create(
+            queued_turns.append(
+                QueuedTurn.objects.create(
                     turn=turn,
                     player=player,
                     game=turn.game,
                     card=self,
-                )
-            else:
-                player_deck.move_to_top_deck(v_in_hand[0])
-                player_deck.save()
+                ),
+            )
+        return queued_turns
+
+    def perform_specific_queued_action(self, queued_turn):
+        super().perform_specific_queued_action(queued_turn)
+        # TODO stop doing this. add deck to turns
+        deck = queued_turn.game.decks.get(player=queued_turn.player)
+        deck.game.gain_card(deck, Silver(), destination='draw_pile')
+        deck.save()
+
+    def should_create_adhoc_turn(self, queued_turn):
+        player_deck = queued_turn.player.decks.get(game=queued_turn.game)
+        v_in_hand = list(card for card in player_deck.real_hand if card.is_victory)
+        if not v_in_hand:
+            return False
+        if len(v_in_hand) > 1:
+            return True
+        player_deck.move_to_top_deck(v_in_hand[0])
+        player_deck.save()
+        return False
 
 
 class Cellar(Card):
@@ -78,12 +90,31 @@ class Cellar(Card):
     adhocturn_form = CellarForm
 
     def perform_specific_action(self, deck, turn):
-        return AdHocTurn.objects.create(
-            turn=turn,
-            player=turn.player,
-            game=turn.game,
-            card=self,
+        queued_turns = []
+        queued_turns.append(
+            QueuedTurn.objects.create(
+                turn=turn,
+                player=turn.player,
+                game=turn.game,
+                card=self,
+            ),
         )
+        queued_turns.append(
+            QueuedTurn.objects.create(
+                turn=turn,
+                player=turn.player,
+                game=turn.game,
+                card=self,
+                perform_simple_actions=True,
+            ),
+        )
+        return queued_turns
+
+    def should_create_adhoc_turn(self, queued_turn):
+        deck = queued_turn.game.decks.get(player=queued_turn.player)
+        if not deck.hand:
+            return False
+        return True
 
 
 class Chancellor(Card):
@@ -94,12 +125,31 @@ class Chancellor(Card):
     adhocturn_form = ChancellorForm
 
     def perform_specific_action(self, deck, turn):
-        return AdHocTurn.objects.create(
-            turn=turn,
-            player=turn.player,
-            game=turn.game,
-            card=self,
+        queued_turns = []
+        queued_turns.append(
+            QueuedTurn.objects.create(
+                turn=turn,
+                player=turn.player,
+                game=turn.game,
+                card=self,
+            ),
         )
+        queued_turns.append(
+            QueuedTurn.objects.create(
+                turn=turn,
+                player=turn.player,
+                game=turn.game,
+                card=self,
+                perform_simple_actions=True,
+            ),
+        )
+        return queued_turns
+
+    def should_create_adhoc_turn(self, queued_turn):
+        deck = queued_turn.game.decks.get(player=queued_turn.player)
+        if not deck.draw_pile:
+            return False
+        return True
 
 
 class Chapel(Card):
@@ -109,12 +159,18 @@ class Chapel(Card):
     adhocturn_form = ChapelForm
 
     def perform_specific_action(self, deck, turn):
-        return AdHocTurn.objects.create(
+        return QueuedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
+
+    def should_create_adhoc_turn(self, queued_turn):
+        deck = queued_turn.game.decks.get(player=queued_turn.player)
+        if not deck.hand:
+            return False
+        return True
 
 
 class CouncilRoom(Card):
@@ -141,13 +197,21 @@ class Feast(Card):
     adhocturn_form = FeastForm
 
     def perform_specific_action(self, deck, turn):
-        deck.trash_cards(cards=[Feast()], source='played_cards')
-        return AdHocTurn.objects.create(
+        return QueuedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
+
+    def perform_specific_queued_action(self, queued_turn):
+        super().perform_specific_queued_action(queued_turn)
+        # TODO stop doing this. add deck to turns
+        deck = queued_turn.game.decks.get(player=queued_turn.player)
+        deck.trash_cards(cards=[Feast()], source='played_cards')
+
+    def should_create_adhoc_turn(self, queued_turn):
+        return True
 
 
 class Festival(Card):
@@ -196,19 +260,34 @@ class Militia(Card):
     adhocturn_form = MilitiaForm
 
     def perform_specific_action(self, deck, turn):
-        results = []
+        queued_turns = []
         for player in deck.game.players.all():
             if player.pk == turn.player_id:
                 continue
-            results.append(
-                AdHocTurn.objects.create(
+            queued_turns.append(
+                QueuedTurn.objects.create(
                     turn=turn,
                     player=player,
                     game=turn.game,
                     card=self,
                 ),
             )
-        return results
+        queued_turns.append(
+            QueuedTurn.objects.create(
+                turn=turn,
+                player=turn.player,
+                game=turn.game,
+                card=self,
+                perform_simple_actions=True,
+            ),
+        )
+        return queued_turns
+
+    def should_create_adhoc_turn(self, queued_turn):
+        player_deck = queued_turn.player.decks.get(game=queued_turn.game)
+        if len(player_deck.hand) < 4:
+            return False
+        return True
 
 
 class Mine(Card):
@@ -218,12 +297,18 @@ class Mine(Card):
     adhocturn_form = MineForm
 
     def perform_specific_action(self, deck, turn):
-        return AdHocTurn.objects.create(
+        return QueuedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
+
+    def should_create_adhoc_turn(self, queued_turn):
+        player_deck = queued_turn.player.decks.get(game=queued_turn.game)
+        if player_deck.no_treasure:
+            return False
+        return True
 
 
 # class Moat(Card):
@@ -237,14 +322,18 @@ class Moneylender(Card):
     adhocturn_form = MoneylenderForm
 
     def perform_specific_action(self, deck, turn):
-        if 'Copper' not in deck.hand:
-            return
-        return AdHocTurn.objects.create(
+        return QueuedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
+
+    def should_create_adhoc_turn(self, queued_turn):
+        player_deck = queued_turn.player.decks.get(game=queued_turn.game)
+        if 'Copper' not in player_deck.hand:
+            return False
+        return True
 
 
 class Remodel(Card):
@@ -254,12 +343,19 @@ class Remodel(Card):
     adhocturn_form = RemodelForm
 
     def perform_specific_action(self, deck, turn):
-        return AdHocTurn.objects.create(
+        return QueuedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
+
+    def should_create_adhoc_turn(self, queued_turn):
+        deck = queued_turn.game.decks.get(player=queued_turn.player)
+        hand = deck.hand
+        if not hand:
+            return False
+        return True
 
 
 class Smithy(Card):
@@ -277,23 +373,36 @@ class Spy(Card):
     adhocturn_form = SpyForm
 
     def perform_specific_action(self, deck, turn):
-        ad_hoc_turns = []
+        queued_turns = []
         for player in deck.game.players.all():
-            player_deck = player.decks.get(game=deck.game)
-            if len(player_deck.draw_pile) < 1:
-                player_deck.full_shuffle()
-                player_deck.save()
-                if len(player_deck.draw_pile) < 1:
-                    continue
-            ad_hoc_turn = AdHocTurn.objects.create(
+            queued_turns.append(
+                QueuedTurn.objects.create(
+                    turn=turn,
+                    player=turn.player,
+                    game=turn.game,
+                    card=self,
+                    target_player=player,
+                ),
+            )
+        queued_turns.append(
+            QueuedTurn.objects.create(
                 turn=turn,
                 player=turn.player,
                 game=turn.game,
                 card=self,
-                target_player=player,
-            )
-            ad_hoc_turns.append(ad_hoc_turn)
-        return ad_hoc_turns
+                perform_simple_actions=True,
+            ),
+        )
+        return queued_turns
+
+    def should_create_adhoc_turn(self, queued_turn):
+        player_deck = queued_turn.target_player.decks.get(game=queued_turn.game)
+        if len(player_deck.draw_pile) < 1:
+            player_deck.full_shuffle()
+            player_deck.save()
+            if len(player_deck.draw_pile) < 1:
+                return False
+        return True
 
 
 # class Thief(Card):
@@ -307,12 +416,18 @@ class ThroneRoom(Card):
     adhocturn_form = ThroneRoomForm
 
     def perform_specific_action(self, deck, turn):
-        return AdHocTurn.objects.create(
+        return QueuedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
+
+    def should_create_adhoc_turn(self, queued_turn):
+        player_deck = queued_turn.player.decks.get(game=queued_turn.game)
+        if player_deck.no_actions:
+            return False
+        return True
 
 
 class Village(Card):
@@ -353,9 +468,12 @@ class Workshop(Card):
     adhocturn_form = WorkshopForm
 
     def perform_specific_action(self, deck, turn):
-        return AdHocTurn.objects.create(
+        return QueuedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
+
+    def should_create_adhoc_turn(self, queued_turn):
+        return True

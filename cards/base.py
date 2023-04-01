@@ -84,15 +84,27 @@ class Card:
     def url(self):
         return static(self.path)
 
-    def perform_specific_action(self, deck, turn):
-        pass
-
-    def perform_action(self, deck, turn: Turn):
+    def perform_simple_actions(self, deck, turn):
         deck.draw_cards(self.plus_cards)
         turn.available_actions += self.plus_actions
         turn.available_buys += self.plus_buys
         turn.available_money += self.plus_treasures
+        deck.save()
+        turn.save()
+
+    def perform_specific_action(self, deck, turn):
+        pass
+
+    def perform_action(self, deck, turn: Turn):
+        if self.adhocturn_form is None:
+            self.perform_simple_actions(deck, turn)
         self.perform_specific_action(deck, turn)
+
+    def perform_specific_queued_action(self, queued_turn):
+        pass
+
+    def should_create_adhoc_turn(self, queued_turn):
+        raise NotImplementedError()
 
     def __str__(self):
         return self.name

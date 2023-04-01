@@ -2,7 +2,7 @@ from django.apps import apps
 from django.db import models
 
 from cards.fields import CardField
-from turns.managers import AdHocTurnManager, TurnManager
+from turns.managers import AdHocTurnManager, QueuedTurnManager, TurnManager
 
 
 class Turn(models.Model):
@@ -132,4 +132,40 @@ class AdHocTurn(models.Model):
         if not self.pk:
             # if we delete any adhoc turns this will break
             self.turn_order = AdHocTurn.objects.count() + 1
+        return super().save(*args, **kwargs)
+
+
+class QueuedTurn(models.Model):
+    turn = models.ForeignKey(
+        'turns.Turn',
+        related_name='queued_turns',
+        on_delete=models.PROTECT,
+    )
+    player = models.ForeignKey(
+        'players.Player',
+        related_name='queued_turns',
+        on_delete=models.PROTECT,
+    )
+    game = models.ForeignKey(
+        'games.Game',
+        related_name='queued_turns',
+        on_delete=models.PROTECT,
+    )
+    target_player = models.ForeignKey(
+        'players.Player',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
+    is_current_turn = models.BooleanField(default=True, db_index=True)
+    card = CardField()
+    turn_order = models.IntegerField(default=0)
+    perform_simple_actions = models.BooleanField(default=False)
+
+    objects = QueuedTurnManager()
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # if we delete any queued turns this will break
+            self.turn_order = QueuedTurn.objects.count() + 1
         return super().save(*args, **kwargs)
