@@ -24,6 +24,7 @@ class Deck(models.Model):
     hand = models.JSONField(default=list)
     played_cards = models.JSONField(default=list)
     duration_cards = models.JSONField(default=list)
+    narnia_pile = models.JSONField(default=list)
 
     @property
     def all_cards(self):
