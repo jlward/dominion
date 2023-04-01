@@ -4,3 +4,4 @@
   - deck and target deck
 - maybe new model for Turns
   - Turn vs SimpleAction, SpecificAction, QueueedAction......
+- all action cards need queued turn for reactions???
