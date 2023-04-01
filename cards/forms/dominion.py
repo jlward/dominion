@@ -10,15 +10,12 @@ from .base.choose_cards import ChooseCardsForm
 class BureaucratForm(ChooseCardsForm):
     source_object = 'deck'
     source_pile = 'real_hand'
-    # TODO empty hand check
     min_cards = 1
     max_cards = 1
     card_filter = 'is_victory'
 
     def save(self):
         cards = self.cleaned_data['cards']
-        if not cards:
-            return
 
         deck = self.adhoc_turn.player.decks.get(game=self.game)
         deck.move_to_top_deck(cards[0])
@@ -151,7 +148,6 @@ class MoneylenderForm(SimpleForm):
 class RemodelForm(ChooseCardsForm):
     source_object = 'deck'
     source_pile = 'real_hand'
-    # TODO empty hand check
     min_cards = 1
     max_cards = 1
     actions = ['trash']
@@ -162,7 +158,7 @@ class RemodelForm(ChooseCardsForm):
                 'class': 'kingdom-selector',
             },
         ),
-        required=False,
+        required=True,
     )
 
     def __init__(self, *args, **kwargs):
@@ -179,11 +175,7 @@ class RemodelForm(ChooseCardsForm):
         kingdom_card = self.cleaned_data['kingdom_card']
         hand_cards = self.cleaned_data.get('cards')
         if not hand_cards:
-            if kingdom_card:
-                raise forms.ValidationError('No trash card selected')
             return self.cleaned_data['kingdom_card']
-        if not kingdom_card:
-            raise forms.ValidationError('No gain card selected')
         self.cleaned_data['kingdom_card'] = get_cards_from_names([kingdom_card])[0]
         hand_card = hand_cards[0]
         if hand_card.cost + 2 < self.cleaned_data['kingdom_card'].cost:
@@ -192,8 +184,6 @@ class RemodelForm(ChooseCardsForm):
 
     def save(self):
         super().save()
-        if not self.cleaned_data['cards']:
-            return
         kingdom_card = self.cleaned_data['kingdom_card']
         self.game.gain_card(self.deck, kingdom_card)
         self.deck.save()

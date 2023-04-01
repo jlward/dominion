@@ -99,3 +99,28 @@ class MineFormTestCase(BaseTestCase):
             kingdom_card='Platinum',
         )
         assert not form.is_valid()
+
+    def test_no_hand_card_selected(self):
+        form = self.build_card_form(
+            adhoc_turn=self.adhoc_turn,
+            cards=[],
+            kingdom_card='Copper',
+        )
+        assert not form.is_valid()
+
+    def test_no_kingdom_card_selected(self):
+        form = self.build_card_form(
+            adhoc_turn=self.adhoc_turn,
+            cards=['Copper'],
+        )
+        assert not form.is_valid()
+
+    def test_no_cards_selected(self):
+        form = self.build_card_form(
+            adhoc_turn=self.adhoc_turn,
+            cards=[],
+        )
+        assert form.is_valid()
+        with mock.patch('games.models.Game.gain_card') as gain_card:
+            form.save()
+        gain_card.assert_not_called()

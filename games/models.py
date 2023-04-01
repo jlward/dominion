@@ -27,7 +27,7 @@ class Game(models.Model):
         return Turn.objects.create(player=player, game=self, turn_number=1)
 
     def get_players(self, player):
-        if player.pk not in self.turn_order:
+        if player.pk not in self.turn_order:  # pragma: no cover
             raise NotImplementedError()
         order = self.turn_order[:]
         while player.pk != order[0]:

@@ -20,5 +20,5 @@ class SimpleForm(forms.Form):
         self.adhoc_turn = adhoc_turn
         super().__init__(*args, **kwargs)
 
-    def save(self):
+    def save(self):  # pragma: no cover
         raise NotImplementedError()
