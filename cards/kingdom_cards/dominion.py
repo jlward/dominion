@@ -350,7 +350,7 @@ class Workshop(Card):
     adhocturn_form = WorkshopForm
 
     def perform_specific_action(self, deck, turn):
-        AdHocTurn.objects.create(
+        return AdHocTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
