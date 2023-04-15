@@ -119,14 +119,23 @@ class AdHocTurn(models.Model):
         null=True,
         blank=True,
     )
+    card_form_field_string = models.CharField(max_length=250, default='adhocturn_form')
+    card_form_title_field_string = models.CharField(
+        max_length=250,
+        default='adhocturn_action_title',
+    )
 
     objects = AdHocTurnManager()
 
     @property
     def form(self):
-        return self.card.adhocturn_form(
+        form_class = getattr(self.card, self.card_form_field_string)
+        return form_class(
             adhoc_turn=self,
         )
+
+    def get_form_title(self):
+        return getattr(self.card, self.card_form_title_field_string)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -161,6 +170,11 @@ class QueuedTurn(models.Model):
     card = CardField()
     turn_order = models.IntegerField(default=0)
     perform_simple_actions = models.BooleanField(default=False)
+    card_form_field_string = models.CharField(max_length=250, default='adhocturn_form')
+    card_form_title_field_string = models.CharField(
+        max_length=250,
+        default='adhocturn_action_title',
+    )
 
     objects = QueuedTurnManager()
 
