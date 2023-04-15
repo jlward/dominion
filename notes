@@ -1,9 +1,8 @@
-- stacked to stack
-  - delete migrations and rebuild
 - property/field for turns
   - deck and target deck
+  - temp fix in place
 - maybe new model for Turns
-  - Turn vs SimpleAction, SpecificAction, StackeedAction......
+  - Turn vs SimpleAction, SpecificAction, StackedAction......
 - all action cards need stacked turn for reactions???
 - deck.top_deck bad
   - can shuffle but doesn't save. can be inconsistent
