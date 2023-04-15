@@ -130,3 +130,5 @@ dmypy.json
 
 # VIM
 *.swo
+
+advanced_cheat_command.json
