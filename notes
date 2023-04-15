@@ -5,3 +5,5 @@
 - maybe new model for Turns
   - Turn vs SimpleAction, SpecificAction, QueueedAction......
 - all action cards need queued turn for reactions???
+- deck.top_deck bad
+  - can shuffle but doesn't save. can be inconsistent
