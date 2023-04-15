@@ -1,6 +1,6 @@
 from django import forms
 
-from cards import get_cards_from_names
+from cards import get_card_from_name, get_cards_from_names
 from cards.forms.base.simple import SimpleForm
 from cards.kingdom_cards.base_cards import Copper
 from turns.models import QueuedTurn
@@ -242,6 +242,44 @@ class SpyForm(SimpleForm):
         target_deck = self.game.decks.get(player=self.adhoc_turn.target_player)
         target_deck.draw_cards(1, destination='discard_pile')
         target_deck.save()
+
+
+class ThiefForm(ChooseCardsForm):
+    source_object = 'target_player_deck'
+    source_pile = 'real_narnia'
+    min_cards = 1
+    max_cards = 1
+
+    def save(self):
+        for card in self.cleaned_data['cards']:
+            self.target_player_deck.move_to_discard(card, source='narnia_pile')
+        self.target_player_deck.save()
+
+    def clean_cards(self):
+        # form returns selected card. need to get unselected card to discard
+        card = super().clean_cards()[0]
+        narnia_cards = [item.name for item in self.get_source_pile()]
+        narnia_cards.pop(narnia_cards.index(card.name))
+        self.cleaned_data['cards'] = [get_card_from_name(narnia_cards[0])]
+        return self.cleaned_data['cards']
+
+
+class ThiefCleanupForm(ChooseCardsForm):
+    source_object = 'game'
+    source_pile = 'real_narnias'
+    min_cards = 0
+
+    @property
+    def max_cards(self):
+        return len(self.get_source_pile())
+
+    def save(self):
+        self.game.move_cards_from_narnias_to_player(
+            cards=self.cleaned_data['cards'],
+            player=self.player,
+            destination='discard_pile',
+        )
+        self.game.trash_narnias()
 
 
 class ThroneRoomForm(ChooseCardsForm):

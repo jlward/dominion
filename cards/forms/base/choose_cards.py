@@ -25,6 +25,11 @@ class ChooseCardsForm(forms.Form):
         self.game = adhoc_turn.game
         self.player = adhoc_turn.player
         self.deck = self.game.decks.get(player=self.player)
+        self.target_player_deck = None
+        if adhoc_turn.target_player:
+            self.target_player_deck = self.game.decks.get(
+                player_id=adhoc_turn.target_player_id,
+            )
         self.turn = adhoc_turn.turn
         self.adhoc_turn = adhoc_turn
         super().__init__(*args, **kwargs)

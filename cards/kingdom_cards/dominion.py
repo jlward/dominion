@@ -1,4 +1,4 @@
-from cards import get_card_from_name
+from cards import get_card_from_name, get_cards_from_names
 from cards.base import Card
 from cards.constants import CardTypes
 from cards.forms.dominion import (
@@ -13,6 +13,8 @@ from cards.forms.dominion import (
     MoneylenderForm,
     RemodelForm,
     SpyForm,
+    ThiefCleanupForm,
+    ThiefForm,
     ThroneRoomForm,
     WorkshopForm,
 )
@@ -446,8 +448,69 @@ class Spy(Card):
         return True
 
 
-# class Thief(Card):
-#     pass
+class Thief(Card):
+    types = [CardTypes.Action, CardTypes.Attack]
+    card_cost = 4
+    adhocturn_action_title = 'Choose one to trash'
+    adhocturn_form = ThiefForm
+    adhocturn_cleanup_action_title = 'Select cards to gain'
+    adhocturn_cleanup_form = ThiefCleanupForm
+
+    def perform_specific_action(self, deck, turn):
+        queued_turns = []
+        queued_turns.append(
+            QueuedTurn.objects.create(
+                turn=turn,
+                player=turn.player,
+                game=turn.game,
+                card=self,
+                card_form_field_string='adhocturn_cleanup_form',
+                card_form_title_field_string='adhocturn_cleanup_action_title',
+            ),
+        )
+        for player in deck.game.players.all():
+            if player == turn.player:
+                continue
+            queued_turns.append(
+                QueuedTurn.objects.create(
+                    turn=turn,
+                    player=turn.player,
+                    game=turn.game,
+                    card=self,
+                    target_player=player,
+                ),
+            )
+        return queued_turns
+
+    def _cleanup_peek(self, deck, treasure=None):
+        for card in deck.real_narnia[::-1]:
+            if treasure and card.name == treasure.name:
+                continue
+            deck.move_to_discard(card, source='narnia_pile')
+        deck.save()
+
+    def should_create_adhoc_turn(self, queued_turn):
+        if queued_turn.card_form_field_string == 'adhocturn_form':
+            deck = queued_turn.get_target_player_deck()
+            cards_string = deck.draw_cards(2, destination='narnia_pile')
+            cards = get_cards_from_names(cards_string)
+            treasures = [card for card in cards if card.is_treasure]
+            if len(treasures) == 0:
+                self._cleanup_peek(deck)
+                return False
+            if len(treasures) == 2:
+                deck.save()
+                return True
+            treasure = treasures[0]
+            self._cleanup_peek(deck, treasure)
+            return False
+        else:
+            for deck in queued_turn.game.decks.all():
+                if deck.player == queued_turn.player:
+                    continue
+                if deck.narnia_pile:
+                    return True
+            return False
 
 
 class ThroneRoom(Card):

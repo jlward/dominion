@@ -119,20 +119,38 @@ class AdHocTurn(models.Model):
         null=True,
         blank=True,
     )
+    card_form_field_string = models.CharField(max_length=250, default='adhocturn_form')
+    card_form_title_field_string = models.CharField(
+        max_length=250,
+        default='adhocturn_action_title',
+    )
 
     objects = AdHocTurnManager()
 
     @property
+    def form_class(self):
+        return getattr(self.card, self.card_form_field_string)
+
+    @property
     def form(self):
-        return self.card.adhocturn_form(
+        return self.form_class(
             adhoc_turn=self,
         )
+
+    def get_form_title(self):
+        return getattr(self.card, self.card_form_title_field_string)
 
     def save(self, *args, **kwargs):
         if not self.pk:
             # if we delete any adhoc turns this will break
             self.turn_order = AdHocTurn.objects.count() + 1
         return super().save(*args, **kwargs)
+
+    def get_player_deck(self):
+        return self.game.decks.get(player=self.player)
+
+    def get_target_player_deck(self):
+        return self.game.decks.get(player=self.target_player)
 
 
 class QueuedTurn(models.Model):
@@ -161,6 +179,11 @@ class QueuedTurn(models.Model):
     card = CardField()
     turn_order = models.IntegerField(default=0)
     perform_simple_actions = models.BooleanField(default=False)
+    card_form_field_string = models.CharField(max_length=250, default='adhocturn_form')
+    card_form_title_field_string = models.CharField(
+        max_length=250,
+        default='adhocturn_action_title',
+    )
 
     objects = QueuedTurnManager()
 
@@ -169,3 +192,9 @@ class QueuedTurn(models.Model):
             # if we delete any queued turns this will break
             self.turn_order = QueuedTurn.objects.count() + 1
         return super().save(*args, **kwargs)
+
+    def get_player_deck(self):
+        return self.game.decks.get(player=self.player)
+
+    def get_target_player_deck(self):
+        return self.game.decks.get(player=self.target_player)
