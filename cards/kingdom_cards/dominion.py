@@ -486,7 +486,7 @@ class Thief(Card):
         for card in deck.real_narnia[::-1]:
             if treasure and card.name == treasure.name:
                 continue
-            deck.move_to_top_deck(card, source='narnia_pile')
+            deck.move_to_discard(card, source='narnia_pile')
         deck.save()
 
     def should_create_adhoc_turn(self, queued_turn):
@@ -501,7 +501,7 @@ class Thief(Card):
             if len(treasures) == 2:
                 deck.save()
                 return True
-            treasure = next(treasures)
+            treasure = treasures[0]
             self._cleanup_peek(deck, treasure)
             return False
         else:
