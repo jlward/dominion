@@ -5,26 +5,32 @@ from cards.fields import CardField
 from turns.managers import AdHocTurnManager, StackedTurnManager, TurnManager
 
 
-class Turn(models.Model):
-    objects = TurnManager()
-
+class BaseTurn(models.Model):
     player = models.ForeignKey(
         'players.Player',
-        related_name='turns',
+        related_name='%(class)ss',
         on_delete=models.PROTECT,
     )
     game = models.ForeignKey(
         'games.Game',
-        related_name='turns',
+        related_name='%(class)ss',
         on_delete=models.PROTECT,
     )
-    turn_number = models.IntegerField()
     is_current_turn = models.BooleanField(default=True, db_index=True)
+
+    class Meta:
+        abstract = True
+
+
+class Turn(BaseTurn):
+    objects = TurnManager()
+
     state = models.CharField(
         choices=[('action', 'Action Phase'), ('buy', 'Buy Phase')],
         default='action',
         max_length=10,
     )
+    turn_number = models.IntegerField()
     # Standard card stuff
     available_actions = models.IntegerField(default=1)
     available_buys = models.IntegerField(default=1)
@@ -41,11 +47,6 @@ class Turn(models.Model):
     buys_used = models.JSONField(default=list)
     cards_bought = models.JSONField(default=list)
     cards_gained = models.JSONField(default=list)
-
-    class Meta:
-        index_together = [
-            ('game', 'is_current_turn'),
-        ]
 
     @property
     def is_action_phase(self):
@@ -94,36 +95,40 @@ class Turn(models.Model):
         self.save()
 
 
-class AdHocTurn(models.Model):
+class BaseTempTurn(models.Model):
     turn = models.ForeignKey(
         'turns.Turn',
-        related_name='adhoc_turns',
+        related_name='%(class)ss',
         on_delete=models.PROTECT,
     )
-    player = models.ForeignKey(
-        'players.Player',
-        related_name='adhoc_turns',
-        on_delete=models.PROTECT,
-    )
-    game = models.ForeignKey(
-        'games.Game',
-        related_name='adhoc_turns',
-        on_delete=models.PROTECT,
-    )
-    is_current_turn = models.BooleanField(default=True, db_index=True)
-    card = CardField()
-    turn_order = models.IntegerField(default=0)
     target_player = models.ForeignKey(
         'players.Player',
         on_delete=models.PROTECT,
         null=True,
         blank=True,
     )
+    turn_order = models.IntegerField(default=0)
     card_form_field_string = models.CharField(max_length=250, default='adhocturn_form')
     card_form_title_field_string = models.CharField(
         max_length=250,
         default='adhocturn_action_title',
     )
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            # if we delete any adhoc turns this will break
+            self.turn_order = self.__class__.objects.count() + 1
+        return super().save(*args, **kwargs)
+
+    def get_player_deck(self):
+        return self.game.decks.get(player=self.player)
+
+    def get_target_player_deck(self):
+        return self.game.decks.get(player=self.target_player)
+
+
+class AdHocTurn(BaseTempTurn, BaseTurn):
+    card = CardField()
 
     objects = AdHocTurnManager()
 
@@ -140,61 +145,9 @@ class AdHocTurn(models.Model):
     def get_form_title(self):
         return getattr(self.card, self.card_form_title_field_string)
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            # if we delete any adhoc turns this will break
-            self.turn_order = AdHocTurn.objects.count() + 1
-        return super().save(*args, **kwargs)
 
-    def get_player_deck(self):
-        return self.game.decks.get(player=self.player)
-
-    def get_target_player_deck(self):
-        return self.game.decks.get(player=self.target_player)
-
-
-class StackedTurn(models.Model):
-    turn = models.ForeignKey(
-        'turns.Turn',
-        related_name='stacked_turns',
-        on_delete=models.PROTECT,
-    )
-    player = models.ForeignKey(
-        'players.Player',
-        related_name='stacked_turns',
-        on_delete=models.PROTECT,
-    )
-    game = models.ForeignKey(
-        'games.Game',
-        related_name='stacked_turns',
-        on_delete=models.PROTECT,
-    )
-    target_player = models.ForeignKey(
-        'players.Player',
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-    )
-    is_current_turn = models.BooleanField(default=True, db_index=True)
+class StackedTurn(BaseTempTurn, BaseTurn):
     card = CardField()
-    turn_order = models.IntegerField(default=0)
     perform_simple_actions = models.BooleanField(default=False)
-    card_form_field_string = models.CharField(max_length=250, default='adhocturn_form')
-    card_form_title_field_string = models.CharField(
-        max_length=250,
-        default='adhocturn_action_title',
-    )
 
     objects = StackedTurnManager()
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            # if we delete any stacked turns this will break
-            self.turn_order = StackedTurn.objects.count() + 1
-        return super().save(*args, **kwargs)
-
-    def get_player_deck(self):
-        return self.game.decks.get(player=self.player)
-
-    def get_target_player_deck(self):
-        return self.game.decks.get(player=self.target_player)

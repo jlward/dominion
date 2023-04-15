@@ -12,7 +12,7 @@ class AdHocTurnManager(models.Manager):
 
 class StackedTurnManager(models.Manager):
     def process_for_game(self, game):
-        stacked_turns = game.stacked_turns.filter(is_current_turn=True).order_by(
+        stacked_turns = game.stackedturns.filter(is_current_turn=True).order_by(
             '-turn_order',
         )
         AdHocTurn = apps.get_model('turns', 'AdHocTurn')
