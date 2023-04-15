@@ -495,7 +495,6 @@ class Thief(Card):
             cards_string = deck.draw_cards(2, destination='narnia_pile')
             cards = get_cards_from_names(cards_string)
             treasures = [card for card in cards if card.is_treasure]
-            print(treasures)
             if len(treasures) == 0:
                 self._cleanup_peek(deck)
                 return False
