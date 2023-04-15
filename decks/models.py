@@ -96,7 +96,7 @@ class Deck(models.Model):
         card = card_source.pop(card_source.index(card.name))
         self.draw_pile.insert(0, card)
 
-    def move_to_discard_pile(self, card, source='hand'):
+    def move_to_discard(self, card, source='hand'):
         card_source = getattr(self, source)
         card = card_source.pop(card_source.index(card.name))
         self.discard_pile.insert(0, card)

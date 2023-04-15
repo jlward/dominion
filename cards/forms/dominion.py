@@ -1,6 +1,6 @@
 from django import forms
 
-from cards import get_cards_from_names
+from cards import get_card_from_name, get_cards_from_names
 from cards.forms.base.simple import SimpleForm
 from cards.kingdom_cards.base_cards import Copper
 from turns.models import QueuedTurn
@@ -245,7 +245,7 @@ class SpyForm(SimpleForm):
 
 
 class ThiefForm(ChooseCardsForm):
-    source_object = 'deck'
+    source_object = 'target_player_deck'
     source_pile = 'real_narnia'
     min_cards = 1
     max_cards = 1
@@ -255,10 +255,18 @@ class ThiefForm(ChooseCardsForm):
             self.target_player_deck.move_to_discard(card, source='narnia_pile')
         self.target_player_deck.save()
 
+    def clean_cards(self):
+        # form returns selected card. need to get unselected card to discard
+        card = super().clean_cards()[0]
+        narnia_cards = [item.name for item in self.get_source_pile()]
+        narnia_cards.pop(narnia_cards.index(card.name))
+        self.cleaned_data['cards'] = [get_card_from_name(narnia_cards[0])]
+        return self.cleaned_data['cards']
+
 
 class ThiefCleanupForm(ChooseCardsForm):
     source_object = 'game'
-    source_pile = 'narnias'
+    source_pile = 'real_narnias'
     min_cards = 0
 
     @property

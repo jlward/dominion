@@ -31,5 +31,7 @@ class QueuedTurnManager(models.Manager):
                     game=turn.game,
                     card=turn.card,
                     target_player=turn.target_player,
+                    card_form_field_string=turn.card_form_field_string,
+                    card_form_title_field_string=turn.card_form_title_field_string,
                 )
         return None

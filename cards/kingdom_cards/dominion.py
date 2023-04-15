@@ -483,8 +483,8 @@ class Thief(Card):
         return queued_turns
 
     def _cleanup_peek(self, deck, treasure=None):
-        for card in self.narnia_pile[:-1]:
-            if card == treasure.name:
+        for card in deck.real_narnia[::-1]:
+            if treasure and card.name == treasure.name:
                 continue
             deck.move_to_top_deck(card, source='narnia_pile')
         deck.save()
@@ -495,11 +495,12 @@ class Thief(Card):
             cards_string = deck.draw_cards(2, destination='narnia_pile')
             cards = get_cards_from_names(cards_string)
             treasures = [card for card in cards if card.is_treasure]
+            print(treasures)
             if len(treasures) == 0:
                 self._cleanup_peek(deck)
                 return False
             if len(treasures) == 2:
-                self._cleanup_peek(deck)
+                deck.save()
                 return True
             treasure = next(treasures)
             self._cleanup_peek(deck, treasure)

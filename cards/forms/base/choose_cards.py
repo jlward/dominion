@@ -69,5 +69,6 @@ class ChooseCardsForm(forms.Form):
         return self.cleaned_data['cards']
 
     def get_source_pile(self):
+        print(self.source_object, self.source_pile, self.__class__)
         source_object = getattr(self, self.source_object)
         return getattr(source_object, self.source_pile)
