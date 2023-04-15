@@ -3,7 +3,7 @@ import uuid
 from django.apps import apps
 from django.db import models
 
-from cards import get_cards_from_names_as_generator
+from cards import get_cards_from_names, get_cards_from_names_as_generator
 from games.managers import GameManager
 
 
@@ -80,6 +80,17 @@ class Game(models.Model):
         return result
 
     @property
+    def narnias(self):
+        result = []
+        for deck in self.decks.all():
+            result.extend(deck.narnia_pile)
+        return result
+
+    @property
+    def real_narnias(self):
+        return get_cards_from_names(self.narnias)
+
+    @property
     def winner(self):
         if not self.is_over:
             return '-'
@@ -121,3 +132,24 @@ class Game(models.Model):
             self.is_over = True
         if len([count for count in self.kingdom.values() if count < 1]) > 2:
             self.is_over = True
+
+    def move_cards_from_narnias_to_player(self, cards, player, destination):
+        decks = list(self.decks.all())
+        player_deck = next(deck for deck in decks if deck.player == player)
+        for card in cards:
+            for deck in decks:
+                if card.name in deck.narnia_pile:
+                    getattr(player_deck, destination).append(
+                        deck.narnia_pile.pop(deck.narnia_pile.index(card.name)),
+                    )
+                    break
+        for deck in decks:
+            deck.save()
+
+    def trash_narnias(self):
+        decks = list(self.decks.all())
+        for deck in decks:
+            self.trash_pile.extend(deck.narnia_pile)
+            deck.narnia_pile = []
+            deck.save()
+        self.save()

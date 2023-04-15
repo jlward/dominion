@@ -45,6 +45,10 @@ class Deck(models.Model):
         return get_cards_from_names(self.played_cards)
 
     @property
+    def real_narnia(self):
+        return get_cards_from_names(self.narnia_pile)
+
+    @property
     def score(self):
         return sum(card.get_victory_points(self) for card in self.all_cards)
 
@@ -67,11 +71,14 @@ class Deck(models.Model):
         return self.draw_pile.pop(0)
 
     def draw_cards(self, num, destination='hand'):
+        result = []
         for _ in range(num):
             card = self.top_deck()
             if card is None:
                 break
+            result.append(card)
             getattr(self, destination).append(card)
+        return result
 
     def play_card(self, card):
         self.hand.remove(card.name)
@@ -88,6 +95,11 @@ class Deck(models.Model):
         card_source = getattr(self, source)
         card = card_source.pop(card_source.index(card.name))
         self.draw_pile.insert(0, card)
+
+    def move_to_discard_pile(self, card, source='hand'):
+        card_source = getattr(self, source)
+        card = card_source.pop(card_source.index(card.name))
+        self.discard_pile.insert(0, card)
 
     def cleanup(self):
         self.discard_cards()
@@ -113,3 +125,15 @@ class Deck(models.Model):
             card_source.pop(card_source.index(card.name))
         self.save()
         self.game.save()
+
+    def peek_deck(self, number=1):
+        for _ in range(number):
+            card = self.top_deck()
+            if card is None:
+                continue
+            self.narnia_pile.append(card)
+        result = self.narnia_pile[:]
+        for card in self.narnia_pile:
+            self.move_to_top_deck(card, 'narnia_pile')
+        self.save()
+        return result

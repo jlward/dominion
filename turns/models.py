@@ -183,3 +183,9 @@ class QueuedTurn(models.Model):
             # if we delete any queued turns this will break
             self.turn_order = QueuedTurn.objects.count() + 1
         return super().save(*args, **kwargs)
+
+    def get_player_deck(self):
+        return self.game.decks.get(player=self.player)
+
+    def get_target_player_deck(self):
+        return self.game.decks.get(player=self.target_player)
