@@ -3,7 +3,7 @@ from django import forms
 from cards import get_card_from_name, get_cards_from_names
 from cards.forms.base.simple import SimpleForm
 from cards.kingdom_cards.base_cards import Copper
-from turns.models import QueuedTurn
+from turns.models import StackedTurn
 
 from .base.choose_cards import ChooseCardsForm
 
@@ -85,7 +85,7 @@ class LibraryForm(SimpleForm):
         else:
             deck.draw_cards(1, destination='narnia_pile')
         if len(deck.hand) < 7:
-            QueuedTurn.objects.create(
+            StackedTurn.objects.create(
                 turn=self.turn,
                 player=self.player,
                 game=self.game,

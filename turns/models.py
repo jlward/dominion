@@ -2,7 +2,7 @@ from django.apps import apps
 from django.db import models
 
 from cards.fields import CardField
-from turns.managers import AdHocTurnManager, QueuedTurnManager, TurnManager
+from turns.managers import AdHocTurnManager, StackedTurnManager, TurnManager
 
 
 class Turn(models.Model):
@@ -153,20 +153,20 @@ class AdHocTurn(models.Model):
         return self.game.decks.get(player=self.target_player)
 
 
-class QueuedTurn(models.Model):
+class StackedTurn(models.Model):
     turn = models.ForeignKey(
         'turns.Turn',
-        related_name='queued_turns',
+        related_name='stacked_turns',
         on_delete=models.PROTECT,
     )
     player = models.ForeignKey(
         'players.Player',
-        related_name='queued_turns',
+        related_name='stacked_turns',
         on_delete=models.PROTECT,
     )
     game = models.ForeignKey(
         'games.Game',
-        related_name='queued_turns',
+        related_name='stacked_turns',
         on_delete=models.PROTECT,
     )
     target_player = models.ForeignKey(
@@ -185,12 +185,12 @@ class QueuedTurn(models.Model):
         default='adhocturn_action_title',
     )
 
-    objects = QueuedTurnManager()
+    objects = StackedTurnManager()
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            # if we delete any queued turns this will break
-            self.turn_order = QueuedTurn.objects.count() + 1
+            # if we delete any stacked turns this will break
+            self.turn_order = StackedTurn.objects.count() + 1
         return super().save(*args, **kwargs)
 
     def get_player_deck(self):

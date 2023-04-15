@@ -8,7 +8,7 @@ from cards import get_cards_from_names
 from cards.forms.base.simple import SimpleForm
 from games.models import Game
 from players.factories import PlayerFactory
-from turns.models import AdHocTurn, QueuedTurn
+from turns.models import AdHocTurn, StackedTurn
 
 
 class BaseTestCase(TestCase):
@@ -25,27 +25,27 @@ class BaseTestCase(TestCase):
         return game
 
     @contextmanager
-    def assert_queued_turn_created(self, count=1):
-        before_turn_count = QueuedTurn.objects.count()
+    def assert_stacked_turn_created(self, count=1):
+        before_turn_count = StackedTurn.objects.count()
         yield
-        after_turn_count = QueuedTurn.objects.count()
+        after_turn_count = StackedTurn.objects.count()
         self.assertEqual(after_turn_count, before_turn_count + count)
 
-    def assert_queued_turn(
+    def assert_stacked_turn(
         self,
         *,
-        queued_turn,
+        stacked_turn,
         turn,
         player,
         game,
         card,
         perform_simple_actions=False,
     ):
-        self.assertEqual(queued_turn.turn, turn)
-        self.assertEqual(queued_turn.player, player)
-        self.assertEqual(queued_turn.game, game)
-        self.assertEqual(queued_turn.card, card)
-        self.assertEqual(queued_turn.perform_simple_actions, perform_simple_actions)
+        self.assertEqual(stacked_turn.turn, turn)
+        self.assertEqual(stacked_turn.player, player)
+        self.assertEqual(stacked_turn.game, game)
+        self.assertEqual(stacked_turn.card, card)
+        self.assertEqual(stacked_turn.perform_simple_actions, perform_simple_actions)
 
     def assert_adhoc_turn_created(self, count=1):
         before_turn_count = AdHocTurn.objects.count()
