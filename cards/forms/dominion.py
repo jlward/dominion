@@ -244,6 +244,36 @@ class SpyForm(SimpleForm):
         target_deck.save()
 
 
+class ThiefForm(ChooseCardsForm):
+    source_object = 'deck'
+    source_pile = 'real_narnia'
+    min_cards = 1
+    max_cards = 1
+
+    def save(self):
+        for card in self.cleaned_data['cards']:
+            self.target_player_deck.move_to_discard(card, source='narnia_pile')
+        self.target_player_deck.save()
+
+
+class ThiefCleanupForm(ChooseCardsForm):
+    source_object = 'game'
+    source_pile = 'narnias'
+    min_cards = 0
+
+    @property
+    def max_cards(self):
+        return len(self.get_source_pile())
+
+    def save(self):
+        self.game.move_cards_from_narnias_to_player(
+            cards=self.cleaned_data['cards'],
+            player=self.player,
+            destination='discard_pile',
+        )
+        self.game.trash_narnias()
+
+
 class ThroneRoomForm(ChooseCardsForm):
     source_object = 'deck'
     source_pile = 'real_hand'
