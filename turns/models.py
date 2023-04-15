@@ -128,9 +128,12 @@ class AdHocTurn(models.Model):
     objects = AdHocTurnManager()
 
     @property
+    def form_class(self):
+        return getattr(self.card, self.card_form_field_string)
+
+    @property
     def form(self):
-        form_class = getattr(self.card, self.card_form_field_string)
-        return form_class(
+        return self.form_class(
             adhoc_turn=self,
         )
 

@@ -21,7 +21,7 @@ def end_phase(request, turn_id):
 @require_POST
 def perform_action(request, turn_id):
     turn = get_object_or_404(AdHocTurn, pk=turn_id)
-    Form = turn.card.adhocturn_form
+    Form = turn.form_class
     form = Form(data=request.POST, adhoc_turn=turn)
     if form.is_valid():
         form.save()
