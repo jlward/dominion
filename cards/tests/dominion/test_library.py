@@ -15,15 +15,15 @@ class LibraryCardTestCase(BaseTestCase):
         self.card = Library()
 
     def test_perform_specific_action(self):
-        with self.assert_queued_turn_created(1):
-            queued_turn = self.card.perform_specific_action(
+        with self.assert_stacked_turn_created(1):
+            stacked_turn = self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
             )
-        self.assertEqual(queued_turn.turn, self.turn)
-        self.assertEqual(queued_turn.player, self.player)
-        self.assertEqual(queued_turn.game, self.game)
-        self.assertEqual(queued_turn.card, self.card)
+        self.assertEqual(stacked_turn.turn, self.turn)
+        self.assertEqual(stacked_turn.player, self.player)
+        self.assertEqual(stacked_turn.game, self.game)
+        self.assertEqual(stacked_turn.card, self.card)
 
 
 # TODO test form

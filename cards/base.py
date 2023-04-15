@@ -100,10 +100,10 @@ class Card:
             self.perform_simple_actions(deck, turn)
         self.perform_specific_action(deck, turn)
 
-    def perform_specific_queued_action(self, queued_turn):
+    def perform_specific_stacked_action(self, stacked_turn):
         pass
 
-    def should_create_adhoc_turn(self, queued_turn):
+    def should_create_adhoc_turn(self, stacked_turn):
         raise NotImplementedError()
 
     def __str__(self):

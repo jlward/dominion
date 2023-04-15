@@ -15,13 +15,13 @@ class MoneylenderCardTestCase(BaseTestCase):
         self.card = Moneylender()
 
     def test_perform_specific_action(self):
-        with self.assert_queued_turn_created():
-            queued_turn = self.card.perform_specific_action(
+        with self.assert_stacked_turn_created():
+            stacked_turn = self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
             )
-        self.assert_queued_turn(
-            queued_turn=queued_turn,
+        self.assert_stacked_turn(
+            stacked_turn=stacked_turn,
             turn=self.turn,
             player=self.player,
             game=self.game,
@@ -30,7 +30,7 @@ class MoneylenderCardTestCase(BaseTestCase):
 
     def test_perform_specific_action_no_copper(self):
         self.deck.hand = ['Estate'] * 4
-        with self.assert_queued_turn_created(1):
+        with self.assert_stacked_turn_created(1):
             self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,

@@ -19,7 +19,7 @@ from cards.forms.dominion import (
     WorkshopForm,
 )
 from cards.kingdom_cards.base_cards import Curse, Silver
-from turns.models import QueuedTurn
+from turns.models import StackedTurn
 
 
 class Adventurer(Card):
@@ -52,20 +52,20 @@ class Bureaucrat(Card):
     adhocturn_form = BureaucratForm
 
     def perform_specific_action(self, deck, turn):
-        queued_turns = []
+        stacked_turns = []
         for player in deck.game.players.all():
             if player.pk == turn.player_id:
                 continue
-            queued_turns.append(
-                QueuedTurn.objects.create(
+            stacked_turns.append(
+                StackedTurn.objects.create(
                     turn=turn,
                     player=player,
                     game=turn.game,
                     card=self,
                 ),
             )
-        queued_turns.append(
-            QueuedTurn.objects.create(
+        stacked_turns.append(
+            StackedTurn.objects.create(
                 turn=turn,
                 player=player,
                 game=turn.game,
@@ -73,15 +73,15 @@ class Bureaucrat(Card):
                 perform_simple_actions=True,
             ),
         )
-        return queued_turns
+        return stacked_turns
 
     def perform_simple_actions(self, deck, turn):
         super().perform_simple_actions(deck, turn)
         deck.game.gain_card(deck, Silver(), destination='draw_pile')
         deck.save()
 
-    def should_create_adhoc_turn(self, queued_turn):
-        player_deck = queued_turn.player.decks.get(game=queued_turn.game)
+    def should_create_adhoc_turn(self, stacked_turn):
+        player_deck = stacked_turn.player.decks.get(game=stacked_turn.game)
         v_in_hand = list(card for card in player_deck.real_hand if card.is_victory)
         if not v_in_hand:
             return False
@@ -100,17 +100,17 @@ class Cellar(Card):
     adhocturn_form = CellarForm
 
     def perform_specific_action(self, deck, turn):
-        queued_turns = []
-        queued_turns.append(
-            QueuedTurn.objects.create(
+        stacked_turns = []
+        stacked_turns.append(
+            StackedTurn.objects.create(
                 turn=turn,
                 player=turn.player,
                 game=turn.game,
                 card=self,
             ),
         )
-        queued_turns.append(
-            QueuedTurn.objects.create(
+        stacked_turns.append(
+            StackedTurn.objects.create(
                 turn=turn,
                 player=turn.player,
                 game=turn.game,
@@ -118,10 +118,10 @@ class Cellar(Card):
                 perform_simple_actions=True,
             ),
         )
-        return queued_turns
+        return stacked_turns
 
-    def should_create_adhoc_turn(self, queued_turn):
-        deck = queued_turn.game.decks.get(player=queued_turn.player)
+    def should_create_adhoc_turn(self, stacked_turn):
+        deck = stacked_turn.game.decks.get(player=stacked_turn.player)
         if not deck.hand:
             return False
         return True
@@ -135,17 +135,17 @@ class Chancellor(Card):
     adhocturn_form = ChancellorForm
 
     def perform_specific_action(self, deck, turn):
-        queued_turns = []
-        queued_turns.append(
-            QueuedTurn.objects.create(
+        stacked_turns = []
+        stacked_turns.append(
+            StackedTurn.objects.create(
                 turn=turn,
                 player=turn.player,
                 game=turn.game,
                 card=self,
             ),
         )
-        queued_turns.append(
-            QueuedTurn.objects.create(
+        stacked_turns.append(
+            StackedTurn.objects.create(
                 turn=turn,
                 player=turn.player,
                 game=turn.game,
@@ -153,10 +153,10 @@ class Chancellor(Card):
                 perform_simple_actions=True,
             ),
         )
-        return queued_turns
+        return stacked_turns
 
-    def should_create_adhoc_turn(self, queued_turn):
-        deck = queued_turn.game.decks.get(player=queued_turn.player)
+    def should_create_adhoc_turn(self, stacked_turn):
+        deck = stacked_turn.game.decks.get(player=stacked_turn.player)
         if not deck.draw_pile:
             return False
         return True
@@ -169,15 +169,15 @@ class Chapel(Card):
     adhocturn_form = ChapelForm
 
     def perform_specific_action(self, deck, turn):
-        return QueuedTurn.objects.create(
+        return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
 
-    def should_create_adhoc_turn(self, queued_turn):
-        deck = queued_turn.game.decks.get(player=queued_turn.player)
+    def should_create_adhoc_turn(self, stacked_turn):
+        deck = stacked_turn.game.decks.get(player=stacked_turn.player)
         if not deck.hand:
             return False
         return True
@@ -207,23 +207,23 @@ class Feast(Card):
     adhocturn_form = FeastForm
 
     def perform_specific_action(self, deck, turn):
-        return QueuedTurn.objects.create(
+        return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
 
-    def perform_specific_queued_action(self, queued_turn):
-        super().perform_specific_queued_action(queued_turn)
+    def perform_specific_stacked_action(self, stacked_turn):
+        super().perform_specific_stacked_action(stacked_turn)
         # TODO stop doing this. add deck to turns
-        deck = queued_turn.game.decks.get(player=queued_turn.player)
+        deck = stacked_turn.game.decks.get(player=stacked_turn.player)
         try:
             deck.trash_cards(cards=[Feast()], source='played_cards')
         except ValueError:
             pass
 
-    def should_create_adhoc_turn(self, queued_turn):
+    def should_create_adhoc_turn(self, stacked_turn):
         return True
 
 
@@ -258,15 +258,15 @@ class Library(Card):
     adhocturn_form = LibraryForm
 
     def perform_specific_action(self, deck, turn):
-        return QueuedTurn.objects.create(
+        return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
 
-    def should_create_adhoc_turn(self, queued_turn):
-        deck = queued_turn.game.decks.get(player=queued_turn.player)
+    def should_create_adhoc_turn(self, stacked_turn):
+        deck = stacked_turn.game.decks.get(player=stacked_turn.player)
         result = False
         while len(deck.hand) < 7:
             card_name = deck.top_deck()
@@ -303,20 +303,20 @@ class Militia(Card):
     adhocturn_form = MilitiaForm
 
     def perform_specific_action(self, deck, turn):
-        queued_turns = []
+        stacked_turns = []
         for player in deck.game.players.all():
             if player.pk == turn.player_id:
                 continue
-            queued_turns.append(
-                QueuedTurn.objects.create(
+            stacked_turns.append(
+                StackedTurn.objects.create(
                     turn=turn,
                     player=player,
                     game=turn.game,
                     card=self,
                 ),
             )
-        queued_turns.append(
-            QueuedTurn.objects.create(
+        stacked_turns.append(
+            StackedTurn.objects.create(
                 turn=turn,
                 player=turn.player,
                 game=turn.game,
@@ -324,10 +324,10 @@ class Militia(Card):
                 perform_simple_actions=True,
             ),
         )
-        return queued_turns
+        return stacked_turns
 
-    def should_create_adhoc_turn(self, queued_turn):
-        player_deck = queued_turn.player.decks.get(game=queued_turn.game)
+    def should_create_adhoc_turn(self, stacked_turn):
+        player_deck = stacked_turn.player.decks.get(game=stacked_turn.game)
         if len(player_deck.hand) < 4:
             return False
         return True
@@ -340,15 +340,15 @@ class Mine(Card):
     adhocturn_form = MineForm
 
     def perform_specific_action(self, deck, turn):
-        return QueuedTurn.objects.create(
+        return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
 
-    def should_create_adhoc_turn(self, queued_turn):
-        player_deck = queued_turn.player.decks.get(game=queued_turn.game)
+    def should_create_adhoc_turn(self, stacked_turn):
+        player_deck = stacked_turn.player.decks.get(game=stacked_turn.game)
         if player_deck.no_treasure:
             return False
         return True
@@ -365,15 +365,15 @@ class Moneylender(Card):
     adhocturn_form = MoneylenderForm
 
     def perform_specific_action(self, deck, turn):
-        return QueuedTurn.objects.create(
+        return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
 
-    def should_create_adhoc_turn(self, queued_turn):
-        player_deck = queued_turn.player.decks.get(game=queued_turn.game)
+    def should_create_adhoc_turn(self, stacked_turn):
+        player_deck = stacked_turn.player.decks.get(game=stacked_turn.game)
         if 'Copper' not in player_deck.hand:
             return False
         return True
@@ -386,15 +386,15 @@ class Remodel(Card):
     adhocturn_form = RemodelForm
 
     def perform_specific_action(self, deck, turn):
-        return QueuedTurn.objects.create(
+        return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
 
-    def should_create_adhoc_turn(self, queued_turn):
-        deck = queued_turn.game.decks.get(player=queued_turn.player)
+    def should_create_adhoc_turn(self, stacked_turn):
+        deck = stacked_turn.game.decks.get(player=stacked_turn.player)
         hand = deck.hand
         if not hand:
             return False
@@ -416,10 +416,10 @@ class Spy(Card):
     adhocturn_form = SpyForm
 
     def perform_specific_action(self, deck, turn):
-        queued_turns = []
+        stacked_turns = []
         for player in deck.game.players.all():
-            queued_turns.append(
-                QueuedTurn.objects.create(
+            stacked_turns.append(
+                StackedTurn.objects.create(
                     turn=turn,
                     player=turn.player,
                     game=turn.game,
@@ -427,8 +427,8 @@ class Spy(Card):
                     target_player=player,
                 ),
             )
-        queued_turns.append(
-            QueuedTurn.objects.create(
+        stacked_turns.append(
+            StackedTurn.objects.create(
                 turn=turn,
                 player=turn.player,
                 game=turn.game,
@@ -436,10 +436,10 @@ class Spy(Card):
                 perform_simple_actions=True,
             ),
         )
-        return queued_turns
+        return stacked_turns
 
-    def should_create_adhoc_turn(self, queued_turn):
-        player_deck = queued_turn.target_player.decks.get(game=queued_turn.game)
+    def should_create_adhoc_turn(self, stacked_turn):
+        player_deck = stacked_turn.target_player.decks.get(game=stacked_turn.game)
         if len(player_deck.draw_pile) < 1:
             player_deck.full_shuffle()
             player_deck.save()
@@ -457,9 +457,9 @@ class Thief(Card):
     adhocturn_cleanup_form = ThiefCleanupForm
 
     def perform_specific_action(self, deck, turn):
-        queued_turns = []
-        queued_turns.append(
-            QueuedTurn.objects.create(
+        stacked_turns = []
+        stacked_turns.append(
+            StackedTurn.objects.create(
                 turn=turn,
                 player=turn.player,
                 game=turn.game,
@@ -471,8 +471,8 @@ class Thief(Card):
         for player in deck.game.players.all():
             if player == turn.player:
                 continue
-            queued_turns.append(
-                QueuedTurn.objects.create(
+            stacked_turns.append(
+                StackedTurn.objects.create(
                     turn=turn,
                     player=turn.player,
                     game=turn.game,
@@ -480,7 +480,7 @@ class Thief(Card):
                     target_player=player,
                 ),
             )
-        return queued_turns
+        return stacked_turns
 
     def _cleanup_peek(self, deck, treasure=None):
         for card in deck.real_narnia[::-1]:
@@ -489,9 +489,9 @@ class Thief(Card):
             deck.move_to_discard(card, source='narnia_pile')
         deck.save()
 
-    def should_create_adhoc_turn(self, queued_turn):
-        if queued_turn.card_form_field_string == 'adhocturn_form':
-            deck = queued_turn.get_target_player_deck()
+    def should_create_adhoc_turn(self, stacked_turn):
+        if stacked_turn.card_form_field_string == 'adhocturn_form':
+            deck = stacked_turn.get_target_player_deck()
             cards_string = deck.draw_cards(2, destination='narnia_pile')
             cards = get_cards_from_names(cards_string)
             treasures = [card for card in cards if card.is_treasure]
@@ -505,8 +505,8 @@ class Thief(Card):
             self._cleanup_peek(deck, treasure)
             return False
         else:
-            for deck in queued_turn.game.decks.all():
-                if deck.player == queued_turn.player:
+            for deck in stacked_turn.game.decks.all():
+                if deck.player == stacked_turn.player:
                     continue
                 if deck.narnia_pile:
                     return True
@@ -520,15 +520,15 @@ class ThroneRoom(Card):
     adhocturn_form = ThroneRoomForm
 
     def perform_specific_action(self, deck, turn):
-        return QueuedTurn.objects.create(
+        return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
 
-    def should_create_adhoc_turn(self, queued_turn):
-        player_deck = queued_turn.player.decks.get(game=queued_turn.game)
+    def should_create_adhoc_turn(self, stacked_turn):
+        player_deck = stacked_turn.player.decks.get(game=stacked_turn.game)
         if player_deck.no_actions:
             return False
         return True
@@ -572,12 +572,12 @@ class Workshop(Card):
     adhocturn_form = WorkshopForm
 
     def perform_specific_action(self, deck, turn):
-        return QueuedTurn.objects.create(
+        return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
 
-    def should_create_adhoc_turn(self, queued_turn):
+    def should_create_adhoc_turn(self, stacked_turn):
         return True

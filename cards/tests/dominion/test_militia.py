@@ -17,8 +17,8 @@ class MilitiaCardTestCase(BaseTestCase):
         self.card = Militia()
 
     def test_perform_specific_action(self):
-        with self.assert_queued_turn_created(len(self.game.players.all())):
-            queued_turns = self.card.perform_specific_action(
+        with self.assert_stacked_turn_created(len(self.game.players.all())):
+            stacked_turns = self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
             )
@@ -26,11 +26,11 @@ class MilitiaCardTestCase(BaseTestCase):
             if player.pk == self.player.pk:
                 continue
             player_turns = [
-                turn for turn in queued_turns if turn.player.pk == player.pk
+                turn for turn in stacked_turns if turn.player.pk == player.pk
             ]
             self.assertEqual(len(player_turns), 1)
-            self.assert_queued_turn(
-                queued_turn=player_turns[0],
+            self.assert_stacked_turn(
+                stacked_turn=player_turns[0],
                 turn=self.turn,
                 player=player,
                 game=self.game,

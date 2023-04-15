@@ -23,7 +23,7 @@ class BureaucratCardTestCase(BaseTestCase):
             deck.hand = ['Copper', 'Estate', 'Estate', 'Village']
             deck.save()
 
-        with self.assert_queued_turn_created(12):
+        with self.assert_stacked_turn_created(12):
             self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
@@ -35,7 +35,7 @@ class BureaucratCardTestCase(BaseTestCase):
             deck.hand = ['Copper', 'Estate', 'Chapel', 'Village']
             deck.save()
 
-        with self.assert_queued_turn_created(12):
+        with self.assert_stacked_turn_created(12):
             self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
@@ -47,7 +47,7 @@ class BureaucratCardTestCase(BaseTestCase):
             deck.hand = ['Copper', 'Gold', 'Chapel', 'Village']
             deck.save()
 
-        with self.assert_queued_turn_created(12):
+        with self.assert_stacked_turn_created(12):
             self.card.perform_specific_action(
                 deck=self.deck,
                 turn=self.turn,
