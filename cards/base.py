@@ -1,7 +1,7 @@
 from django.templatetags.static import static
 
 from cards.constants import CardTypes
-from turns.models import Turn
+from turns.models import StackedTurn, Turn
 
 
 class Card:
@@ -93,7 +93,13 @@ class Card:
         turn.save()
 
     def perform_specific_action(self, deck, turn):
-        pass
+        return StackedTurn.objects.create(
+            turn=turn,
+            player=turn.player,
+            game=turn.game,
+            card=self,
+            perform_simple_actions=True,
+        )
 
     def perform_action(self, deck, turn: Turn):
         if self.adhocturn_form is None:

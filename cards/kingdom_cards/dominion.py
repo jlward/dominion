@@ -26,7 +26,7 @@ class Adventurer(Card):
     types = [CardTypes.Action]
     card_cost = 6
 
-    def perform_specific_action(self, deck):
+    def perform_simple_actions(self, deck, turn):
         revealed_cards = []
         revealed_treasures = []
 
@@ -189,7 +189,7 @@ class CouncilRoom(Card):
     extra_cards = 4
     extra_buys = 1
 
-    def perform_specific_action(self, deck, turn):
+    def perform_simple_actions(self, deck, turn):
         game = turn.game
         players = game.get_players(turn.player)
         # remove current player from list
@@ -550,7 +550,7 @@ class Witch(Card):
     card_cost = 5
     extra_cards = 2
 
-    def perform_specific_action(self, deck, turn):
+    def perform_simple_actions(self, deck, turn):
         game = turn.game
         players = game.get_players(turn.player)
         # remove current player from list
