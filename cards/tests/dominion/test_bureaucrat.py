@@ -24,7 +24,7 @@ class BureaucratCardTestCase(BaseTestCase):
             deck.save()
 
         with self.assert_stacked_turn_created(12):
-            self.card.perform_specific_action(
+            self.card.create_stacked_turns(
                 deck=self.deck,
                 turn=self.turn,
             )
@@ -36,7 +36,7 @@ class BureaucratCardTestCase(BaseTestCase):
             deck.save()
 
         with self.assert_stacked_turn_created(12):
-            self.card.perform_specific_action(
+            self.card.create_stacked_turns(
                 deck=self.deck,
                 turn=self.turn,
             )
@@ -48,7 +48,7 @@ class BureaucratCardTestCase(BaseTestCase):
             deck.save()
 
         with self.assert_stacked_turn_created(12):
-            self.card.perform_specific_action(
+            self.card.create_stacked_turns(
                 deck=self.deck,
                 turn=self.turn,
             )

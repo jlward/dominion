@@ -1,7 +1,7 @@
 from django.templatetags.static import static
 
 from cards.constants import CardTypes
-from turns.models import Turn
+from turns.models import StackedTurn, Turn
 
 
 class Card:
@@ -84,7 +84,7 @@ class Card:
     def url(self):
         return static(self.path)
 
-    def perform_simple_actions(self, deck, turn):
+    def _perform_simple_actions(self, deck, turn):
         deck.draw_cards(self.plus_cards)
         turn.available_actions += self.plus_actions
         turn.available_buys += self.plus_buys
@@ -92,16 +92,24 @@ class Card:
         deck.save()
         turn.save()
 
-    def perform_specific_action(self, deck, turn):
+    def perform_specific_actions(self, deck, turn):
         pass
 
-    def perform_action(self, deck, turn: Turn):
-        if self.adhocturn_form is None:
-            self.perform_simple_actions(deck, turn)
-        self.perform_specific_action(deck, turn)
+    def execute_card(self, deck, turn):
+        self._perform_simple_actions(deck, turn)
+        self.perform_specific_actions(deck, turn)
 
-    def perform_specific_stacked_action(self, stacked_turn):
-        pass
+    def create_stacked_turns(self, deck, turn):
+        return StackedTurn.objects.create(
+            turn=turn,
+            player=turn.player,
+            game=turn.game,
+            card=self,
+            perform_simple_actions=True,
+        )
+
+    def play_action(self, deck, turn: Turn):
+        self.create_stacked_turns(deck, turn)
 
     def should_create_adhoc_turn(self, stacked_turn):
         raise NotImplementedError()

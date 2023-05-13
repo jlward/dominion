@@ -18,7 +18,7 @@ class RemodelCardTestCase(BaseTestCase):
 
     def test_perform_specific_action(self):
         with self.assert_stacked_turn_created():
-            stacked_turn = self.card.perform_specific_action(
+            stacked_turn = self.card.create_stacked_turns(
                 deck=self.deck,
                 turn=self.turn,
             )

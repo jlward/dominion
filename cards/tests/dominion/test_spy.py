@@ -18,7 +18,7 @@ class SpyCardTestCase(BaseTestCase):
 
     def test_perform_specific_action(self):
         with self.assert_stacked_turn_created(13):
-            stacked_turns = self.card.perform_specific_action(
+            stacked_turns = self.card.create_stacked_turns(
                 deck=self.deck,
                 turn=self.turn,
             )

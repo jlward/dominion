@@ -32,11 +32,11 @@ class CouncilRoomCardTestCase(TestCase):
 
     def test_perform_specific_action_self(self):
         with self.assert_council_room(self.deck, 0):
-            self.card.perform_specific_action(deck=self.deck, turn=self.turn)
+            self.card.create_stacked_turns(deck=self.deck, turn=self.turn)
 
     def test_perform_specific_action_other(self):
         with self.assert_council_room(self.other_deck, 1):
-            self.card.perform_specific_action(
+            self.card.perform_specific_actions(
                 deck=self.other_deck,
                 turn=self.turn,
             )
