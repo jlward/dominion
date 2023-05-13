@@ -23,7 +23,6 @@ class StackedTurnManager(models.Manager):
                 deck = turn.game.decks.get(player=turn.player)
                 turn.card.perform_simple_actions(deck, turn.turn)
                 continue
-            turn.card.perform_specific_stacked_action(turn)
             if turn.card.should_create_adhoc_turn(turn):
                 return AdHocTurn.objects.create(
                     turn=turn.turn,

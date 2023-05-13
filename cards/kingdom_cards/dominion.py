@@ -207,17 +207,21 @@ class Feast(Card):
     adhocturn_form = FeastForm
 
     def perform_specific_action(self, deck, turn):
-        return StackedTurn.objects.create(
+        StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
             game=turn.game,
             card=self,
         )
+        return StackedTurn.objects.create(
+            turn=turn,
+            player=turn.player,
+            game=turn.game,
+            card=self,
+            perform_simple_actions=True,
+        )
 
-    def perform_specific_stacked_action(self, stacked_turn):
-        super().perform_specific_stacked_action(stacked_turn)
-        # TODO stop doing this. add deck to turns
-        deck = stacked_turn.game.decks.get(player=stacked_turn.player)
+    def perform_simple_actions(self, deck, turn):
         try:
             deck.trash_cards(cards=[Feast()], source='played_cards')
         except ValueError:
