@@ -18,7 +18,6 @@ def css_select_get_text(response, selector):
 
 def _css_select_get_attributes(response, selector, attributes):
     for element in css_select(response, selector):
-        print(element)
         yield {attribute: element[attribute] for attribute in attributes}
 
 
