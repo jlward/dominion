@@ -26,7 +26,7 @@ class Adventurer(Card):
     types = [CardTypes.Action]
     card_cost = 6
 
-    def perform_simple_actions(self, deck, turn):
+    def perform_specific_actions(self, deck, turn):
         revealed_cards = []
         revealed_treasures = []
 
@@ -51,7 +51,7 @@ class Bureaucrat(Card):
     adhocturn_action_title = 'Reveal a Victory Card to put on top of your deck'
     adhocturn_form = BureaucratForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         stacked_turns = []
         for player in deck.game.players.all():
             if player.pk == turn.player_id:
@@ -75,8 +75,8 @@ class Bureaucrat(Card):
         )
         return stacked_turns
 
-    def perform_simple_actions(self, deck, turn):
-        super().perform_simple_actions(deck, turn)
+    def perform_specific_actions(self, deck, turn):
+        super().perform_specific_actions(deck, turn)
         deck.game.gain_card(deck, Silver(), destination='draw_pile')
         deck.save()
 
@@ -99,7 +99,7 @@ class Cellar(Card):
     adhocturn_action_title = 'Select cards to discard'
     adhocturn_form = CellarForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         stacked_turns = []
         stacked_turns.append(
             StackedTurn.objects.create(
@@ -134,7 +134,7 @@ class Chancellor(Card):
     adhocturn_action_title = 'Put deck in discard?'
     adhocturn_form = ChancellorForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         stacked_turns = []
         stacked_turns.append(
             StackedTurn.objects.create(
@@ -168,7 +168,7 @@ class Chapel(Card):
     adhocturn_action_title = 'Select up to 4 cards to trash'
     adhocturn_form = ChapelForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
@@ -189,7 +189,7 @@ class CouncilRoom(Card):
     extra_cards = 4
     extra_buys = 1
 
-    def perform_simple_actions(self, deck, turn):
+    def perform_specific_actions(self, deck, turn):
         game = turn.game
         players = game.get_players(turn.player)
         # remove current player from list
@@ -206,7 +206,7 @@ class Feast(Card):
     adhocturn_action_title = 'Gain a card costing up to 5'
     adhocturn_form = FeastForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
@@ -221,7 +221,7 @@ class Feast(Card):
             perform_simple_actions=True,
         )
 
-    def perform_simple_actions(self, deck, turn):
+    def perform_specific_actions(self, deck, turn):
         try:
             deck.trash_cards(cards=[Feast()], source='played_cards')
         except ValueError:
@@ -261,7 +261,7 @@ class Library(Card):
     adhocturn_action_title = 'Add card to hand?'
     adhocturn_form = LibraryForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
@@ -306,7 +306,7 @@ class Militia(Card):
     adhocturn_action_title = 'Pick 3 cards to keep'
     adhocturn_form = MilitiaForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         stacked_turns = []
         for player in deck.game.players.all():
             if player.pk == turn.player_id:
@@ -343,7 +343,7 @@ class Mine(Card):
     adhocturn_action_title = 'Trash a treasure? - Gain a treasure costing up to 3 more'
     adhocturn_form = MineForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
@@ -368,7 +368,7 @@ class Moneylender(Card):
     adhocturn_action_title = 'Trash a Copper?'
     adhocturn_form = MoneylenderForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
@@ -389,7 +389,7 @@ class Remodel(Card):
     adhocturn_action_title = 'Trash a card? - Gain a card costing up to 2 more'
     adhocturn_form = RemodelForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
@@ -419,7 +419,7 @@ class Spy(Card):
     adhocturn_action_title = 'Discard?'
     adhocturn_form = SpyForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         stacked_turns = []
         for player in deck.game.players.all():
             stacked_turns.append(
@@ -460,7 +460,7 @@ class Thief(Card):
     adhocturn_cleanup_action_title = 'Select cards to gain'
     adhocturn_cleanup_form = ThiefCleanupForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         stacked_turns = []
         stacked_turns.append(
             StackedTurn.objects.create(
@@ -523,7 +523,7 @@ class ThroneRoom(Card):
     adhocturn_action_title = 'Pick an action to play twice'
     adhocturn_form = ThroneRoomForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,
@@ -550,7 +550,7 @@ class Witch(Card):
     card_cost = 5
     extra_cards = 2
 
-    def perform_simple_actions(self, deck, turn):
+    def perform_specific_actions(self, deck, turn):
         game = turn.game
         players = game.get_players(turn.player)
         # remove current player from list
@@ -575,7 +575,7 @@ class Workshop(Card):
     adhocturn_action_title = 'Gain a card costing up to 4'
     adhocturn_form = WorkshopForm
 
-    def perform_specific_action(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
         return StackedTurn.objects.create(
             turn=turn,
             player=turn.player,

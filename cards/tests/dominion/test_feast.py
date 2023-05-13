@@ -19,7 +19,7 @@ class FeastCardTestCase(BaseTestCase):
     def test_perform_specific_action(self):
         self.deck.played_cards.append('Feast')
         with self.assert_stacked_turn_created(2):
-            stacked_turn = self.card.perform_specific_action(
+            stacked_turn = self.card.create_stacked_turns(
                 deck=self.deck,
                 turn=self.turn,
             )

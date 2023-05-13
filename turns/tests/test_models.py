@@ -6,10 +6,11 @@ from cards.base import Card
 from cards.kingdom_cards.base_cards import Copper, Estate, Silver
 from cards.kingdom_cards.dominion import Smithy, Village
 from decks.factories import DeckFactory
+from testing import BaseTestCase
 from turns.factories import AdHocTurnFactory, TurnFactory
 
 
-class TurnPlayActionTestCase(TestCase):
+class TurnPlayActionTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
         self.turn = TurnFactory()
@@ -55,8 +56,8 @@ class TurnPlayActionTestCase(TestCase):
         self.assertEqual(self.turn.available_actions, actions)
 
     def test_smoke(self):
-        self.turn.play_action(self.village)
-        self.assert_action_played()
+        with self.assert_stacked_turn_created():
+            self.turn.play_action(self.village)
 
 
 class TurnPlayTreasuresTestCase(TestCase):

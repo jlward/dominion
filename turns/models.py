@@ -61,7 +61,7 @@ class Turn(BaseTurn):
         if not ghost_action:
             player_deck.play_card(action)
         self.actions_played.append(action.name)
-        action.perform_action(deck=player_deck, turn=self)
+        action.play_action(deck=player_deck, turn=self)
         if consume:
             self.available_actions -= 1
         player_deck.save()

@@ -21,7 +21,7 @@ class StackedTurnManager(models.Manager):
             turn.save()
             if turn.perform_simple_actions:
                 deck = turn.game.decks.get(player=turn.player)
-                turn.card.perform_simple_actions(deck, turn.turn)
+                turn.card.execute_card(deck, turn.turn)
                 continue
             if turn.card.should_create_adhoc_turn(turn):
                 return AdHocTurn.objects.create(

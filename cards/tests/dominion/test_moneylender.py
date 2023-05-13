@@ -16,7 +16,7 @@ class MoneylenderCardTestCase(BaseTestCase):
 
     def test_perform_specific_action(self):
         with self.assert_stacked_turn_created():
-            stacked_turn = self.card.perform_specific_action(
+            stacked_turn = self.card.create_stacked_turns(
                 deck=self.deck,
                 turn=self.turn,
             )
@@ -31,7 +31,7 @@ class MoneylenderCardTestCase(BaseTestCase):
     def test_perform_specific_action_no_copper(self):
         self.deck.hand = ['Estate'] * 4
         with self.assert_stacked_turn_created(1):
-            self.card.perform_specific_action(
+            self.card.create_stacked_turns(
                 deck=self.deck,
                 turn=self.turn,
             )

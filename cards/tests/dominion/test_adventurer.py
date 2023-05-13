@@ -30,9 +30,9 @@ class AdventurerCardTestCase(BaseTestCase):
 
     def test_perform_specific_action(self):
         with self.assert_adventurer(self.deck):
-            self.card.perform_simple_actions(deck=self.deck, turn=self.turn)
+            self.card.perform_specific_actions(deck=self.deck, turn=self.turn)
 
     def test_perform_specific_action_empty_draw_pile(self):
         self.deck.draw_pile = []
         with self.assert_adventurer(self.deck, 1):
-            self.card.perform_simple_actions(deck=self.deck, turn=self.turn)
+            self.card.perform_specific_actions(deck=self.deck, turn=self.turn)
