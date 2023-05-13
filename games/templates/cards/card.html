@@ -1,4 +1,4 @@
-<span class="card"
+<span class="card{% if in_hand %} in_hand{% endif %}"
     {% if in_hand %}
         draggable="true"
         {%if turn.state == 'action' and turn.available_actions > 0 %}
