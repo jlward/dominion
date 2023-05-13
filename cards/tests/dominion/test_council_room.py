@@ -36,7 +36,7 @@ class CouncilRoomCardTestCase(TestCase):
 
     def test_perform_specific_action_other(self):
         with self.assert_council_room(self.other_deck, 1):
-            self.card.perform_specific_action(
+            self.card.perform_simple_actions(
                 deck=self.other_deck,
                 turn=self.turn,
             )

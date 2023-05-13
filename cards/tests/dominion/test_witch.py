@@ -34,5 +34,5 @@ class WitchCardTestCase(TestCase):
             self.assertIn('Curse', player_deck.discard_pile)
 
     def test_perform_specific_action(self):
-        self.card.perform_specific_action(deck=self.deck, turn=self.turn)
+        self.card.perform_simple_actions(deck=self.deck, turn=self.turn)
         self.assert_witch()
