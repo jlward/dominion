@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from players.factories import PlayerFactory
 from testing import BaseTestCase
-from testing.utils import css_select_get_attributes, css_select_get_text
+from testing.utils import css_select, css_select_get_attributes, css_select_get_text
 
 
 class IntegrationTestCase(BaseTestCase):
@@ -43,7 +43,7 @@ class IntegrationTestCase(BaseTestCase):
         self.assert_your_turn(r)
         self.assertEqual(self.get_resources(r), dict(actions=1, buys=1, money=0))
         if self.player_starting_hand:
-            self.assertEqual(self.get_hand(r), self.player_starting_hand)
+            self.assertEqual(self.get_player_hand(r), self.player_starting_hand)
 
         r = self.opponent_client.get(self.game_url)
         self.assert_not_your_turn(r)
@@ -52,7 +52,7 @@ class IntegrationTestCase(BaseTestCase):
             dict(actions=None, buys=None, money=None),
         )
         if self.opponent_starting_hand:
-            self.assertEqual(self.get_hand(r), self.opponent_starting_hand)
+            self.assertEqual(self.get_oppnent_hand(r), self.opponent_starting_hand)
 
     def assert_your_turn(self, response):
         self.assertEqual(response.status_code, 200)
@@ -96,8 +96,13 @@ class IntegrationTestCase(BaseTestCase):
             money=money,
         )
 
-    def get_hand(self, response):
+    def get_player_hand(self, response):
         r = self.player_client.get(self.game_url)
+        hand = css_select_get_attributes(r, '#hand .card.in_hand', ['data-name'])
+        return [row['data-name'] for row in hand]
+
+    def get_oppnent_hand(self, response):
+        r = self.opponent_client.get(self.game_url)
         hand = css_select_get_attributes(r, '#hand .card.in_hand', ['data-name'])
         return [row['data-name'] for row in hand]
 
@@ -105,6 +110,30 @@ class IntegrationTestCase(BaseTestCase):
         r = self.player_client.post(self.play_action_url, dict(card=card), follow=True)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.json()['okay'], True)
+
+    def opponent_play_card(self, card):
+        raise NotImplementedError()
+
+    def assert_player_adhoc_turn_modal_present(self):
+        r = self.player_client.get(self.game_url)
+        assert css_select(r, '#adhocturnModal')
+
+    def assert_player_adhoc_turn_modal_not_present(self):
+        r = self.player_client.get(self.game_url)
+        assert not css_select(r, '#adhocturnModal')
+
+    def assert_opponent_adhoc_turn_modal_not_present(self):
+        r = self.opponent_client.get(self.game_url)
+        assert not css_select(r, '#adhocturnModal')
+
+    def player_pick_cards_from_modal(self, *cards):
+        r = self.player_client.get(self.game_url)
+        form_actions = css_select_get_attributes(r, '#adhocturnModal form', ['action'])
+        url = form_actions[0]['action']
+
+        r = self.player_client.post(url, dict(cards=cards), HTTP_REFERER=self.game_url)
+        self.assertEqual(r.status_code, 302)
+        self.assertRedirects(r, self.game_url)
 
 
 class VillageTestCase(IntegrationTestCase):
@@ -117,7 +146,27 @@ class VillageTestCase(IntegrationTestCase):
         r = self.player_client.get(self.game_url)
         self.assert_your_turn(r)
         self.assertEqual(self.get_resources(r), dict(actions=2, buys=1, money=0))
-        self.assertEqual(len(self.get_hand(r)), 1)
+        self.assertEqual(len(self.get_player_hand(r)), 1)
 
         r = self.opponent_client.get(self.game_url)
         self.assert_not_your_turn(r)
+
+
+class ChapelTestCase(IntegrationTestCase):
+    player_starting_hand = ['Chapel', 'Silver', 'Gold', 'Smithy']
+
+    def test_modal_pops_up_when_card_played(self):
+        self.assert_initial_state()
+        self.player_play_card('Chapel')
+
+        self.assert_player_adhoc_turn_modal_present()
+        self.assert_opponent_adhoc_turn_modal_not_present()
+
+        self.player_pick_cards_from_modal('Silver', 'Gold')
+
+        self.assert_player_adhoc_turn_modal_not_present()
+        self.assert_opponent_adhoc_turn_modal_not_present()
+
+        r = self.player_client.get(self.game_url)
+        self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
+        self.assertCountEqual(self.get_player_hand(r), ['Smithy'])
