@@ -32,6 +32,10 @@ class IntegrationTestCase(BaseTestCase):
             self.player_deck.hand = self.player_starting_hand[:]
             self.player_deck.save()
 
+        if self.opponent_starting_hand:
+            self.opponent_deck.hand = self.opponent_starting_hand[:]
+            self.opponent_deck.save()
+
         self.player_client = Client()
         self.opponent_client = Client()
 
@@ -122,6 +126,10 @@ class IntegrationTestCase(BaseTestCase):
         r = self.player_client.get(self.game_url)
         assert not css_select(r, '#adhocturnModal')
 
+    def assert_opponent_adhoc_turn_modal_present(self):
+        r = self.opponent_client.get(self.game_url)
+        assert css_select(r, '#adhocturnModal')
+
     def assert_opponent_adhoc_turn_modal_not_present(self):
         r = self.opponent_client.get(self.game_url)
         assert not css_select(r, '#adhocturnModal')
@@ -132,6 +140,19 @@ class IntegrationTestCase(BaseTestCase):
         url = form_actions[0]['action']
 
         r = self.player_client.post(url, dict(cards=cards), HTTP_REFERER=self.game_url)
+        self.assertEqual(r.status_code, 302)
+        self.assertRedirects(r, self.game_url)
+
+    def oppenent_pick_cards_from_modal(self, *cards):
+        r = self.opponent_client.get(self.game_url)
+        form_actions = css_select_get_attributes(r, '#adhocturnModal form', ['action'])
+        url = form_actions[0]['action']
+
+        r = self.opponent_client.post(
+            url,
+            dict(cards=cards),
+            HTTP_REFERER=self.game_url,
+        )
         self.assertEqual(r.status_code, 302)
         self.assertRedirects(r, self.game_url)
 
@@ -170,3 +191,25 @@ class ChapelTestCase(IntegrationTestCase):
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
         self.assertCountEqual(self.get_player_hand(r), ['Smithy'])
+
+
+class MilitiaTestCase(IntegrationTestCase):
+    player_starting_hand = ['Militia', 'Silver', 'Gold', 'Smithy']
+    opponent_starting_hand = ['Copper', 'Estate', 'Copper', 'Estate', 'Village']
+
+    def test_modal_pops_up_when_card_played(self):
+        self.assert_initial_state()
+        self.player_play_card('Militia')
+
+        self.assert_player_adhoc_turn_modal_not_present()
+        self.assert_opponent_adhoc_turn_modal_present()
+
+        self.oppenent_pick_cards_from_modal('Estate', 'Copper', 'Village')
+
+        self.assert_player_adhoc_turn_modal_not_present()
+        self.assert_opponent_adhoc_turn_modal_not_present()
+
+        r = self.player_client.get(self.game_url)
+        self.assert_your_turn(r)
+        self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=2))
+        self.assertCountEqual(self.get_oppnent_hand(r), ['Copper', 'Estate', 'Village'])
