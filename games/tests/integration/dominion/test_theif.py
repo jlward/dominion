@@ -6,7 +6,7 @@ class ThiefChoiceTestCase(IntegrationTestCase):
     opponent_starting_draw_pile = ['Gold', 'Silver']
 
     def test(self):
-        self.player_play_card('Thief')
+        self.play_card(self.player, 'Thief')
 
         self.assert_player_adhoc_turn_modal_present()
         self.assert_opponent_adhoc_turn_modal_not_present()
@@ -26,7 +26,7 @@ class ThiefOneTreaureChoiceTestCase(IntegrationTestCase):
     opponent_starting_draw_pile = ['Gold']
 
     def test(self):
-        self.player_play_card('Thief')
+        self.play_card(self.player, 'Thief')
 
         self.assert_player_adhoc_turn_modal_present()
         self.assert_opponent_adhoc_turn_modal_not_present()
@@ -42,7 +42,7 @@ class ThiefNoTreaureNoChoiceTestCase(IntegrationTestCase):
     opponent_starting_draw_pile = ['Estate', 'Duchy']
 
     def test(self):
-        self.player_play_card('Thief')
+        self.play_card(self.player, 'Thief')
 
         self.assert_player_adhoc_turn_modal_not_present()
         self.assert_opponent_adhoc_turn_modal_not_present()

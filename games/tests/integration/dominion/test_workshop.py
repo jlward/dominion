@@ -5,7 +5,7 @@ class WorkshopTestCase(IntegrationTestCase):
     player_starting_hand = ['Workshop']
 
     def test(self):
-        self.player_play_card('Workshop')
+        self.play_card(self.player, 'Workshop')
 
         self.assert_player_adhoc_turn_modal_present()
         self.assert_opponent_adhoc_turn_modal_not_present()

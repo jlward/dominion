@@ -7,7 +7,7 @@ class SpyTestCase(IntegrationTestCase):
     opponent_starting_draw_pile = ['Gold', 'Village']
 
     def test(self):
-        self.player_play_card('Spy')
+        self.play_card(self.player, 'Spy')
 
         self.assert_player_adhoc_turn_modal_present()
         self.assert_opponent_adhoc_turn_modal_not_present()
@@ -30,7 +30,7 @@ class SpyNoCardsLeftToDrawTestCase(IntegrationTestCase):
     opponent_starting_discard_pile = ['Gold']
 
     def test(self):
-        self.player_play_card('Spy')
+        self.play_card(self.player, 'Spy')
 
         self.assert_player_adhoc_turn_modal_present()
         self.assert_opponent_adhoc_turn_modal_not_present()

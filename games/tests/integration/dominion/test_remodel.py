@@ -5,7 +5,7 @@ class RemodelTestCase(IntegrationTestCase):
     player_starting_hand = ['Remodel', 'Estate']
 
     def test(self):
-        self.player_play_card('Remodel')
+        self.play_card(self.player, 'Remodel')
 
         self.assert_player_adhoc_turn_modal_present()
         self.assert_opponent_adhoc_turn_modal_not_present()
@@ -20,7 +20,7 @@ class RemodelNoCardInHandTestCase(IntegrationTestCase):
     player_starting_hand = ['Remodel']
 
     def test(self):
-        self.player_play_card('Remodel')
+        self.play_card(self.player, 'Remodel')
 
         self.assert_player_adhoc_turn_modal_not_present()
         self.assert_opponent_adhoc_turn_modal_not_present()

@@ -137,13 +137,10 @@ class IntegrationTestCase(BaseTestCase):
         hand = [row['data-name'] for row in hand]
         self.assertCountEqual(hand, expected_hand)
 
-    def player_play_card(self, card):
-        r = self.player_client.post(self.play_action_url, dict(card=card), follow=True)
+    def play_card(self, player, card):
+        r = player.client.post(self.play_action_url, dict(card=card), follow=True)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.json()['okay'], True)
-
-    def opponent_play_card(self, card):
-        raise NotImplementedError()
 
     def assert_player_adhoc_turn_modal_present(self):
         r = self.player_client.get(self.game_url)
