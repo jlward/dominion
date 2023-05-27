@@ -8,17 +8,17 @@ class ThiefChoiceTestCase(IntegrationTestCase):
     def test(self):
         self.play_card(self.player, 'Thief')
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
         self.player_pick_cards_from_modal('Gold')
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
         self.player_pick_cards_from_modal('Gold')
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
 
 class ThiefOneTreaureChoiceTestCase(IntegrationTestCase):
@@ -28,13 +28,13 @@ class ThiefOneTreaureChoiceTestCase(IntegrationTestCase):
     def test(self):
         self.play_card(self.player, 'Thief')
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
         self.player_pick_cards_from_modal('Gold')
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
 
 class ThiefNoTreaureNoChoiceTestCase(IntegrationTestCase):
@@ -44,5 +44,5 @@ class ThiefNoTreaureNoChoiceTestCase(IntegrationTestCase):
     def test(self):
         self.play_card(self.player, 'Thief')
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)

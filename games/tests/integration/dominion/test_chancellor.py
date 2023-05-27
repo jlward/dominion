@@ -8,8 +8,8 @@ class ChancellorNoDrawPileTestCase(IntegrationTestCase):
     def test(self):
         self.play_card(self.player, 'Chancellor')
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
 
 class ChancellorDrawPileTestCase(IntegrationTestCase):
@@ -19,5 +19,5 @@ class ChancellorDrawPileTestCase(IntegrationTestCase):
     def test(self):
         self.play_card(self.player, 'Chancellor')
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)

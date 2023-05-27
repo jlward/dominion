@@ -142,21 +142,18 @@ class IntegrationTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.json()['okay'], True)
 
-    def assert_player_adhoc_turn_modal_present(self):
-        r = self.player_client.get(self.game_url)
-        assert css_select(r, '#adhocturnModal')
-
-    def assert_player_adhoc_turn_modal_not_present(self):
-        r = self.player_client.get(self.game_url)
-        assert not css_select(r, '#adhocturnModal')
-
-    def assert_opponent_adhoc_turn_modal_present(self):
-        r = self.opponent_client.get(self.game_url)
-        assert css_select(r, '#adhocturnModal')
-
-    def assert_opponent_adhoc_turn_modal_not_present(self):
-        r = self.opponent_client.get(self.game_url)
-        assert not css_select(r, '#adhocturnModal')
+    def assert_adhoc_model_for_player(self, player, present):
+        r = player.client.get(self.game_url)
+        if present:
+            assert css_select(
+                r,
+                '#adhocturnModal',
+            ), 'Player should see adhoc modal and is not'
+        else:
+            assert not css_select(
+                r,
+                '#adhocturnModal',
+            ), 'Player should not see adhoc modal and is'
 
     def player_pick_cards_from_modal(self, *cards, **extra_params):
         r = self.player_client.get(self.game_url)

@@ -8,8 +8,8 @@ class BureaucratNoChoiceTestCase(IntegrationTestCase):
     def test(self):
         self.play_card(self.player, 'Bureaucrat')
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
         self.assert_player_turn(self.player, True)
         self.assert_resources_for_player(self.player, actions=0, buys=1, money=0)
@@ -23,8 +23,8 @@ class BureaucratNoChoiceNoVicrotryCardTestCase(IntegrationTestCase):
     def test(self):
         self.play_card(self.player, 'Bureaucrat')
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
         self.assert_player_turn(self.player, True)
         self.assert_resources_for_player(self.player, actions=0, buys=1, money=0)
@@ -38,13 +38,13 @@ class BureaucratChoiceTestCase(IntegrationTestCase):
     def test(self):
         self.play_card(self.player, 'Bureaucrat')
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, True)
 
         self.oppenent_pick_cards_from_modal('Estate')
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
         self.assert_player_turn(self.player, True)
         self.assert_resources_for_player(self.player, actions=0, buys=1, money=0)
