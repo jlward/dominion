@@ -5,51 +5,42 @@ class MoneylenderTestCase(IntegrationTestCase):
     player_starting_hand = ['Moneylender', 'Copper']
 
     def test_trash(self):
-        self.assert_initial_state()
+        self.play_card(self.player, 'Moneylender')
 
-        self.player_play_card('Moneylender')
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.pick_yes_no_from_modal(self.player, self.SELECTION_YES)
 
-        self.player_pick_yes_no_from_modal(self.SELECTION_YES)
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
-
-        r = self.player_client.get(self.game_url)
-        self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=3))
-        self.assertCountEqual(self.get_player_hand(r), [])
+        self.assert_resources_for_player(self.player, actions=0, buys=1, money=3)
+        self.assert_hand(self.player, [])
 
     def test_do_not_trash(self):
-        self.assert_initial_state()
+        self.play_card(self.player, 'Moneylender')
 
-        self.player_play_card('Moneylender')
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.pick_yes_no_from_modal(self.player, self.SELECTION_NO)
 
-        self.player_pick_yes_no_from_modal(self.SELECTION_NO)
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
-
-        r = self.player_client.get(self.game_url)
-        self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_player_hand(r), ['Copper'])
+        self.assert_resources_for_player(self.player, actions=0, buys=1, money=0)
+        self.assert_hand(self.player, ['Copper'])
 
 
 class MoneylenderNoCopperTestCase(IntegrationTestCase):
     player_starting_hand = ['Moneylender', 'Silver']
 
     def test(self):
-        self.assert_initial_state()
+        self.play_card(self.player, 'Moneylender')
 
-        self.player_play_card('Moneylender')
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
-
-        r = self.player_client.get(self.game_url)
-        self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_player_hand(r), ['Silver'])
+        self.assert_resources_for_player(self.player, actions=0, buys=1, money=0)
+        self.assert_hand(self.player, ['Silver'])

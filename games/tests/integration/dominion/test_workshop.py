@@ -5,17 +5,15 @@ class WorkshopTestCase(IntegrationTestCase):
     player_starting_hand = ['Workshop']
 
     def test(self):
-        self.assert_initial_state()
-        self.player_play_card('Workshop')
+        self.play_card(self.player, 'Workshop')
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_cards_from_modal('Silver')
+        self.pick_cards_from_modal(self.player, 'Silver')
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        r = self.player_client.get(self.game_url)
-        self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_player_hand(r), [])
+        self.assert_resources_for_player(self.player, actions=0, buys=1, money=0)
+        self.assert_hand(self.player, [])

@@ -56,35 +56,45 @@ class IntegrationTestCase(BaseTestCase):
         self.player_client.force_login(self.player.user)
         self.opponent_client.force_login(self.opponent.user)
 
-    def assert_initial_state(self):
-        r = self.player_client.get(self.game_url)
-        self.assert_your_turn(r)
-        self.assertEqual(self.get_resources(r), dict(actions=1, buys=1, money=0))
-        if self.player_starting_hand:
-            self.assertEqual(self.get_player_hand(r), self.player_starting_hand)
+        self.player.client = self.player_client
+        self.opponent.client = self.opponent_client
+        self.player_client.player = self.player
+        self.opponent_client.player = self.opponent
 
-        r = self.opponent_client.get(self.game_url)
-        self.assert_not_your_turn(r)
-        self.assertEqual(
-            self.get_resources(r),
-            dict(actions=None, buys=None, money=None),
+        del self.client
+        self.assert_initial_state()
+
+    def assert_initial_state(self):
+        self.assert_player_turn(self.player, True)
+
+        self.assert_resources_for_player(self.player)
+
+        if self.player_starting_hand:
+            self.assert_hand(self.player, self.player_starting_hand)
+
+        self.assert_player_turn(self.opponent, False)
+        self.assert_resources_for_player(
+            self.opponent,
+            actions=None,
+            buys=None,
+            money=None,
         )
         if self.opponent_starting_hand:
-            self.assertEqual(self.get_oppnent_hand(r), self.opponent_starting_hand)
+            self.assert_hand(self.opponent, self.opponent_starting_hand)
 
-    def assert_your_turn(self, response):
-        self.assertEqual(response.status_code, 200)
-        self.assertNotEqual(
-            css_select_get_text(response, '.state'),
-            ['Waiting'],
-        )
-
-    def assert_not_your_turn(self, response):
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            css_select_get_text(response, '.state'),
-            ['Waiting'],
-        )
+    def assert_player_turn(self, player, yes_or_no):
+        r = player.client.get(self.game_url)
+        self.assertEqual(r.status_code, 200)
+        if yes_or_no:
+            self.assertNotEqual(
+                css_select_get_text(r, '.state'),
+                ['Waiting'],
+            )
+        else:
+            self.assertEqual(
+                css_select_get_text(r, '.state'),
+                ['Waiting'],
+            )
 
     def _get_actions(self, response):
         return css_select_get_text(response, '#actions span')[0][1:-1]
@@ -95,7 +105,7 @@ class IntegrationTestCase(BaseTestCase):
     def _get_money(self, response):
         return css_select_get_text(response, '#money span')[0][1:-1]
 
-    def get_resources(self, response):
+    def _get_resources(self, response):
         try:
             actions = int(self._get_actions(response))
         except IndexError:
@@ -114,57 +124,43 @@ class IntegrationTestCase(BaseTestCase):
             money=money,
         )
 
-    def get_player_hand(self, response):
-        r = self.player_client.get(self.game_url)
-        hand = css_select_get_attributes(r, '#hand .card.in_hand', ['data-name'])
-        return [row['data-name'] for row in hand]
+    def assert_resources_for_player(self, player, actions=1, buys=1, money=0):
+        r = player.client.get(self.game_url)
+        resources = self._get_resources(r)
+        self.assertEqual(resources['actions'], actions)
+        self.assertEqual(resources['buys'], buys)
+        self.assertEqual(resources['money'], money)
 
-    def get_oppnent_hand(self, response):
-        r = self.opponent_client.get(self.game_url)
+    def assert_hand(self, player, expected_hand):
+        r = player.client.get(self.game_url)
         hand = css_select_get_attributes(r, '#hand .card.in_hand', ['data-name'])
-        return [row['data-name'] for row in hand]
+        hand = [row['data-name'] for row in hand]
+        self.assertCountEqual(hand, expected_hand)
 
-    def player_play_card(self, card):
-        r = self.player_client.post(self.play_action_url, dict(card=card), follow=True)
+    def play_card(self, player, card):
+        r = player.client.post(self.play_action_url, dict(card=card), follow=True)
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.json()['okay'], True)
 
-    def opponent_play_card(self, card):
-        raise NotImplementedError()
+    def assert_adhoc_model_for_player(self, player, present):
+        r = player.client.get(self.game_url)
+        if present:
+            assert css_select(
+                r,
+                '#adhocturnModal',
+            ), 'Player should see adhoc modal and is not'
+        else:
+            assert not css_select(
+                r,
+                '#adhocturnModal',
+            ), 'Player should not see adhoc modal and is'
 
-    def assert_player_adhoc_turn_modal_present(self):
-        r = self.player_client.get(self.game_url)
-        assert css_select(r, '#adhocturnModal')
-
-    def assert_player_adhoc_turn_modal_not_present(self):
-        r = self.player_client.get(self.game_url)
-        assert not css_select(r, '#adhocturnModal')
-
-    def assert_opponent_adhoc_turn_modal_present(self):
-        r = self.opponent_client.get(self.game_url)
-        assert css_select(r, '#adhocturnModal')
-
-    def assert_opponent_adhoc_turn_modal_not_present(self):
-        r = self.opponent_client.get(self.game_url)
-        assert not css_select(r, '#adhocturnModal')
-
-    def player_pick_cards_from_modal(self, *cards, **extra_params):
-        r = self.player_client.get(self.game_url)
+    def pick_yes_no_from_modal(self, player, answer):
+        r = player.client.get(self.game_url)
         form_actions = css_select_get_attributes(r, '#adhocturnModal form', ['action'])
         url = form_actions[0]['action']
 
-        params = dict(cards=cards)
-        params.update(extra_params)
-        r = self.player_client.post(url, params, HTTP_REFERER=self.game_url)
-        self.assertEqual(r.status_code, 302)
-        self.assertRedirects(r, self.game_url)
-
-    def player_pick_yes_no_from_modal(self, answer):
-        r = self.player_client.get(self.game_url)
-        form_actions = css_select_get_attributes(r, '#adhocturnModal form', ['action'])
-        url = form_actions[0]['action']
-
-        r = self.player_client.post(
+        r = player.client.post(
             url,
             dict(selection=answer),
             HTTP_REFERER=self.game_url,
@@ -172,14 +168,16 @@ class IntegrationTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 302)
         self.assertRedirects(r, self.game_url)
 
-    def oppenent_pick_cards_from_modal(self, *cards):
-        r = self.opponent_client.get(self.game_url)
+    def pick_cards_from_modal(self, player, *cards, **extra_params):
+        r = player.client.get(self.game_url)
         form_actions = css_select_get_attributes(r, '#adhocturnModal form', ['action'])
         url = form_actions[0]['action']
 
-        r = self.opponent_client.post(
+        params = dict(cards=cards)
+        params.update(extra_params)
+        r = player.client.post(
             url,
-            dict(cards=cards),
+            params,
             HTTP_REFERER=self.game_url,
         )
         self.assertEqual(r.status_code, 302)

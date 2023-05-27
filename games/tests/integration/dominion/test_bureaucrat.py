@@ -6,16 +6,14 @@ class BureaucratNoChoiceTestCase(IntegrationTestCase):
     opponent_starting_hand = ['Copper', 'Estate']
 
     def test(self):
-        self.assert_initial_state()
-        self.player_play_card('Bureaucrat')
+        self.play_card(self.player, 'Bureaucrat')
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        r = self.player_client.get(self.game_url)
-        self.assert_your_turn(r)
-        self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_oppnent_hand(r), ['Copper'])
+        self.assert_player_turn(self.player, True)
+        self.assert_resources_for_player(self.player, actions=0, buys=1, money=0)
+        self.assert_hand(self.opponent, ['Copper'])
 
 
 class BureaucratNoChoiceNoVicrotryCardTestCase(IntegrationTestCase):
@@ -23,16 +21,14 @@ class BureaucratNoChoiceNoVicrotryCardTestCase(IntegrationTestCase):
     opponent_starting_hand = ['Copper']
 
     def test(self):
-        self.assert_initial_state()
-        self.player_play_card('Bureaucrat')
+        self.play_card(self.player, 'Bureaucrat')
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        r = self.player_client.get(self.game_url)
-        self.assert_your_turn(r)
-        self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_oppnent_hand(r), ['Copper'])
+        self.assert_player_turn(self.player, True)
+        self.assert_resources_for_player(self.player, actions=0, buys=1, money=0)
+        self.assert_hand(self.opponent, ['Copper'])
 
 
 class BureaucratChoiceTestCase(IntegrationTestCase):
@@ -40,18 +36,16 @@ class BureaucratChoiceTestCase(IntegrationTestCase):
     opponent_starting_hand = ['Copper', 'Estate', 'Estate']
 
     def test(self):
-        self.assert_initial_state()
-        self.player_play_card('Bureaucrat')
+        self.play_card(self.player, 'Bureaucrat')
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, True)
 
-        self.oppenent_pick_cards_from_modal('Estate')
+        self.pick_cards_from_modal(self.opponent, 'Estate')
 
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        r = self.player_client.get(self.game_url)
-        self.assert_your_turn(r)
-        self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_oppnent_hand(r), ['Copper', 'Estate'])
+        self.assert_player_turn(self.player, True)
+        self.assert_resources_for_player(self.player, actions=0, buys=1, money=0)
+        self.assert_hand(self.opponent, ['Copper', 'Estate'])
