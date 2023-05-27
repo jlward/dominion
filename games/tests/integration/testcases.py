@@ -67,17 +67,17 @@ class IntegrationTestCase(BaseTestCase):
     def assert_initial_state(self):
         self.assert_player_turn(self.player, True)
 
-        r = self.player_client.get(self.game_url)
-        self.assertEqual(self.get_resources(r), dict(actions=1, buys=1, money=0))
+        self.assert_resources_for_player(self.player)
 
         if self.player_starting_hand:
             self.assert_hand(self.player, self.player_starting_hand)
 
-        r = self.opponent_client.get(self.game_url)
         self.assert_player_turn(self.opponent, False)
-        self.assertEqual(
-            self.get_resources(r),
-            dict(actions=None, buys=None, money=None),
+        self.assert_resources_for_player(
+            self.opponent,
+            actions=None,
+            buys=None,
+            money=None,
         )
         if self.opponent_starting_hand:
             self.assert_hand(self.opponent, self.opponent_starting_hand)
@@ -105,7 +105,7 @@ class IntegrationTestCase(BaseTestCase):
     def _get_money(self, response):
         return css_select_get_text(response, '#money span')[0][1:-1]
 
-    def get_resources(self, response):
+    def _get_resources(self, response):
         try:
             actions = int(self._get_actions(response))
         except IndexError:
@@ -123,6 +123,13 @@ class IntegrationTestCase(BaseTestCase):
             buys=buys,
             money=money,
         )
+
+    def assert_resources_for_player(self, player, actions=1, buys=1, money=0):
+        r = player.client.get(self.game_url)
+        resources = self._get_resources(r)
+        self.assertEqual(resources['actions'], actions)
+        self.assertEqual(resources['buys'], buys)
+        self.assertEqual(resources['money'], money)
 
     def assert_hand(self, player, expected_hand):
         r = player.client.get(self.game_url)

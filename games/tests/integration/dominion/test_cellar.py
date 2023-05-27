@@ -10,9 +10,8 @@ class CellarNoCardsTestCase(IntegrationTestCase):
         self.assert_player_adhoc_turn_modal_not_present()
         self.assert_opponent_adhoc_turn_modal_not_present()
 
-        r = self.player_client.get(self.game_url)
         self.assert_player_turn(self.player, True)
-        self.assertEqual(self.get_resources(r), dict(actions=1, buys=1, money=0))
+        self.assert_resources_for_player(self.player, actions=1, buys=1, money=0)
 
 
 class CellarCardsInHandTestCase(IntegrationTestCase):
@@ -30,8 +29,7 @@ class CellarCardsInHandTestCase(IntegrationTestCase):
         self.assert_player_adhoc_turn_modal_not_present()
         self.assert_opponent_adhoc_turn_modal_not_present()
 
-        r = self.player_client.get(self.game_url)
         self.assert_player_turn(self.player, True)
-        self.assertEqual(self.get_resources(r), dict(actions=1, buys=1, money=0))
+        self.assert_resources_for_player(self.player, actions=1, buys=1, money=0)
 
         self.assert_hand(self.player, ['Gold'])
