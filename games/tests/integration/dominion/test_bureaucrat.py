@@ -5,7 +5,7 @@ class BureaucratNoChoiceTestCase(IntegrationTestCase):
     player_starting_hand = ['Bureaucrat']
     opponent_starting_hand = ['Copper', 'Estate']
 
-    def test_modal_pops_up_when_card_played(self):
+    def test(self):
         self.assert_initial_state()
         self.player_play_card('Bureaucrat')
 
@@ -22,7 +22,7 @@ class BureaucratNoChoiceNoVicrotryCardTestCase(IntegrationTestCase):
     player_starting_hand = ['Bureaucrat']
     opponent_starting_hand = ['Copper']
 
-    def test_modal_pops_up_when_card_played(self):
+    def test(self):
         self.assert_initial_state()
         self.player_play_card('Bureaucrat')
 
@@ -39,7 +39,7 @@ class BureaucratChoiceTestCase(IntegrationTestCase):
     player_starting_hand = ['Bureaucrat']
     opponent_starting_hand = ['Copper', 'Estate', 'Estate']
 
-    def test_modal_pops_up_when_card_played(self):
+    def test(self):
         self.assert_initial_state()
         self.player_play_card('Bureaucrat')
 

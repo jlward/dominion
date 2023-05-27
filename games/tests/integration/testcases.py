@@ -8,7 +8,9 @@ from testing.utils import css_select, css_select_get_attributes, css_select_get_
 
 class IntegrationTestCase(BaseTestCase):
     player_starting_hand = None
+    player_starting_draw_pile = None
     opponent_starting_hand = None
+    opponent_starting_draw_pile = None
 
     @property
     def game_url(self):
@@ -30,11 +32,15 @@ class IntegrationTestCase(BaseTestCase):
 
         if self.player_starting_hand:
             self.player_deck.hand = self.player_starting_hand[:]
-            self.player_deck.save()
-
         if self.opponent_starting_hand:
             self.opponent_deck.hand = self.opponent_starting_hand[:]
-            self.opponent_deck.save()
+        if self.player_starting_draw_pile:
+            self.player_deck.draw_pile = self.player_starting_draw_pile[:]
+        if self.opponent_starting_draw_pile:
+            self.opponent_deck.draw_pile = self.opponent_starting_draw_pile[:]
+
+        self.player_deck.save()
+        self.opponent_deck.save()
 
         self.player_client = Client()
         self.opponent_client = Client()
