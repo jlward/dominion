@@ -1,4 +1,4 @@
-from .testcases import IntegrationTestCase
+from ..testcases import IntegrationTestCase
 
 
 class ChapelTestCase(IntegrationTestCase):
