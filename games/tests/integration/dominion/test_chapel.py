@@ -5,7 +5,6 @@ class ChapelWithHandTestCase(IntegrationTestCase):
     player_starting_hand = ['Chapel', 'Silver', 'Gold', 'Smithy']
 
     def test(self):
-        self.assert_initial_state()
         self.player_play_card('Chapel')
 
         self.assert_player_adhoc_turn_modal_present()
@@ -25,7 +24,6 @@ class ChapelWithoutHandTestCase(IntegrationTestCase):
     player_starting_hand = ['Chapel']
 
     def test(self):
-        self.assert_initial_state()
         self.player_play_card('Chapel')
 
         self.assert_player_adhoc_turn_modal_not_present()

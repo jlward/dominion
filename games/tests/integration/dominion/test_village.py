@@ -5,7 +5,6 @@ class VillageTestCase(IntegrationTestCase):
     player_starting_hand = ['Village']
 
     def test_provides_actions_and_draws_a_card(self):
-        self.assert_initial_state()
         self.player_play_card('Village')
 
         r = self.player_client.get(self.game_url)

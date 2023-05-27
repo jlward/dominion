@@ -5,8 +5,6 @@ class MoneylenderTestCase(IntegrationTestCase):
     player_starting_hand = ['Moneylender', 'Copper']
 
     def test_trash(self):
-        self.assert_initial_state()
-
         self.player_play_card('Moneylender')
 
         self.assert_player_adhoc_turn_modal_present()
@@ -22,8 +20,6 @@ class MoneylenderTestCase(IntegrationTestCase):
         self.assertCountEqual(self.get_player_hand(r), [])
 
     def test_do_not_trash(self):
-        self.assert_initial_state()
-
         self.player_play_card('Moneylender')
 
         self.assert_player_adhoc_turn_modal_present()
@@ -43,8 +39,6 @@ class MoneylenderNoCopperTestCase(IntegrationTestCase):
     player_starting_hand = ['Moneylender', 'Silver']
 
     def test(self):
-        self.assert_initial_state()
-
         self.player_play_card('Moneylender')
 
         self.assert_player_adhoc_turn_modal_not_present()

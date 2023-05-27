@@ -13,8 +13,6 @@ class ThroneRoomTestCase(IntegrationTestCase):
     ]
 
     def test_throne_room_smithy(self):
-        self.assert_initial_state()
-
         self.player_play_card('ThroneRoom')
 
         self.assert_player_adhoc_turn_modal_present()
@@ -43,8 +41,6 @@ class ThroneRoomTestCase(IntegrationTestCase):
         )
 
     def test_throne_room_feast(self):
-        self.assert_initial_state()
-
         self.player_play_card('ThroneRoom')
 
         self.assert_player_adhoc_turn_modal_present()
@@ -79,8 +75,6 @@ class ThroneRoomTestCase(IntegrationTestCase):
         )
 
     def test_throne_room_throne_room_smithy_village(self):
-        self.assert_initial_state()
-
         self.player_play_card('ThroneRoom')
 
         self.assert_player_adhoc_turn_modal_present()
@@ -131,8 +125,6 @@ class ThroneRoomNoOtherCardsInHandTestCase(IntegrationTestCase):
     player_starting_hand = ['ThroneRoom']
 
     def test(self):
-        self.assert_initial_state()
-
         self.player_play_card('ThroneRoom')
 
         self.assert_player_adhoc_turn_modal_not_present()

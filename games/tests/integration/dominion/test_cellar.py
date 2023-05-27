@@ -5,7 +5,6 @@ class CellarNoCardsTestCase(IntegrationTestCase):
     player_starting_hand = ['Cellar']
 
     def test(self):
-        self.assert_initial_state()
         self.player_play_card('Cellar')
 
         self.assert_player_adhoc_turn_modal_not_present()
@@ -21,7 +20,6 @@ class CellarCardsInHandTestCase(IntegrationTestCase):
     player_starting_draw_pile = ['Gold', 'Estate']
 
     def test(self):
-        self.assert_initial_state()
         self.player_play_card('Cellar')
 
         self.assert_player_adhoc_turn_modal_present()

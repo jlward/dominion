@@ -5,8 +5,6 @@ class MineTestCase(IntegrationTestCase):
     player_starting_hand = ['Mine', 'Copper', 'Silver', 'Gold']
 
     def test_say_yes(self):
-        self.assert_initial_state()
-
         self.player_play_card('Mine')
 
         self.assert_player_adhoc_turn_modal_present()
@@ -26,8 +24,6 @@ class MineNoTreasureTestCase(IntegrationTestCase):
     player_starting_hand = ['Mine', 'Village']
 
     def test_say_yes(self):
-        self.assert_initial_state()
-
         self.player_play_card('Mine')
 
         self.assert_player_adhoc_turn_modal_not_present()

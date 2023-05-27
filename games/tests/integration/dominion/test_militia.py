@@ -6,7 +6,6 @@ class MilitiaTestCase(IntegrationTestCase):
     opponent_starting_hand = ['Copper', 'Estate', 'Copper', 'Estate', 'Village']
 
     def test(self):
-        self.assert_initial_state()
         self.player_play_card('Militia')
 
         self.assert_player_adhoc_turn_modal_not_present()
@@ -28,7 +27,6 @@ class MilitiaOpponentShortCardsTestCase(IntegrationTestCase):
     opponent_starting_hand = ['Copper', 'Estate', 'Village']
 
     def test(self):
-        self.assert_initial_state()
         self.player_play_card('Militia')
 
         self.assert_player_adhoc_turn_modal_not_present()

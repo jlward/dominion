@@ -55,6 +55,7 @@ class IntegrationTestCase(BaseTestCase):
 
         self.player_client.force_login(self.player.user)
         self.opponent_client.force_login(self.opponent.user)
+        self.assert_initial_state()
 
     def assert_initial_state(self):
         r = self.player_client.get(self.game_url)
