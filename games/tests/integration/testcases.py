@@ -155,23 +155,12 @@ class IntegrationTestCase(BaseTestCase):
                 '#adhocturnModal',
             ), 'Player should not see adhoc modal and is'
 
-    def player_pick_cards_from_modal(self, *cards, **extra_params):
-        r = self.player_client.get(self.game_url)
+    def pick_yes_no_from_modal(self, player, answer):
+        r = player.client.get(self.game_url)
         form_actions = css_select_get_attributes(r, '#adhocturnModal form', ['action'])
         url = form_actions[0]['action']
 
-        params = dict(cards=cards)
-        params.update(extra_params)
-        r = self.player_client.post(url, params, HTTP_REFERER=self.game_url)
-        self.assertEqual(r.status_code, 302)
-        self.assertRedirects(r, self.game_url)
-
-    def player_pick_yes_no_from_modal(self, answer):
-        r = self.player_client.get(self.game_url)
-        form_actions = css_select_get_attributes(r, '#adhocturnModal form', ['action'])
-        url = form_actions[0]['action']
-
-        r = self.player_client.post(
+        r = player.client.post(
             url,
             dict(selection=answer),
             HTTP_REFERER=self.game_url,
@@ -179,14 +168,16 @@ class IntegrationTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 302)
         self.assertRedirects(r, self.game_url)
 
-    def oppenent_pick_cards_from_modal(self, *cards):
-        r = self.opponent_client.get(self.game_url)
+    def pick_cards_from_modal(self, player, *cards, **extra_params):
+        r = player.client.get(self.game_url)
         form_actions = css_select_get_attributes(r, '#adhocturnModal form', ['action'])
         url = form_actions[0]['action']
 
-        r = self.opponent_client.post(
+        params = dict(cards=cards)
+        params.update(extra_params)
+        r = player.client.post(
             url,
-            dict(cards=cards),
+            params,
             HTTP_REFERER=self.game_url,
         )
         self.assertEqual(r.status_code, 302)

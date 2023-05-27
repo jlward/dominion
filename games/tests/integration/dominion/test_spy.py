@@ -12,12 +12,12 @@ class SpyTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_yes_no_from_modal(self.SELECTION_NO)
+        self.pick_yes_no_from_modal(self.player, self.SELECTION_NO)
 
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_yes_no_from_modal(self.SELECTION_YES)
+        self.pick_yes_no_from_modal(self.player, self.SELECTION_YES)
 
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, False)
@@ -35,6 +35,6 @@ class SpyNoCardsLeftToDrawTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_yes_no_from_modal(self.SELECTION_YES)
+        self.pick_yes_no_from_modal(self.player, self.SELECTION_YES)
 
         self.assert_adhoc_model_for_player(self.player, False)

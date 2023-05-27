@@ -11,7 +11,7 @@ class MilitiaTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, True)
 
-        self.oppenent_pick_cards_from_modal('Estate', 'Copper', 'Village')
+        self.pick_cards_from_modal(self.opponent, 'Estate', 'Copper', 'Village')
 
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, False)

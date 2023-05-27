@@ -11,12 +11,12 @@ class ThiefChoiceTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_cards_from_modal('Gold')
+        self.pick_cards_from_modal(self.player, 'Gold')
 
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_cards_from_modal('Gold')
+        self.pick_cards_from_modal(self.player, 'Gold')
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
@@ -31,7 +31,7 @@ class ThiefOneTreaureChoiceTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_cards_from_modal('Gold')
+        self.pick_cards_from_modal(self.player, 'Gold')
 
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, False)

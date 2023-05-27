@@ -41,7 +41,7 @@ class BureaucratChoiceTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, True)
 
-        self.oppenent_pick_cards_from_modal('Estate')
+        self.pick_cards_from_modal(self.opponent, 'Estate')
 
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, False)

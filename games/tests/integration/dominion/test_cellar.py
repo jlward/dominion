@@ -24,7 +24,7 @@ class CellarCardsInHandTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_cards_from_modal('Copper')
+        self.pick_cards_from_modal(self.player, 'Copper')
 
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, False)

@@ -18,7 +18,7 @@ class ThroneRoomTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_cards_from_modal('Smithy')
+        self.pick_cards_from_modal(self.player, 'Smithy')
 
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, False)
@@ -45,7 +45,7 @@ class ThroneRoomTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_cards_from_modal('Feast')
+        self.pick_cards_from_modal(self.player, 'Feast')
 
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
@@ -55,12 +55,12 @@ class ThroneRoomTestCase(IntegrationTestCase):
             ['ThroneRoom', 'Smithy', 'Feast'],
         )
 
-        self.player_pick_cards_from_modal('Silver')
+        self.pick_cards_from_modal(self.player, 'Silver')
 
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_cards_from_modal('Silver')
+        self.pick_cards_from_modal(self.player, 'Silver')
 
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, False)
@@ -77,14 +77,14 @@ class ThroneRoomTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_cards_from_modal('ThroneRoom')
+        self.pick_cards_from_modal(self.player, 'ThroneRoom')
 
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
         self.assert_hand(self.player, ['Smithy', 'Feast', 'Feast'])
 
-        self.player_pick_cards_from_modal('Smithy')
+        self.pick_cards_from_modal(self.player, 'Smithy')
 
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
@@ -103,7 +103,7 @@ class ThroneRoomTestCase(IntegrationTestCase):
             ],
         )
 
-        self.player_pick_cards_from_modal('Village')
+        self.pick_cards_from_modal(self.player, 'Village')
 
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, False)

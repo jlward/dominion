@@ -10,7 +10,7 @@ class RemodelTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.player, True)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.player_pick_cards_from_modal('Estate', kingdom_card='Silver')
+        self.pick_cards_from_modal(self.player, 'Estate', kingdom_card='Silver')
 
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, False)
