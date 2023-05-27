@@ -66,13 +66,13 @@ class IntegrationTestCase(BaseTestCase):
 
     def assert_initial_state(self):
         r = self.player_client.get(self.game_url)
-        self.assert_your_turn(r)
+        self.assert_player_turn(self.player, True)
         self.assertEqual(self.get_resources(r), dict(actions=1, buys=1, money=0))
         if self.player_starting_hand:
             self.assertEqual(self.get_player_hand(r), self.player_starting_hand)
 
         r = self.opponent_client.get(self.game_url)
-        self.assert_not_your_turn(r)
+        self.assert_player_turn(self.opponent, False)
         self.assertEqual(
             self.get_resources(r),
             dict(actions=None, buys=None, money=None),
@@ -80,19 +80,19 @@ class IntegrationTestCase(BaseTestCase):
         if self.opponent_starting_hand:
             self.assertEqual(self.get_oppnent_hand(r), self.opponent_starting_hand)
 
-    def assert_your_turn(self, response):
-        self.assertEqual(response.status_code, 200)
-        self.assertNotEqual(
-            css_select_get_text(response, '.state'),
-            ['Waiting'],
-        )
-
-    def assert_not_your_turn(self, response):
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            css_select_get_text(response, '.state'),
-            ['Waiting'],
-        )
+    def assert_player_turn(self, player, yes_or_no):
+        r = player.client.get(self.game_url)
+        self.assertEqual(r.status_code, 200)
+        if yes_or_no:
+            self.assertNotEqual(
+                css_select_get_text(r, '.state'),
+                ['Waiting'],
+            )
+        else:
+            self.assertEqual(
+                css_select_get_text(r, '.state'),
+                ['Waiting'],
+            )
 
     def _get_actions(self, response):
         return css_select_get_text(response, '#actions span')[0][1:-1]

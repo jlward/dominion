@@ -12,7 +12,7 @@ class BureaucratNoChoiceTestCase(IntegrationTestCase):
         self.assert_opponent_adhoc_turn_modal_not_present()
 
         r = self.player_client.get(self.game_url)
-        self.assert_your_turn(r)
+        self.assert_player_turn(self.player, True)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
         self.assertCountEqual(self.get_oppnent_hand(r), ['Copper'])
 
@@ -28,7 +28,7 @@ class BureaucratNoChoiceNoVicrotryCardTestCase(IntegrationTestCase):
         self.assert_opponent_adhoc_turn_modal_not_present()
 
         r = self.player_client.get(self.game_url)
-        self.assert_your_turn(r)
+        self.assert_player_turn(self.player, True)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
         self.assertCountEqual(self.get_oppnent_hand(r), ['Copper'])
 
@@ -49,6 +49,6 @@ class BureaucratChoiceTestCase(IntegrationTestCase):
         self.assert_opponent_adhoc_turn_modal_not_present()
 
         r = self.player_client.get(self.game_url)
-        self.assert_your_turn(r)
+        self.assert_player_turn(self.player, True)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
         self.assertCountEqual(self.get_oppnent_hand(r), ['Copper', 'Estate'])

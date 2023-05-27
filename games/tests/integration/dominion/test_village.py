@@ -8,9 +8,8 @@ class VillageTestCase(IntegrationTestCase):
         self.player_play_card('Village')
 
         r = self.player_client.get(self.game_url)
-        self.assert_your_turn(r)
+        self.assert_player_turn(self.player, True)
         self.assertEqual(self.get_resources(r), dict(actions=2, buys=1, money=0))
         self.assertEqual(len(self.get_player_hand(r)), 1)
 
-        r = self.opponent_client.get(self.game_url)
-        self.assert_not_your_turn(r)
+        self.assert_player_turn(self.opponent, False)
