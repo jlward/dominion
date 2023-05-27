@@ -9,8 +9,10 @@ from testing.utils import css_select, css_select_get_attributes, css_select_get_
 class IntegrationTestCase(BaseTestCase):
     player_starting_hand = None
     player_starting_draw_pile = None
+    player_starting_discard_pile = None
     opponent_starting_hand = None
     opponent_starting_draw_pile = None
+    opponent_starting_discard_pile = None
 
     @property
     def game_url(self):
@@ -34,10 +36,16 @@ class IntegrationTestCase(BaseTestCase):
             self.player_deck.hand = self.player_starting_hand[:]
         if self.opponent_starting_hand is not None:
             self.opponent_deck.hand = self.opponent_starting_hand[:]
+
         if self.player_starting_draw_pile is not None:
             self.player_deck.draw_pile = self.player_starting_draw_pile[:]
         if self.opponent_starting_draw_pile is not None:
             self.opponent_deck.draw_pile = self.opponent_starting_draw_pile[:]
+
+        if self.player_starting_discard_pile is not None:
+            self.player_deck.discard_pile = self.player_starting_discard_pile
+        if self.opponent_starting_discard_pile is not None:
+            self.opponent_deck.discard_pile = self.opponent_starting_discard_pile
 
         self.player_deck.save()
         self.opponent_deck.save()
@@ -146,6 +154,19 @@ class IntegrationTestCase(BaseTestCase):
         url = form_actions[0]['action']
 
         r = self.player_client.post(url, dict(cards=cards), HTTP_REFERER=self.game_url)
+        self.assertEqual(r.status_code, 302)
+        self.assertRedirects(r, self.game_url)
+
+    def player_pick_yes_no_from_modal(self, answer):
+        r = self.player_client.get(self.game_url)
+        form_actions = css_select_get_attributes(r, '#adhocturnModal form', ['action'])
+        url = form_actions[0]['action']
+
+        r = self.player_client.post(
+            url,
+            dict(selection=answer),
+            HTTP_REFERER=self.game_url,
+        )
         self.assertEqual(r.status_code, 302)
         self.assertRedirects(r, self.game_url)
 
