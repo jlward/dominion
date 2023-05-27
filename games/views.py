@@ -38,19 +38,6 @@ def game_create(request):
 
 
 @login_required
-def game_state(request, game_id):
-    game = get_object_or_404(
-        Game,
-        pk=game_id,
-    )
-
-    context = dict(
-        game=game,
-    )
-    return render(request, 'game_state.html', context)
-
-
-@login_required
 def play_game_as_player(request, game_id):
     game = get_object_or_404(
         Game,

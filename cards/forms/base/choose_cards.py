@@ -47,7 +47,10 @@ class ChooseCardsForm(forms.Form):
 
     def save(self):
         action_performed = False
-        if 'trash' in self.actions:
+        # We currently only have the one branch. So coverage doesn't like that
+        # we are always getting into here. Once we have another branch, drop
+        # the no cover and try again.
+        if 'trash' in self.actions:  # pragma: no cover
             self.game.trash_cards(
                 deck=self.deck,
                 turn=self.turn,

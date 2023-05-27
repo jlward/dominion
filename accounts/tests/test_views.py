@@ -6,6 +6,7 @@ from testing import BaseTestCase
 
 class LoginTestCase(BaseTestCase):
     url = reverse('accounts_login')
+    auto_login_player = False
 
     def setUp(self):
         super().setUp()

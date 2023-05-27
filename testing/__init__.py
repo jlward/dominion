@@ -15,6 +15,13 @@ class BaseTestCase(TestCase):
     faker = Faker()
     SELECTION_YES = SimpleForm.selection_yes
     SELECTION_NO = SimpleForm.selection_no
+    auto_login_player = True
+
+    def setUp(self):
+        super().setUp()
+        self.player = PlayerFactory()
+        if self.auto_login_player:
+            self.client.force_login(self.player.user)
 
     def create_game(self, players=None, kingdom_cards=None):
         if kingdom_cards is None:
