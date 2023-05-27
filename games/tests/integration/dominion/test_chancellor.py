@@ -6,12 +6,10 @@ class ChancellorNoDrawPileTestCase(IntegrationTestCase):
     player_starting_draw_pile = []
 
     def test(self):
-        self.assert_initial_state()
+        self.play_card(self.player, 'Chancellor')
 
-        self.player_play_card('Chancellor')
-
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
 
 class ChancellorDrawPileTestCase(IntegrationTestCase):
@@ -19,9 +17,7 @@ class ChancellorDrawPileTestCase(IntegrationTestCase):
     player_starting_draw_pile = ['Copper']
 
     def test(self):
-        self.assert_initial_state()
+        self.play_card(self.player, 'Chancellor')
 
-        self.player_play_card('Chancellor')
-
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)

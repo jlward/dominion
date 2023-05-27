@@ -7,22 +7,20 @@ class SpyTestCase(IntegrationTestCase):
     opponent_starting_draw_pile = ['Gold', 'Village']
 
     def test(self):
-        self.assert_initial_state()
+        self.play_card(self.player, 'Spy')
 
-        self.player_play_card('Spy')
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.pick_yes_no_from_modal(self.player, self.SELECTION_NO)
 
-        self.player_pick_yes_no_from_modal(self.SELECTION_NO)
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.pick_yes_no_from_modal(self.player, self.SELECTION_YES)
 
-        self.player_pick_yes_no_from_modal(self.SELECTION_YES)
-
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
 
 class SpyNoCardsLeftToDrawTestCase(IntegrationTestCase):
@@ -32,13 +30,11 @@ class SpyNoCardsLeftToDrawTestCase(IntegrationTestCase):
     opponent_starting_discard_pile = ['Gold']
 
     def test(self):
-        self.assert_initial_state()
+        self.play_card(self.player, 'Spy')
 
-        self.player_play_card('Spy')
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.pick_yes_no_from_modal(self.player, self.SELECTION_YES)
 
-        self.player_pick_yes_no_from_modal(self.SELECTION_YES)
-
-        self.assert_player_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)

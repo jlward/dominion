@@ -6,21 +6,19 @@ class ThiefChoiceTestCase(IntegrationTestCase):
     opponent_starting_draw_pile = ['Gold', 'Silver']
 
     def test(self):
-        self.assert_initial_state()
+        self.play_card(self.player, 'Thief')
 
-        self.player_play_card('Thief')
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.pick_cards_from_modal(self.player, 'Gold')
 
-        self.player_pick_cards_from_modal('Gold')
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
-
-        self.player_pick_cards_from_modal('Gold')
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.pick_cards_from_modal(self.player, 'Gold')
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
 
 class ThiefOneTreaureChoiceTestCase(IntegrationTestCase):
@@ -28,17 +26,15 @@ class ThiefOneTreaureChoiceTestCase(IntegrationTestCase):
     opponent_starting_draw_pile = ['Gold']
 
     def test(self):
-        self.assert_initial_state()
+        self.play_card(self.player, 'Thief')
 
-        self.player_play_card('Thief')
+        self.assert_adhoc_model_for_player(self.player, True)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
-        self.assert_player_adhoc_turn_modal_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.pick_cards_from_modal(self.player, 'Gold')
 
-        self.player_pick_cards_from_modal('Gold')
-
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
 
 
 class ThiefNoTreaureNoChoiceTestCase(IntegrationTestCase):
@@ -46,9 +42,7 @@ class ThiefNoTreaureNoChoiceTestCase(IntegrationTestCase):
     opponent_starting_draw_pile = ['Estate', 'Duchy']
 
     def test(self):
-        self.assert_initial_state()
+        self.play_card(self.player, 'Thief')
 
-        self.player_play_card('Thief')
-
-        self.assert_player_adhoc_turn_modal_not_present()
-        self.assert_opponent_adhoc_turn_modal_not_present()
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, False)
