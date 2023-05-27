@@ -30,13 +30,13 @@ class IntegrationTestCase(BaseTestCase):
         self.player_deck = self.game.decks.get(player=self.player)
         self.opponent_deck = self.game.decks.get(player=self.opponent)
 
-        if self.player_starting_hand:
+        if self.player_starting_hand is not None:
             self.player_deck.hand = self.player_starting_hand[:]
-        if self.opponent_starting_hand:
+        if self.opponent_starting_hand is not None:
             self.opponent_deck.hand = self.opponent_starting_hand[:]
-        if self.player_starting_draw_pile:
+        if self.player_starting_draw_pile is not None:
             self.player_deck.draw_pile = self.player_starting_draw_pile[:]
-        if self.opponent_starting_draw_pile:
+        if self.opponent_starting_draw_pile is not None:
             self.opponent_deck.draw_pile = self.opponent_starting_draw_pile[:]
 
         self.player_deck.save()
