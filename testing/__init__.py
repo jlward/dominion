@@ -16,10 +16,11 @@ class BaseTestCase(TestCase):
     SELECTION_YES = SimpleForm.selection_yes
     SELECTION_NO = SimpleForm.selection_no
 
-    def create_game(self, kingdom_cards=None):
+    def create_game(self, players=None, kingdom_cards=None):
         if kingdom_cards is None:
             kingdom_cards = ['Village', 'Smithy']
-        players = PlayerFactory.create_batch(2)
+        if players is None:
+            players = PlayerFactory.create_batch(2)
         game = Game.objects.create_game(players, kingdom_cards)
         game.create_turn(players[0])
         return game

@@ -55,7 +55,7 @@ class ChooseCardsForm(forms.Form):
             )
             action_performed = True
         if not action_performed:
-            raise NotImplementedError()
+            raise NotImplementedError()  # pragma: no cover
 
     def clean_cards(self):
         cards = self.cleaned_data['cards']

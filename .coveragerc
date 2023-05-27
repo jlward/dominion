@@ -1,6 +1,7 @@
 [run]
 source = .
 branch = True
+concurrency = multiprocessing
 omit =
     *tests*.py
     manage.py
