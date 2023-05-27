@@ -112,7 +112,7 @@ class Card:
         self.create_stacked_turns(deck, turn)
 
     def should_create_adhoc_turn(self, stacked_turn):
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def __str__(self):
         return self.name
