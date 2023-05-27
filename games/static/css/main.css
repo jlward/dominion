@@ -92,6 +92,10 @@ img {
 	transform: scale(2);
 	z-index: 1000;
 }
+.card.no-hover:hover {
+	transform: scale(1);
+	cursor: pointer;
+}
 
 .kingdom-selector img {
 	height: 140px;
