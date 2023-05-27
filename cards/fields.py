@@ -20,5 +20,7 @@ class CardField(models.CharField):
         if inspect.isclass(model_instance.card):
             if issubclass(model_instance.card, Card):
                 model_instance.card = model_instance.card.__name__
+            else:
+                raise TypeError(f'{model_instance.card} is not a valid Card')
 
         return super().pre_save(model_instance, add)

@@ -60,9 +60,6 @@ class Deck(models.Model):
     def no_treasure(self):
         return list(card for card in self.real_hand if card.is_treasure) == []
 
-    def __len__(self):
-        return len(self.all_cards)
-
     def top_deck(self):
         if len(self.draw_pile) == 0:
             if len(self.discard_pile) == 0:
@@ -118,22 +115,10 @@ class Deck(models.Model):
     # Assuming player can only trash from hand
     def trash_cards(self, cards, source='hand'):
         if source not in ['hand', 'played_cards']:
-            raise ValueError('invalid source')
+            raise ValueError('invalid source')  # pragma: no cover
         card_source = getattr(self, source)
         for card in cards:
             self.game.trash_pile.append(card.name)
             card_source.pop(card_source.index(card.name))
         self.save()
         self.game.save()
-
-    def peek_deck(self, number=1):
-        for _ in range(number):
-            card = self.top_deck()
-            if card is None:
-                continue
-            self.narnia_pile.append(card)
-        result = self.narnia_pile[:]
-        for card in self.narnia_pile:
-            self.move_to_top_deck(card, 'narnia_pile')
-        self.save()
-        return result

@@ -20,7 +20,6 @@ import games.views
 urlpatterns = [
     path('', games.views.game_list, name='game_list'),
     path('create', games.views.game_create, name='game_create'),
-    path('<int:game_id>/info', games.views.game_state, name='game_state'),
     path(
         '<int:game_id>',
         games.views.play_game_as_player,

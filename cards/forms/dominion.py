@@ -228,11 +228,6 @@ class SpyForm(SimpleForm):
         deck = self.game.decks.get(
             player=self.adhoc_turn.target_player,
         )
-        if len(deck.draw_pile) < 1:
-            deck.full_shuffle()
-            deck.save()
-            if len(deck.draw_pile) < 1:
-                return
         card_name = deck.draw_pile.pop(0)
         return get_cards_from_names([card_name])
 

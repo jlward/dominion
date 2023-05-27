@@ -171,3 +171,10 @@ class AdHocTurnCardFieldTestCase(TestCase):
         turn = AdHocTurnFactory(card=Village())
         turn.refresh_from_db()
         assert isinstance(turn.card, Card)
+
+    def test_non_card_object_is_not_valid(self):
+        class Foo:
+            pass
+
+        with self.assertRaises(TypeError):
+            AdHocTurnFactory(card=Foo)

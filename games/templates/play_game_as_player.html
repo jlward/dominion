@@ -22,6 +22,8 @@
 <div class="flex">
     <div id="right-sidebar" class="sidebar">
         <strong>{{ player }}</strong>
+        <br/>
+        <span>Score: <strong class="score">{{ deck.score }}</strong></span>
         {% if not game.is_over %}
             <div class='state'>
                 {% if turn %}
@@ -35,8 +37,8 @@
             <div id="buys">Buys <span class="float-right">({{ turn.available_buys }})</span></div>
             <div id="money">Money <span class="float-right">({{ turn.available_money }})</span></div>
             <div id="end-phase">
-                <form 
-                    method="POST" 
+                <form
+                    method="POST"
                     action="{% url 'turns_end_phase' turn_id=turn.pk %}"
                     {% if turn.state == 'action' and deck.no_actions %}
                     class="auto-submit"

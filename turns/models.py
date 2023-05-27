@@ -48,10 +48,6 @@ class Turn(BaseTurn):
     cards_bought = models.JSONField(default=list)
     cards_gained = models.JSONField(default=list)
 
-    @property
-    def is_action_phase(self):
-        return self.state == 'action'
-
     def get_deck(self):
         Deck = apps.get_model('decks', 'Deck')
         return Deck.objects.get(game_id=self.game_id, player_id=self.player_id)
@@ -119,9 +115,6 @@ class BaseTempTurn(models.Model):
             # if we delete any adhoc turns this will break
             self.turn_order = self.__class__.objects.count() + 1
         return super().save(*args, **kwargs)
-
-    def get_player_deck(self):
-        return self.game.decks.get(player=self.player)
 
     def get_target_player_deck(self):
         return self.game.decks.get(player=self.target_player)
