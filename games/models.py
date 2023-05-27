@@ -135,7 +135,7 @@ class Game(models.Model):
 
     def move_cards_from_narnias_to_player(self, cards, player, destination):
         decks = list(self.decks.all())
-        player_deck = next(deck for deck in decks if deck.player == player)
+        player_deck = list(deck for deck in decks if deck.player == player)[0]
         for card in cards:
             for deck in decks:
                 if card.name in deck.narnia_pile:
