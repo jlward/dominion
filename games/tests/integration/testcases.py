@@ -148,12 +148,14 @@ class IntegrationTestCase(BaseTestCase):
         r = self.opponent_client.get(self.game_url)
         assert not css_select(r, '#adhocturnModal')
 
-    def player_pick_cards_from_modal(self, *cards):
+    def player_pick_cards_from_modal(self, *cards, **extra_params):
         r = self.player_client.get(self.game_url)
         form_actions = css_select_get_attributes(r, '#adhocturnModal form', ['action'])
         url = form_actions[0]['action']
 
-        r = self.player_client.post(url, dict(cards=cards), HTTP_REFERER=self.game_url)
+        params = dict(cards=cards)
+        params.update(extra_params)
+        r = self.player_client.post(url, params, HTTP_REFERER=self.game_url)
         self.assertEqual(r.status_code, 302)
         self.assertRedirects(r, self.game_url)
 
