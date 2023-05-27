@@ -55,6 +55,13 @@ class IntegrationTestCase(BaseTestCase):
 
         self.player_client.force_login(self.player.user)
         self.opponent_client.force_login(self.opponent.user)
+
+        self.player.client = self.player_client
+        self.opponent.client = self.opponent_client
+        self.player_client.player = self.player
+        self.opponent_client.player = self.opponent
+
+        del self.client
         self.assert_initial_state()
 
     def assert_initial_state(self):
