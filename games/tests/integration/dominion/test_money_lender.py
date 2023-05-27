@@ -17,7 +17,7 @@ class MoneylenderTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=3))
-        self.assertCountEqual(self.get_player_hand(r), [])
+        self.assert_hand(self.player, [])
 
     def test_do_not_trash(self):
         self.player_play_card('Moneylender')
@@ -32,7 +32,7 @@ class MoneylenderTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_player_hand(r), ['Copper'])
+        self.assert_hand(self.player, ['Copper'])
 
 
 class MoneylenderNoCopperTestCase(IntegrationTestCase):
@@ -46,4 +46,4 @@ class MoneylenderNoCopperTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_player_hand(r), ['Silver'])
+        self.assert_hand(self.player, ['Silver'])

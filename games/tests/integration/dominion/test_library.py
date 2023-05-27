@@ -24,10 +24,7 @@ class LibraryLessThanSevenCardsTotalTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(
-            self.get_player_hand(r),
-            ['Gold', 'Village', 'Copper', 'Estate'],
-        )
+        self.assert_hand(self.player, ['Gold', 'Village', 'Copper', 'Estate'])
 
 
 class LibraryMoreThanSevenCardsTotalTestCase(IntegrationTestCase):
@@ -42,7 +39,7 @@ class LibraryMoreThanSevenCardsTotalTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_player_hand(r), ['Gold'] * 7)
+        self.assert_hand(self.player, ['Gold'] * 7)
 
 
 class LibraryLastCardPickedMakesSevenTestCase(IntegrationTestCase):
@@ -62,4 +59,4 @@ class LibraryLastCardPickedMakesSevenTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_player_hand(r), ['Village'] + ['Gold'] * 6)
+        self.assert_hand(self.player, ['Village'] + ['Gold'] * 6)

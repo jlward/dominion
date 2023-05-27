@@ -25,8 +25,8 @@ class ThroneRoomTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(
-            self.get_player_hand(r),
+        self.assert_hand(
+            self.player,
             [
                 'ThroneRoom',
                 'Feast',
@@ -52,8 +52,8 @@ class ThroneRoomTestCase(IntegrationTestCase):
         self.assert_opponent_adhoc_turn_modal_not_present()
 
         r = self.player_client.get(self.game_url)
-        self.assertCountEqual(
-            self.get_player_hand(r),
+        self.assert_hand(
+            self.player,
             ['ThroneRoom', 'Smithy', 'Feast'],
         )
 
@@ -69,8 +69,8 @@ class ThroneRoomTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(
-            self.get_player_hand(r),
+        self.assert_hand(
+            self.player,
             ['ThroneRoom', 'Smithy', 'Feast'],
         )
 
@@ -86,7 +86,7 @@ class ThroneRoomTestCase(IntegrationTestCase):
         self.assert_opponent_adhoc_turn_modal_not_present()
 
         r = self.player_client.get(self.game_url)
-        self.assertCountEqual(self.get_player_hand(r), ['Smithy', 'Feast', 'Feast'])
+        self.assert_hand(self.player, ['Smithy', 'Feast', 'Feast'])
 
         self.player_pick_cards_from_modal('Smithy')
 
@@ -94,8 +94,8 @@ class ThroneRoomTestCase(IntegrationTestCase):
         self.assert_opponent_adhoc_turn_modal_not_present()
 
         r = self.player_client.get(self.game_url)
-        self.assertCountEqual(
-            self.get_player_hand(r),
+        self.assert_hand(
+            self.player,
             [
                 'Feast',
                 'Feast',
@@ -115,8 +115,8 @@ class ThroneRoomTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=4, buys=1, money=0))
-        self.assertCountEqual(
-            self.get_player_hand(r),
+        self.assert_hand(
+            self.player,
             ['Feast', 'Feast', 'Silver', 'Copper', 'Estate', 'Feast', 'Thief'],
         )
 
@@ -131,4 +131,4 @@ class ThroneRoomNoOtherCardsInHandTestCase(IntegrationTestCase):
         self.assert_opponent_adhoc_turn_modal_not_present()
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_player_hand(r), [])
+        self.assert_hand(self.player, [])

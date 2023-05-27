@@ -17,7 +17,7 @@ class ChapelWithHandTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_player_hand(r), ['Smithy'])
+        self.assert_hand(self.player, ['Smithy'])
 
 
 class ChapelWithoutHandTestCase(IntegrationTestCase):
@@ -31,4 +31,4 @@ class ChapelWithoutHandTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_player_hand(r), [])
+        self.assert_hand(self.player, [])

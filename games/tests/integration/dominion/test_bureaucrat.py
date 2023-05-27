@@ -14,7 +14,7 @@ class BureaucratNoChoiceTestCase(IntegrationTestCase):
         r = self.player_client.get(self.game_url)
         self.assert_player_turn(self.player, True)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_oppnent_hand(r), ['Copper'])
+        self.assert_hand(self.opponent, ['Copper'])
 
 
 class BureaucratNoChoiceNoVicrotryCardTestCase(IntegrationTestCase):
@@ -30,7 +30,7 @@ class BureaucratNoChoiceNoVicrotryCardTestCase(IntegrationTestCase):
         r = self.player_client.get(self.game_url)
         self.assert_player_turn(self.player, True)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_oppnent_hand(r), ['Copper'])
+        self.assert_hand(self.opponent, ['Copper'])
 
 
 class BureaucratChoiceTestCase(IntegrationTestCase):
@@ -51,4 +51,4 @@ class BureaucratChoiceTestCase(IntegrationTestCase):
         r = self.player_client.get(self.game_url)
         self.assert_player_turn(self.player, True)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_oppnent_hand(r), ['Copper', 'Estate'])
+        self.assert_hand(self.opponent, ['Copper', 'Estate'])

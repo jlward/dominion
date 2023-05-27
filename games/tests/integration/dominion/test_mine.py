@@ -17,7 +17,7 @@ class MineTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_player_hand(r), ['Silver', 'Gold'])
+        self.assert_hand(self.player, ['Silver', 'Gold'])
 
 
 class MineNoTreasureTestCase(IntegrationTestCase):
@@ -31,4 +31,4 @@ class MineNoTreasureTestCase(IntegrationTestCase):
 
         r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=0, buys=1, money=0))
-        self.assertCountEqual(self.get_player_hand(r), ['Village'])
+        self.assert_hand(self.player, ['Village'])

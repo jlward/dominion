@@ -34,4 +34,4 @@ class CellarCardsInHandTestCase(IntegrationTestCase):
         self.assert_player_turn(self.player, True)
         self.assertEqual(self.get_resources(r), dict(actions=1, buys=1, money=0))
 
-        self.assertCountEqual(self.get_player_hand(r), ['Gold'])
+        self.assert_hand(self.player, ['Gold'])

@@ -65,11 +65,13 @@ class IntegrationTestCase(BaseTestCase):
         self.assert_initial_state()
 
     def assert_initial_state(self):
-        r = self.player_client.get(self.game_url)
         self.assert_player_turn(self.player, True)
+
+        r = self.player_client.get(self.game_url)
         self.assertEqual(self.get_resources(r), dict(actions=1, buys=1, money=0))
+
         if self.player_starting_hand:
-            self.assertEqual(self.get_player_hand(r), self.player_starting_hand)
+            self.assert_hand(self.player, self.player_starting_hand)
 
         r = self.opponent_client.get(self.game_url)
         self.assert_player_turn(self.opponent, False)
@@ -78,7 +80,7 @@ class IntegrationTestCase(BaseTestCase):
             dict(actions=None, buys=None, money=None),
         )
         if self.opponent_starting_hand:
-            self.assertEqual(self.get_oppnent_hand(r), self.opponent_starting_hand)
+            self.assert_hand(self.opponent, self.opponent_starting_hand)
 
     def assert_player_turn(self, player, yes_or_no):
         r = player.client.get(self.game_url)
@@ -122,15 +124,11 @@ class IntegrationTestCase(BaseTestCase):
             money=money,
         )
 
-    def get_player_hand(self, response):
-        r = self.player_client.get(self.game_url)
+    def assert_hand(self, player, expected_hand):
+        r = player.client.get(self.game_url)
         hand = css_select_get_attributes(r, '#hand .card.in_hand', ['data-name'])
-        return [row['data-name'] for row in hand]
-
-    def get_oppnent_hand(self, response):
-        r = self.opponent_client.get(self.game_url)
-        hand = css_select_get_attributes(r, '#hand .card.in_hand', ['data-name'])
-        return [row['data-name'] for row in hand]
+        hand = [row['data-name'] for row in hand]
+        self.assertCountEqual(hand, expected_hand)
 
     def player_play_card(self, card):
         r = self.player_client.post(self.play_action_url, dict(card=card), follow=True)
