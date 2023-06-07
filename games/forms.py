@@ -32,7 +32,7 @@ class PlayActionForm(forms.Form):
     def __init__(self, data, deck, *args, **kwargs):
         super().__init__(data, *args, **kwargs)
         self.fields['card'].choices = [
-            (card.name, card.name) for card in deck.real_hand if card.is_action
+            (card.name, card.name) for card in deck.hand if card.is_action
         ]
 
     def clean_card(self):
@@ -48,7 +48,7 @@ class PlayTreasureForm(forms.Form):
     def __init__(self, data, deck, *args, **kwargs):
         super().__init__(data, *args, **kwargs)
         self.fields['card'].choices = [
-            (card.name, card.name) for card in deck.real_hand if card.is_treasure
+            (card.name, card.name) for card in deck.hand if card.is_treasure
         ]
 
     def clean_card(self):

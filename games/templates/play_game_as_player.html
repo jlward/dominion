@@ -82,7 +82,7 @@
     <div class="centered">
         Played Cards
     </div>
-    {% for card in deck.real_played_cards %}
+    {% for card in deck.played_cards %}
     {% card_in_play card %}
     {% endfor %}
 </div>
@@ -94,7 +94,7 @@
         <img src="{% static 'images/card_back.jpg' %}" />
         <div class="count">{{ deck.draw_pile|length }}</div>
     </span>
-    {% for card in deck.real_hand %}
+    {% for card in deck.hand %}
     {% card_in_hand card %}
     {% endfor %}
     <span class="card pull-right">
