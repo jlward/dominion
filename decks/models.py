@@ -3,6 +3,7 @@ import random
 from django.db import models
 
 from cards import get_cards_from_names
+from cards.fields import CardsField
 from decks.managers import DeckManager
 
 
@@ -19,12 +20,12 @@ class Deck(models.Model):
         on_delete=models.PROTECT,
     )
 
-    draw_pile = models.JSONField(default=list)
-    discard_pile = models.JSONField(default=list)
-    hand = models.JSONField(default=list)
-    played_cards = models.JSONField(default=list)
-    duration_cards = models.JSONField(default=list)
-    narnia_pile = models.JSONField(default=list)
+    draw_pile = CardsField()
+    discard_pile = CardsField()
+    hand = CardsField()
+    played_cards = CardsField()
+    duration_cards = CardsField()
+    narnia_pile = CardsField()
 
     @property
     def all_cards(self):
