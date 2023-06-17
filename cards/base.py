@@ -148,3 +148,16 @@ class Card:
                     return False
 
         return True
+
+    def create_adhoc_turn(self, turn):
+        if turn.card.should_create_adhoc_turn(turn):
+            AdHocTurn = apps.get_model('turns', 'AdHocTurn')
+            return AdHocTurn.objects.create(
+                turn=turn.turn,
+                player=turn.player,
+                game=turn.game,
+                card=turn.card,
+                target_player=turn.target_player,
+                card_form_field_string=turn.card_form_field_string,
+                card_form_title_field_string=turn.card_form_title_field_string,
+            )
