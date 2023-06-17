@@ -1,6 +1,11 @@
 - property/field for turns
   - deck and target deck
   - temp fix in place
-- all action cards need stacked turn for reactions???
 - deck.top_deck bad
   - can shuffle but doesn't save. can be inconsistent
+- turn.play_treasures
+  - needs validation for non-treasures
+- turns.views
+  - needs authorization/authentication for endpoints
+- audit all endpoints for auth
+- helpers should save consistently
