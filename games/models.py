@@ -3,7 +3,7 @@ import uuid
 from django.apps import apps
 from django.db import models
 
-from cards import get_cards_from_names, get_cards_from_names_as_generator
+from cards import get_cards_from_names_as_generator
 from games.managers import GameManager
 
 
@@ -85,10 +85,6 @@ class Game(models.Model):
         for deck in self.decks.all():
             result.extend(deck.narnia_pile)
         return result
-
-    @property
-    def real_narnias(self):
-        return get_cards_from_names(self.narnias)
 
     @property
     def winner(self):

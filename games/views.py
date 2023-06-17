@@ -108,7 +108,7 @@ def play_all_treasures(request, game_id):
     player = request.user.player
     deck = game.decks.get(player=player)
     turn = game.get_current_turn()
-    cards = [card for card in deck.real_hand if card.is_treasure]
+    cards = [card for card in deck.hand if card.is_treasure]
     for card in cards:
         deck.play_card(card)
     turn.play_treasures(cards)

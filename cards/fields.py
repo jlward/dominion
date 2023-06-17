@@ -1,4 +1,5 @@
 import inspect
+import json
 
 from django.db import models
 
@@ -24,3 +25,19 @@ class CardField(models.CharField):
                 raise TypeError(f'{model_instance.card} is not a valid Card')
 
         return super().pre_save(model_instance, add)
+
+
+class CardsField(models.TextField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault('default', [])
+        super().__init__(*args, **kwargs)
+
+    def from_db_value(self, value, expression, connection):
+        from cards import get_cards_from_names
+
+        return get_cards_from_names(json.loads(value))
+
+    def get_prep_value(self, value):
+        return json.dumps(
+            [card if isinstance(card, str) else card.name for card in value],
+        )

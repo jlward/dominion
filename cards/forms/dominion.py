@@ -10,7 +10,7 @@ from .base.choose_cards import ChooseCardsForm
 
 class BureaucratForm(ChooseCardsForm):
     source_object = 'deck'
-    source_pile = 'real_hand'
+    source_pile = 'hand'
     min_cards = 1
     max_cards = 1
     card_filter = 'is_victory'
@@ -25,7 +25,7 @@ class BureaucratForm(ChooseCardsForm):
 
 class ChapelForm(ChooseCardsForm):
     source_object = 'deck'
-    source_pile = 'real_hand'
+    source_pile = 'hand'
     actions = ['trash']
     min_cards = 0
     max_cards = 4
@@ -33,7 +33,7 @@ class ChapelForm(ChooseCardsForm):
 
 class CellarForm(ChooseCardsForm):
     source_object = 'deck'
-    source_pile = 'real_hand'
+    source_pile = 'hand'
     min_cards = 0
     max_cards = 1000
 
@@ -99,7 +99,7 @@ class LibraryForm(SimpleForm):
 
 class MilitiaForm(ChooseCardsForm):
     source_object = 'deck'
-    source_pile = 'real_hand'
+    source_pile = 'hand'
     max_cards = 3
 
     def __init__(self, *args, **kwargs):
@@ -117,7 +117,7 @@ class MilitiaForm(ChooseCardsForm):
 
 class MineForm(ChooseCardsForm):
     source_object = 'deck'
-    source_pile = 'real_hand'
+    source_pile = 'hand'
     min_cards = 0
     max_cards = 1
     actions = ['trash']
@@ -177,7 +177,7 @@ class MoneylenderForm(SimpleForm):
 
 class RemodelForm(ChooseCardsForm):
     source_object = 'deck'
-    source_pile = 'real_hand'
+    source_pile = 'hand'
     min_cards = 1
     max_cards = 1
     actions = ['trash']
@@ -241,7 +241,7 @@ class SpyForm(SimpleForm):
 
 class ThiefForm(ChooseCardsForm):
     source_object = 'target_player_deck'
-    source_pile = 'real_narnia'
+    source_pile = 'narnia_pile'
     min_cards = 1
     max_cards = 1
 
@@ -261,7 +261,7 @@ class ThiefForm(ChooseCardsForm):
 
 class ThiefCleanupForm(ChooseCardsForm):
     source_object = 'game'
-    source_pile = 'real_narnias'
+    source_pile = 'narnias'
     min_cards = 0
 
     @property
@@ -279,7 +279,7 @@ class ThiefCleanupForm(ChooseCardsForm):
 
 class ThroneRoomForm(ChooseCardsForm):
     source_object = 'deck'
-    source_pile = 'real_hand'
+    source_pile = 'hand'
     min_cards = 0
     max_cards = 1
 

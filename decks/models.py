@@ -4,6 +4,7 @@ import random
 from django.db import models
 
 from cards import get_cards_from_names
+from cards.fields import CardsField
 from decks.managers import DeckManager
 
 
@@ -20,12 +21,12 @@ class Deck(models.Model):
         on_delete=models.PROTECT,
     )
 
-    draw_pile = models.JSONField(default=list)
-    discard_pile = models.JSONField(default=list)
-    hand = models.JSONField(default=list)
-    played_cards = models.JSONField(default=list)
-    duration_cards = models.JSONField(default=list)
-    narnia_pile = models.JSONField(default=list)
+    draw_pile = CardsField()
+    discard_pile = CardsField()
+    hand = CardsField()
+    played_cards = CardsField()
+    duration_cards = CardsField()
+    narnia_pile = CardsField()
 
     @property
     def all_cards(self):
@@ -36,14 +37,6 @@ class Deck(models.Model):
             + self.duration_cards
             + self.played_cards,
         )
-
-    @property
-    def real_hand(self):
-        return get_cards_from_names(self.hand)
-
-    @property
-    def real_played_cards(self):
-        return get_cards_from_names(self.played_cards)
 
     @property
     def real_draw_pile(self):
@@ -58,20 +51,16 @@ class Deck(models.Model):
         return get_cards_from_names(self.discard_pile)
 
     @property
-    def real_narnia(self):
-        return get_cards_from_names(self.narnia_pile)
-
-    @property
     def score(self):
         return sum(card.get_victory_points(self) for card in self.all_cards)
 
     @property
     def no_actions(self):
-        return list(card for card in self.real_hand if card.is_action) == []
+        return list(card for card in self.hand if card.is_action) == []
 
     @property
     def no_treasure(self):
-        return list(card for card in self.real_hand if card.is_treasure) == []
+        return list(card for card in self.hand if card.is_treasure) == []
 
     def top_deck(self):
         if len(self.draw_pile) == 0:
@@ -96,10 +85,10 @@ class Deck(models.Model):
 
     def discard_cards(self, cards=None):
         if cards is None:
-            cards = self.real_hand
+            cards = self.hand
 
-        for card in cards:
-            self.discard_pile.append(self.hand.pop(self.hand.index(card.name)))
+        for card in list(cards):
+            self.discard_pile.append(self.hand.pop(self.hand.index(card)))
 
     def move_to_top_deck(self, card, source='hand'):
         card_source = getattr(self, source)

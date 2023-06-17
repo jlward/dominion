@@ -15,6 +15,18 @@ class Card:
     adhocturn_action_title = ''
     adhocturn_form = None
 
+    def __eq__(self, other):
+        name = other
+        if isinstance(other, Card):
+            name = other.name
+        return self.name == name
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __str__(self):
+        return self.name
+
     @property
     def name(self):
         return self.__class__.__name__
@@ -113,6 +125,3 @@ class Card:
 
     def should_create_adhoc_turn(self, stacked_turn):
         raise NotImplementedError()  # pragma: no cover
-
-    def __str__(self):
-        return self.name

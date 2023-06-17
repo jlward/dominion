@@ -82,7 +82,7 @@ class Bureaucrat(Card):
 
     def should_create_adhoc_turn(self, stacked_turn):
         player_deck = stacked_turn.player.decks.get(game=stacked_turn.game)
-        v_in_hand = list(card for card in player_deck.real_hand if card.is_victory)
+        v_in_hand = list(card for card in player_deck.hand if card.is_victory)
         if not v_in_hand:
             return False
         if len(v_in_hand) > 1:
@@ -487,7 +487,7 @@ class Thief(Card):
         return stacked_turns
 
     def _cleanup_peek(self, deck, treasure=None):
-        for card in deck.real_narnia[::-1]:
+        for card in deck.narnia_pile[::-1]:
             if treasure and card.name == treasure.name:
                 continue
             deck.move_to_discard(card, source='narnia_pile')
