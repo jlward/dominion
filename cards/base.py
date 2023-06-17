@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.templatetags.static import static
 
 from cards.constants import CardTypes
@@ -72,6 +73,14 @@ class Card:
         return CardTypes.Victory in self.types
 
     @property
+    def is_attack(self):
+        return CardTypes.Attack in self.types
+
+    @property
+    def is_reaction(self):
+        return CardTypes.Reaction in self.types
+
+    @property
     def is_base_card(self):
         base_cards = [
             'Copper',
@@ -125,3 +134,31 @@ class Card:
 
     def should_create_adhoc_turn(self, stacked_turn):
         raise NotImplementedError()  # pragma: no cover
+
+    def should_attack(self, stacked_turn):
+        # TODO We tried using the reverse relations ship through turn into reaction turn. It didn't work. No know why.
+        ReactionTurn = apps.get_model('turns', 'ReactionTurn')
+        reaction_turns = ReactionTurn.objects.filter(
+            turn=stacked_turn.turn,
+            player=stacked_turn.player,
+        )
+        for react in reaction_turns:
+            # TODO remove pragma
+            if react.reaction_card.name == 'Moat':  # pragma: no cover
+                if react.response is True:
+                    return False
+
+        return True
+
+    def create_adhoc_turn(self, turn):
+        if turn.card.should_create_adhoc_turn(turn):
+            AdHocTurn = apps.get_model('turns', 'AdHocTurn')
+            return AdHocTurn.objects.create(
+                turn=turn.turn,
+                player=turn.player,
+                game=turn.game,
+                card=turn.card,
+                target_player=turn.target_player,
+                card_form_field_string=turn.card_form_field_string,
+                card_form_title_field_string=turn.card_form_title_field_string,
+            )

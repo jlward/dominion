@@ -24,6 +24,3 @@ class LibraryCardTestCase(BaseTestCase):
         self.assertEqual(stacked_turn.player, self.player)
         self.assertEqual(stacked_turn.game, self.game)
         self.assertEqual(stacked_turn.card, self.card)
-
-
-# TODO test form

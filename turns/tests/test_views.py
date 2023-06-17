@@ -62,10 +62,7 @@ class EndPhaseTestCase(BaseTestCase):
 class PerformActionTestCase(BaseTestCase):
     @property
     def url(self):
-        return reverse(
-            'turns_adhocturn_perform_action',
-            kwargs=dict(turn_id=self.turn.pk),
-        )
+        return self.turn.perform_action_url
 
     redirect_url = reverse('accounts_login')
 

@@ -35,6 +35,12 @@ class Game(models.Model):
 
         return order
 
+    def get_decks(self, exclude):
+        decks = self.decks.all()
+        decks = decks.exclude(player=exclude)
+
+        return list(decks)
+
     def gain_card(self, deck, card, destination='discard_pile'):
         destination_pile = getattr(deck, destination)
         if self.kingdom[card.name] == 0:
@@ -102,6 +108,12 @@ class Game(models.Model):
     def get_current_turn(self):
         if self.is_over:
             return None
+
+        reaction_turns = self.reactionturns.filter(is_current_turn=True).order_by(
+            'turn_order',
+        )
+        if reaction_turns.exists():
+            return reaction_turns[0]
 
         adhocturns = self.adhocturns.filter(is_current_turn=True).order_by(
             'turn_order',

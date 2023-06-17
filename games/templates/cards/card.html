@@ -1,4 +1,5 @@
 <span class="card{% if in_hand %} in_hand{% endif %}"
+    data-name="{{card.name}}"
     {% if in_hand %}
         draggable="true"
         {%if turn.state == 'action' and turn.available_actions > 0 %}
@@ -12,9 +13,7 @@
                 data-url="{%url 'games_play_treasure' game_id=game.pk%}"
             {%endif%}
         {%endif%}
-        data-name="{{card.name}}"
     {% elif in_kingdom %}
-        data-name="{{card.name}}"
         {%if turn.state == 'buy' and turn.available_buys > 0 %}
             data-url="{%url 'games_buy_kingdom_card' game_id=game.pk%}"
         {%endif%}

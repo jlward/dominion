@@ -24,8 +24,8 @@ class IntegrationTestCase(BaseTestCase):
 
     def setUp(self):
         super().setUp()
-        self.player = PlayerFactory()
-        self.opponent = PlayerFactory()
+        self.player = PlayerFactory(handle='player')
+        self.opponent = PlayerFactory(handle='opponent')
 
         self.game = self.create_game(players=[self.player, self.opponent])
 
@@ -131,11 +131,18 @@ class IntegrationTestCase(BaseTestCase):
         self.assertEqual(resources['buys'], buys)
         self.assertEqual(resources['money'], money)
 
-    def assert_hand(self, player, expected_hand):
+    def get_hand(self, player):
         r = player.client.get(self.game_url)
         hand = css_select_get_attributes(r, '#hand .card.in_hand', ['data-name'])
         hand = [row['data-name'] for row in hand]
+        return hand
+
+    def assert_hand(self, player, expected_hand):
+        hand = self.get_hand(player)
         self.assertCountEqual(hand, expected_hand)
+
+    def assert_hand_size(self, player, expected_count):
+        self.assertEqual(len(self.get_hand(player)), expected_count)
 
     def play_card(self, player, card):
         r = player.client.post(self.play_action_url, dict(card=card), follow=True)
@@ -182,3 +189,13 @@ class IntegrationTestCase(BaseTestCase):
         )
         self.assertEqual(r.status_code, 302)
         self.assertRedirects(r, self.game_url)
+
+    def assert_card_in_discard(self, player, card):
+        r = player.client.get(self.game_url)
+        discard_pile = css_select_get_attributes(
+            r,
+            '#discard-modal .modal-body .card',
+            ['data-name'],
+        )
+        discard = [row['data-name'] for row in discard_pile]
+        assert card in discard

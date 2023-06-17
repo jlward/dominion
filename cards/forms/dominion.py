@@ -165,6 +165,12 @@ class MineForm(ChooseCardsForm):
         self.deck.save()
 
 
+class MoatForm(SimpleForm):
+    def save(self):
+        self.adhoc_turn.response = self.cleaned_data['selection'] == self.selection_yes
+        self.adhoc_turn.save()
+
+
 class MoneylenderForm(SimpleForm):
     def save(self):
         if self.cleaned_data['selection'] != self.selection_yes:

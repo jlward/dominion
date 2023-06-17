@@ -1,4 +1,3 @@
-from django.apps import apps
 from django.db import models
 
 
@@ -15,7 +14,6 @@ class StackedTurnManager(models.Manager):
         stacked_turns = game.stackedturns.filter(is_current_turn=True).order_by(
             '-turn_order',
         )
-        AdHocTurn = apps.get_model('turns', 'AdHocTurn')
         for turn in stacked_turns:
             turn.is_current_turn = False
             turn.save()
@@ -23,14 +21,10 @@ class StackedTurnManager(models.Manager):
                 deck = turn.game.decks.get(player=turn.player)
                 turn.card.execute_card(deck, turn.turn)
                 continue
-            if turn.card.should_create_adhoc_turn(turn):
-                return AdHocTurn.objects.create(
-                    turn=turn.turn,
-                    player=turn.player,
-                    game=turn.game,
-                    card=turn.card,
-                    target_player=turn.target_player,
-                    card_form_field_string=turn.card_form_field_string,
-                    card_form_title_field_string=turn.card_form_title_field_string,
-                )
+            if turn.card.is_attack:
+                if not turn.card.should_attack(turn):
+                    continue
+            adhocturn = turn.card.create_adhoc_turn(turn)
+            if adhocturn:
+                return adhocturn
         return None

@@ -10,6 +10,7 @@ from cards.forms.dominion import (
     LibraryForm,
     MilitiaForm,
     MineForm,
+    MoatForm,
     MoneylenderForm,
     RemodelForm,
     SpyForm,
@@ -358,8 +359,12 @@ class Mine(Card):
         return True
 
 
-# class Moat(Card):
-#     pass
+class Moat(Card):
+    types = [CardTypes.Action, CardTypes.Reaction]
+    card_cost = 2
+    extra_cards = 2
+    adhocturn_form = MoatForm
+    adhocturn_action_title = 'Reveal?'
 
 
 class Moneylender(Card):
@@ -550,15 +555,35 @@ class Witch(Card):
     card_cost = 5
     extra_cards = 2
 
-    def perform_specific_actions(self, deck, turn):
+    def create_stacked_turns(self, deck, turn):
+        stacked_turns = []
+        for player in deck.game.players.all():
+            if player.pk == turn.player_id:
+                continue
+            stacked_turns.append(
+                StackedTurn.objects.create(
+                    turn=turn,
+                    player=player,
+                    game=turn.game,
+                    card=self,
+                ),
+            )
+        stacked_turns.append(
+            StackedTurn.objects.create(
+                turn=turn,
+                player=turn.player,
+                game=turn.game,
+                card=self,
+                perform_simple_actions=True,
+            ),
+        )
+        return stacked_turns
+
+    def create_adhoc_turn(self, turn):
         game = turn.game
-        players = game.get_players(turn.player)
-        # remove current player from list
-        players.pop(0)
-        for player_id in players:
-            deck = game.decks.get(player_id=player_id)
-            game.gain_card(deck, Curse())
-            deck.save()
+        deck = game.decks.get(player_id=turn.player_id)
+        game.gain_card(deck, Curse())
+        deck.save()
         game.save()
 
 

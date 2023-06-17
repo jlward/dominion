@@ -21,7 +21,7 @@ class ThiefChoiceTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.opponent, False)
 
 
-class ThiefOneTreaureChoiceTestCase(IntegrationTestCase):
+class ThiefOneTreasureChoiceTestCase(IntegrationTestCase):
     player_starting_hand = ['Thief']
     opponent_starting_draw_pile = ['Gold']
 
@@ -37,7 +37,7 @@ class ThiefOneTreaureChoiceTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.opponent, False)
 
 
-class ThiefNoTreaureNoChoiceTestCase(IntegrationTestCase):
+class ThiefNoTreasureNoChoiceTestCase(IntegrationTestCase):
     player_starting_hand = ['Thief']
     opponent_starting_draw_pile = ['Estate', 'Duchy']
 

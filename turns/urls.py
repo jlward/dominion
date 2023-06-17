@@ -16,6 +16,7 @@ Including another URLconf
 from django.urls import path
 
 import turns.views
+from turns.models import AdHocTurn, ReactionTurn
 
 urlpatterns = [
     path(
@@ -24,8 +25,15 @@ urlpatterns = [
         name='turns_end_phase',
     ),
     path(
-        '<int:turn_id>/perform_action',
+        '<int:turn_id>/adhoc/perform_action',
         turns.views.perform_action,
-        name='turns_adhocturn_perform_action',
+        name='turns_adhocturn_adhoc_perform_action',
+        kwargs=dict(Model=AdHocTurn),
+    ),
+    path(
+        '<int:turn_id>/reaction/perform_action',
+        turns.views.perform_action,
+        name='turns_adhocturn_reaction_perform_action',
+        kwargs=dict(Model=ReactionTurn),
     ),
 ]
