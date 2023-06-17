@@ -62,6 +62,10 @@ class Deck(models.Model):
     def no_treasure(self):
         return list(card for card in self.hand if card.is_treasure) == []
 
+    @property
+    def no_reactions(self):
+        return list(card for card in self.hand if card.is_reaction) == []
+
     def top_deck(self):
         if len(self.draw_pile) == 0:
             if len(self.discard_pile) == 0:
@@ -124,3 +128,8 @@ class Deck(models.Model):
             card_source.pop(card_source.index(card.name))
         self.save()
         self.game.save()
+
+    def get_cards_of_type(self, card_type):
+        for card in self.hand:
+            if card_type in card.types:
+                yield card

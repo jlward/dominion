@@ -72,6 +72,14 @@ class Card:
         return CardTypes.Victory in self.types
 
     @property
+    def is_attack(self):
+        return CardTypes.Attack in self.types
+
+    @property
+    def is_reaction(self):
+        return CardTypes.Reaction in self.types
+
+    @property
     def is_base_card(self):
         base_cards = [
             'Copper',

@@ -35,6 +35,13 @@ class Game(models.Model):
 
         return order
 
+    def get_decks(self, exclude=None):
+        decks = self.decks.all()
+        if exclude:
+            decks = decks.exclude(player=exclude)
+
+        return list(decks)
+
     def gain_card(self, deck, card, destination='discard_pile'):
         destination_pile = getattr(deck, destination)
         if self.kingdom[card.name] == 0:

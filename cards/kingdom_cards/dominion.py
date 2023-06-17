@@ -358,8 +358,10 @@ class Mine(Card):
         return True
 
 
-# class Moat(Card):
-#     pass
+class Moat(Card):
+    types = [CardTypes.Action, CardTypes.Reaction]
+    card_cost = 2
+    extra_cards = 2
 
 
 class Moneylender(Card):

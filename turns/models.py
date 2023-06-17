@@ -1,6 +1,7 @@
 from django.apps import apps
 from django.db import models
 
+from cards.constants import CardTypes
 from cards.fields import CardField
 from turns.managers import AdHocTurnManager, StackedTurnManager, TurnManager
 
@@ -54,6 +55,17 @@ class Turn(BaseTurn):
 
     def play_action(self, action, consume=True, ghost_action=False):
         player_deck = self.get_deck()
+        if action.is_attack:
+            # check for reactions
+            opponent_decks = self.game.get_decks(self.player)
+            for deck in opponent_decks:
+                if deck.no_reactions:
+                    continue
+                reactions = deck.get_cards_of_type(CardTypes.Reaction)
+                for reaction in reactions:
+                    # create reaction turn
+                    print(reaction)
+
         if not ghost_action:
             player_deck.play_card(action)
         self.actions_played.append(action.name)
