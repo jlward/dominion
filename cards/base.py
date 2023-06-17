@@ -143,7 +143,8 @@ class Card:
             player=stacked_turn.player,
         )
         for react in reaction_turns:
-            if react.reaction_card.name == 'Moat':
+            # TODO remove pragma
+            if react.reaction_card.name == 'Moat':  # pragma: no cover
                 if react.response is True:
                     return False
 

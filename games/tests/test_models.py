@@ -1,6 +1,6 @@
 from unittest import mock
 
-from cards.kingdom_cards.base_cards import Copper
+from cards.kingdom_cards.base_cards import Copper, Curse
 from decks.models import Deck
 from games.factories import GameFactory
 from games.models import Game
@@ -140,3 +140,10 @@ class GameTestCase(BaseTestCase):
         )
         for deck in game.decks.all():
             self.assertEqual(deck.discard_pile, [])
+
+    def test_gain_card_from_empty_pile(self):
+        game = self.create_game(players=self.players, kingdom_cards=['Village'])
+        deck = game.decks.first()
+        for _ in range(11):
+            game.gain_card(deck, Curse())
+        self.assertEqual(len(deck.discard_pile), 10)

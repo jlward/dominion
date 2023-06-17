@@ -35,10 +35,9 @@ class Game(models.Model):
 
         return order
 
-    def get_decks(self, exclude=None):
+    def get_decks(self, exclude):
         decks = self.decks.all()
-        if exclude:
-            decks = decks.exclude(player=exclude)
+        decks = decks.exclude(player=exclude)
 
         return list(decks)
 

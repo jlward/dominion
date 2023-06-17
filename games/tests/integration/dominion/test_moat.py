@@ -13,6 +13,16 @@ class MoatTestCase(IntegrationTestCase):
         self.assert_adhoc_model_for_player(self.player, False)
         self.assert_adhoc_model_for_player(self.opponent, False)
 
+    def test_not_reveal(self):
+        self.play_card(self.player, 'Bureaucrat')
+
+        self.assert_adhoc_model_for_player(self.player, False)
+        self.assert_adhoc_model_for_player(self.opponent, True)
+
+        with mock.patch('cards.base.Card.create_adhoc_turn') as func:
+            self.pick_yes_no_from_modal(self.opponent, self.SELECTION_NO)
+        func.assert_called_once()
+
     def test_bureaucrat(self):
         self.play_card(self.player, 'Bureaucrat')
 
