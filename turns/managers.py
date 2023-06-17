@@ -24,6 +24,9 @@ class StackedTurnManager(models.Manager):
                 turn.card.execute_card(deck, turn.turn)
                 continue
             if turn.card.should_create_adhoc_turn(turn):
+                if turn.card.is_attack:
+                    if not turn.card.should_attack(turn):
+                        continue
                 return AdHocTurn.objects.create(
                     turn=turn.turn,
                     player=turn.player,

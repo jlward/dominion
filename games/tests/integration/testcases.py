@@ -24,8 +24,8 @@ class IntegrationTestCase(BaseTestCase):
 
     def setUp(self):
         super().setUp()
-        self.player = PlayerFactory()
-        self.opponent = PlayerFactory()
+        self.player = PlayerFactory(handle='player')
+        self.opponent = PlayerFactory(handle='opponent')
 
         self.game = self.create_game(players=[self.player, self.opponent])
 

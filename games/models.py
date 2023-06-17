@@ -110,6 +110,12 @@ class Game(models.Model):
         if self.is_over:
             return None
 
+        reaction_turns = self.reactionturns.filter(is_current_turn=True).order_by(
+            'turn_order',
+        )
+        if reaction_turns.exists():
+            return reaction_turns[0]
+
         adhocturns = self.adhocturns.filter(is_current_turn=True).order_by(
             'turn_order',
         )

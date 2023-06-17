@@ -1,5 +1,6 @@
 from django.apps import apps
 from django.db import models
+from django.urls import reverse
 
 from cards.constants import CardTypes
 from cards.fields import CardField
@@ -56,15 +57,19 @@ class Turn(BaseTurn):
     def play_action(self, action, consume=True, ghost_action=False):
         player_deck = self.get_deck()
         if action.is_attack:
-            # check for reactions
             opponent_decks = self.game.get_decks(self.player)
             for deck in opponent_decks:
                 if deck.no_reactions:
                     continue
                 reactions = deck.get_cards_of_type(CardTypes.Reaction)
                 for reaction in reactions:
-                    # create reaction turn
-                    print(reaction)
+                    ReactionTurn.objects.create(
+                        card=action,
+                        reaction_card=reaction,
+                        turn=self,
+                        player=deck.player,
+                        game=self.game,
+                    )
 
         if not ghost_action:
             player_deck.play_card(action)
@@ -104,6 +109,7 @@ class Turn(BaseTurn):
 
 
 class BaseTempTurn(models.Model):
+    card = CardField()
     turn = models.ForeignKey(
         'turns.Turn',
         related_name='%(class)ss',
@@ -133,8 +139,6 @@ class BaseTempTurn(models.Model):
 
 
 class AdHocTurn(BaseTempTurn, BaseTurn):
-    card = CardField()
-
     objects = AdHocTurnManager()
 
     @property
@@ -147,12 +151,39 @@ class AdHocTurn(BaseTempTurn, BaseTurn):
             adhoc_turn=self,
         )
 
+    @property
+    def perform_action_url(self):
+        return reverse(
+            'turns_adhocturn_adhoc_perform_action',
+            kwargs=dict(turn_id=self.pk),
+        )
+
     def get_form_title(self):
         return getattr(self.card, self.card_form_title_field_string)
 
 
 class StackedTurn(BaseTempTurn, BaseTurn):
-    card = CardField()
     perform_simple_actions = models.BooleanField(default=False)
-
     objects = StackedTurnManager()
+
+
+class ReactionTurn(BaseTempTurn, BaseTurn):
+    reaction_card = CardField()
+    response = models.BooleanField(default=None, null=True, blank=True)
+
+    @property
+    def perform_action_url(self):
+        return reverse(
+            'turns_adhocturn_reaction_perform_action',
+            kwargs=dict(turn_id=self.pk),
+        )
+
+    @property
+    def form_class(self):
+        return getattr(self.reaction_card, self.card_form_field_string)
+
+    @property
+    def form(self):
+        return self.form_class(
+            adhoc_turn=self,
+        )

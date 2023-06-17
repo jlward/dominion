@@ -167,7 +167,7 @@
                 <h5 class="modal-title">{{ turn.get_form_title }}</h5>
             </div>
             <div class="modal-body centered">
-                <form method="POST" action="{% url 'turns_adhocturn_perform_action' turn_id=turn.pk %}">
+                <form method="POST" action="{{ turn.perform_action_url }}">
                     {% csrf_token %}
                     {% if turn.form.extra_info %}
                     {{ turn.form.extra_info }}

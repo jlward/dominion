@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.templatetags.static import static
 
 from cards.constants import CardTypes
@@ -133,3 +134,17 @@ class Card:
 
     def should_create_adhoc_turn(self, stacked_turn):
         raise NotImplementedError()  # pragma: no cover
+
+    def should_attack(self, stacked_turn):
+        # TODO We tried using the reverse relations ship through turn into reaction turn. It didn't work. No know why.
+        ReactionTurn = apps.get_model('turns', 'ReactionTurn')
+        reaction_turns = ReactionTurn.objects.filter(
+            turn=stacked_turn.turn,
+            player=stacked_turn.player,
+        )
+        for react in reaction_turns:
+            if react.reaction_card.name == 'Moat':
+                if react.response is True:
+                    return False
+
+        return True

@@ -10,6 +10,7 @@ from cards.forms.dominion import (
     LibraryForm,
     MilitiaForm,
     MineForm,
+    MoatForm,
     MoneylenderForm,
     RemodelForm,
     SpyForm,
@@ -362,6 +363,8 @@ class Moat(Card):
     types = [CardTypes.Action, CardTypes.Reaction]
     card_cost = 2
     extra_cards = 2
+    adhocturn_form = MoatForm
+    adhocturn_action_title = 'Reveal?'
 
 
 class Moneylender(Card):
