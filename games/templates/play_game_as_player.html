@@ -90,14 +90,14 @@
     <div class="centered">
         Hand
     </div>
-    <span class="card pull-left">
+    <span class="card no-hover pull-left" data-toggle="modal" data-target="#draw-modal">
         <img src="{% static 'images/card_back.jpg' %}" />
         <div class="count">{{ deck.draw_pile|length }}</div>
     </span>
     {% for card in deck.hand %}
     {% card_in_hand card %}
     {% endfor %}
-    <span class="card pull-right">
+    <span class="card no-hover pull-right" data-toggle="modal" data-target="#discard-modal">
         <img src="{% static 'images/card_back.jpg' %}" />
         <div class="count">{{ deck.discard_pile|length }}</div>
     </span>
@@ -118,6 +118,42 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary btn-confirm">Yes</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="draw-modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cards in draw pile <span id="cardName"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body centered">
+                {% for card in deck.real_draw_pile %}
+                {% card_in_play card %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="discard-modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cards in discard pile <span id="cardName"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body centered">
+                {% for card in deck.real_discard_pile %}
+                {% card_in_play card %}
+                {% endfor %}
             </div>
         </div>
     </div>

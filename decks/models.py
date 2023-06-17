@@ -1,3 +1,4 @@
+import operator
 import random
 
 from django.db import models
@@ -36,6 +37,18 @@ class Deck(models.Model):
             + self.duration_cards
             + self.played_cards,
         )
+
+    @property
+    def real_draw_pile(self):
+        cards = get_cards_from_names(self.draw_pile)
+        return sorted(
+            cards,
+            key=operator.attrgetter('cost', 'name'),
+        )
+
+    @property
+    def real_discard_pile(self):
+        return get_cards_from_names(self.discard_pile)
 
     @property
     def score(self):
